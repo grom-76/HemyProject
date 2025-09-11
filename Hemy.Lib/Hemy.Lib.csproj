@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <!-- <ImplicitUsings>enable</ImplicitUsings> -->
+    <!-- <Nullable>enable</Nullable> -->
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DefineConstants>WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup >
