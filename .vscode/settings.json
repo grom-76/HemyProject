@@ -1,4 +1,22 @@
 {
+    "workbench.colorTheme": "Default Dark Modern",
+    
     "dotnet-test-explorer.autoWatch" : true,
     "dotnet-test-explorer.testProjectPath" : "Hemy.Test/Hemy.Test.csproj",
+    "files.exclude": 
+    {
+        "**/bin": true,
+        "**/obj": true
+    },
+
+    
+
+    "material-icon-theme.folders.associations": 
+    {
+        "Diagnostic" : "debug",
+        "Graphic": "godot",
+        "Memory":"mock",
+        "Resources":"res",
+        "Systems" : "Src",
+    },
 }
