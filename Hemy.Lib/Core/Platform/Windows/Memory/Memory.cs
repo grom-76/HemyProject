@@ -54,24 +54,78 @@ internal static unsafe partial class Memory
     [SuppressUnmanagedCodeSecurity]
     internal static byte* NewStr(string text)
     {
-        //Equivalent a NewArray<byte> 
-        byte* bytes = (byte*)calloc((uint)text.Length + 1, Size<byte>());
-        // byte* bytes = (byte*)NativeMemory.AllocZeroed( (uint)text.Length + 1, sizeof(byte) );
-        if (bytes == null)
-        {
-            Log.Error("Alloc Str Failed  ");
-            return null;
-        }
+        // //Equivalent a NewArray<byte> 
+        // byte* bytes = (byte*)calloc((uint)text.Length + 1, Size<byte>());
+        // // byte* bytes = (byte*)NativeMemory.AllocZeroed( (uint)text.Length + 1, sizeof(byte) );
+        // if (bytes == null)
+        // {
+        //     Log.Error("Alloc Str Failed  ");
+        //     return null;
+        // }
 
+        // int i = 0;
+        // while (i < text.Length)
+        // {
+        //     *(bytes + i) = unchecked((byte)(text[i++] & 0x7f));
+        // }
+        // *(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
+
+        // Increment();
+        byte* bytes = NewArray<byte>( (uint)text.Length + 1);
+        FillBytesWithString(bytes, text);
+        return bytes;
+    }
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+    internal static void FillBytesWithString(byte* bytes, string text)
+    {
         int i = 0;
         while (i < text.Length)
         {
             *(bytes + i) = unchecked((byte)(text[i++] & 0x7f));
         }
         *(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
+    }
 
-        Increment();
-        return bytes;
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	public static uint Length(byte* source)
+	{
+		uint utf8 = (uint)(source[1] == '\0' ? 2 : 1);
+		byte* ptr = source;
+
+		while (*ptr != '\0') { ptr += utf8; }
+
+		return (uint)(ptr - source) / utf8;
+	}
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	public static string BytesToString(byte* bytes, uint length = 0)
+	{
+		if (length == 0) length = Length(bytes);
+
+		// REPLACE  for not using  System.text ( too many dependencies ) System.Text.Encoding.UTF8.GetString(  bytes ,(int) length );
+		string response = string.Empty;
+		for (int pos = 0; pos < length; pos++)
+		{
+			response += (char)bytes[pos];
+		}
+		return response;
+	}
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    internal static void Fill(void* destination, int valueToFill, nuint bytesCount)
+    {
+        void* result = memset(destination, valueToFill, bytesCount);
+        if (result != destination) Log.Error("Erreur copy");
+
     }
 
     [SkipLocalsInit]
@@ -80,6 +134,8 @@ internal static unsafe partial class Memory
     internal static T* NewArray<T>(nuint count) where T : unmanaged
     {
         T* result = (T*)calloc(count, Size<T>());
+
+        // TODO: remplace calloc par aligned_alloc  size = GetByteCount( itemSize , count)
 
         if (result == null)
         {
@@ -139,7 +195,7 @@ internal static unsafe partial class Memory
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public static void DisposeStr<T>(T* pointer) where T : unmanaged
+    public static void DisposeStr(byte* pointer) 
     {
         if (pointer == null) return;
 
