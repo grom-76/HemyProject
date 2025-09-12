@@ -1,15 +1,13 @@
 namespace Hemy.Lib.Core;
 
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-public static unsafe partial class Log
+public static  class Log
 {
     public const string INFO = "INFO";
     public const string ERROR = "ERROR";
