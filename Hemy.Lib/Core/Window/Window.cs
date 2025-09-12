@@ -7,6 +7,7 @@ using System;
 
 #if WINDOWS
 using Hemy.Lib.Core.Platform.Windows.Window;
+using Hemy.Lib.Core.Platform.Windows.Graphic;
 using static Hemy.Lib.Core.Platform.Windows.Window.WindowConsts;
 
 #endif
@@ -18,6 +19,7 @@ public unsafe sealed class Window : IDisposable
 {
 #if WINDOWS
     private WindowData* _windowData = null;
+    private GraphicData* _graphicData = null;
 #else
 #endif
     private bool _isDisposed = false;
@@ -27,6 +29,7 @@ public unsafe sealed class Window : IDisposable
     {
 #if WINDOWS
         _windowData = Memory.Memory.New<WindowData>(true);
+        _graphicData = Memory.Memory.New<GraphicData>(true);
 #endif
 
     }
@@ -38,6 +41,11 @@ public unsafe sealed class Window : IDisposable
     {
 #if WINDOWS
         WindowImpl.Init(_windowData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
+        GraphicImpl.Init(_graphicData, _windowData);
+
+        GraphicImpl.CreateRenderPass(_graphicData);
+        GraphicImpl.CreateRender(_graphicData);
+
 
         WindowImpl.Show(_windowData);
 #endif
@@ -54,6 +62,16 @@ public unsafe sealed class Window : IDisposable
         => false;
 #endif
 
+[SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public void TestingDraw()
+#if WINDOWS 
+        => GraphicImpl.Draw(_graphicData);
+#else
+        => false;
+#endif
+
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
@@ -62,10 +80,13 @@ public unsafe sealed class Window : IDisposable
         if (_isDisposed) return;
 
 #if WINDOWS
+        GraphicImpl.Dispose(_graphicData);
         WindowImpl.Dispose(_windowData);
+
         Memory.Memory.Dispose(_windowData);
+        Memory.Memory.Dispose(_graphicData);
 #endif
-        
+
         _isDisposed = true;
 
         GC.SuppressFinalize(this);

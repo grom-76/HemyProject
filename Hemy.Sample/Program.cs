@@ -7,7 +7,8 @@ public class Program
     {
 
         // TestLog();
-        FirstWindow();
+        // FirstWindow();
+        FirstGraphic();
 
     }
 
@@ -26,6 +27,22 @@ public class Program
         while (window.IsRunning())
         {
             window.Update();
+        }
+
+    }
+    
+    public static void FirstGraphic()
+    {
+        using Hemy.Lib.Core.Window.Window window = new();
+
+        window.CreateWindow();
+
+        while (window.IsRunning())
+        {
+            window.Update();
+
+
+            window.TestingDraw();
         }
         
     }
