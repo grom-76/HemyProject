@@ -71,14 +71,14 @@ internal static unsafe partial class Memory
         // *(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
 
         // Increment();
-        byte* bytes = NewArray<byte>( (uint)text.Length + 1);
+        byte* bytes = NewArray<byte>((uint)text.Length + 1);
         FillBytesWithString(bytes, text);
         return bytes;
     }
 
-	[SkipLocalsInit]
-	[SuppressGCTransition]
-	[SuppressUnmanagedCodeSecurity]
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     internal static void FillBytesWithString(byte* bytes, string text)
     {
         int i = 0;
@@ -89,34 +89,34 @@ internal static unsafe partial class Memory
         *(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
     }
 
-	[SkipLocalsInit]
-	[SuppressGCTransition]
-	[SuppressUnmanagedCodeSecurity]
-	public static uint Length(byte* source)
-	{
-		uint utf8 = (uint)(source[1] == '\0' ? 2 : 1);
-		byte* ptr = source;
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public static uint Length(byte* source)
+    {
+        uint utf8 = (uint)(source[1] == '\0' ? 2 : 1);
+        byte* ptr = source;
 
-		while (*ptr != '\0') { ptr += utf8; }
+        while (*ptr != '\0') { ptr += utf8; }
 
-		return (uint)(ptr - source) / utf8;
-	}
+        return (uint)(ptr - source) / utf8;
+    }
 
-	[SkipLocalsInit]
-	[SuppressGCTransition]
-	[SuppressUnmanagedCodeSecurity]
-	public static string BytesToString(byte* bytes, uint length = 0)
-	{
-		if (length == 0) length = Length(bytes);
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public static string BytesToString(byte* bytes, uint length = 0)
+    {
+        if (length == 0) length = Length(bytes);
 
-		// REPLACE  for not using  System.text ( too many dependencies ) System.Text.Encoding.UTF8.GetString(  bytes ,(int) length );
-		string response = string.Empty;
-		for (int pos = 0; pos < length; pos++)
-		{
-			response += (char)bytes[pos];
-		}
-		return response;
-	}
+        // REPLACE  for not using  System.text ( too many dependencies ) System.Text.Encoding.UTF8.GetString(  bytes ,(int) length );
+        string response = string.Empty;
+        for (int pos = 0; pos < length; pos++)
+        {
+            response += (char)bytes[pos];
+        }
+        return response;
+    }
 
     [SkipLocalsInit]
     [SuppressGCTransition]
@@ -195,7 +195,7 @@ internal static unsafe partial class Memory
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public static void DisposeStr(byte* pointer) 
+    public static void DisposeStr(byte* pointer)
     {
         if (pointer == null) return;
 
@@ -236,7 +236,7 @@ internal static unsafe partial class Memory
     [LibraryImport(Ucrt, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial void* realloc(void* memblock,nuint size);
+    internal static partial void* realloc(void* memblock, nuint size);
 
     [LibraryImport(Ucrt, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -246,7 +246,25 @@ internal static unsafe partial class Memory
     [LibraryImport(Ucrt, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial void* memset(void* dest,int c,nuint count );
+    internal static partial void* memset(void* dest, int c, nuint count);
+
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial byte* _itoa( int value, byte *buffer, int radix );
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial byte * _ltoa( long value, byte *buffer, int radix );
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial byte* _ultoa(ulong value, byte* buffer, int radix);
+    
+    
 }
 
 #endif

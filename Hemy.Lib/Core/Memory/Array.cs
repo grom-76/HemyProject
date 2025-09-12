@@ -1,20 +1,20 @@
-namespace HE2.Core;
+namespace Hemy.Lib.Core.Memory;
 
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
-
-
-
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe struct Array(uint count, uint itemMaxSize)
 {
     readonly uint _count = count;
     readonly uint _maxSizeItem = itemMaxSize;
-#if WINDOWS
-    readonly byte* _array = (byte*)NativeMemory.AllocZeroed(count * itemMaxSize);
-    readonly byte* _pointer = (byte*)NativeMemory.AllocZeroed(count, (nuint)Unsafe.SizeOf<IntPtr>());
-#endif
+
+    readonly byte* _array = (byte*)Memory.NewArray<byte>(count * itemMaxSize);
+    readonly byte* _pointer = (byte*)Memory.NewArray<byte>((uint)count * (uint)Unsafe.SizeOf<IntPtr>());
+
     /// <summary> le nombre de ligne du tableau </summary>
     public readonly uint Count => _count;
 
@@ -25,6 +25,9 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
     /// <param name="value"> pointeur au format byte  de la chaine d'entrée</param>
     /// <param name="index">specifie la ligne d'insertion doit être superieur à zéro ou inferieur a count </param>
     /// <returns></returns> 
+    [SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
     public readonly bool Add(byte* value, uint index)
     {
         if (value is null) return false;
@@ -32,10 +35,9 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
         if (index <= 0 && index >= _count) return false;
 
         uint size = Str.Length(value) + 1;
-#if WINDOWS
-        // Memory.Copy(value, _array + ((uint)_maxSizeItem * index), size);
-        NativeMemory.Copy(value, _array + ((uint)_maxSizeItem * index), size);
-#endif
+
+        Memory.Copy(value, _array + ((uint)_maxSizeItem * index), size);
+
         ((byte**)_pointer)[index] = _array + ((uint)_maxSizeItem * index);
 
         return true;
@@ -45,6 +47,9 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
     /// <param name="value"></param>
     /// <param name="index"></param>
     /// <returns></returns>
+    [SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
     public readonly bool Add(string value, uint index)
     {
         if (string.IsNullOrEmpty(value)) return false;
@@ -74,18 +79,19 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
     {
         var bytes = _array + (_maxSizeItem * index);
         // REPLACE  System.text (no dependencies )  var r = System.Text.Encoding.UTF8.GetString(bytes, (int)Str.Length(bytes));
-        string response = string.Empty;
+        // string response = string.Empty;
 
-        int position = 0;
-        char c = (char)bytes[position++];
+        // int position = 0;
+        // char c = (char)bytes[position++];
 
-        while (c != '\0' && position <= _maxSizeItem)
-        {
-            response += c;
-            c = (char)bytes[position++];
-        }
+        // while (c != '\0' && position <= _maxSizeItem)
+        // {
+        //     response += c;
+        //     c = (char)bytes[position++];
+        // }
 
-        return response;
+        // return response;
+        return Str.BytesToString(bytes);
     }
 
     /// <summary>
@@ -93,6 +99,9 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
     /// </summary>
     /// <param name="match"></param>
     /// <returns></returns>
+    [SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
     public readonly bool IsExist(string match)
     {
         for (uint i = 0; i < Count; i++)
@@ -110,17 +119,19 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
     /// <returns></returns>
     public readonly byte* this[uint index]
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get => _array + (_maxSizeItem * index);
         set => Add(value, index);
     }
 
     /// <summary> Quitter proprement  </summary>
+    [SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
     public readonly void Dispose()
     {
-#if WINDOWS
-        NativeMemory.Free(_array);
-        NativeMemory.Free(_pointer);
-#endif
+        Memory.DisposeArray(_array);
+        Memory.DisposeArray(_pointer);
     }
 
     public static implicit operator byte**(Array array) => (byte**)array._pointer;
