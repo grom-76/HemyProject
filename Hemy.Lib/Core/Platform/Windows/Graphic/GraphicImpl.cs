@@ -5,12 +5,13 @@ namespace Hemy.Lib.Core.Platform.Windows.Graphic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Window;
 
 // using HE2.Tools.Shaders.ShaderCompiler;
 
-// [SkipLocalsInit]
+[SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct GraphicData()
 {
@@ -49,7 +50,10 @@ public unsafe struct GraphicData()
 }
 
 
-
+// [SkipLocalsInit]
+// TODO: pourquoi skiplocaalinit a un fonctionnement eratique dans graphics device
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
 internal unsafe static class GraphicImpl
 {
     internal static int Init(GraphicData* contextData, WindowData* windowData)
@@ -496,7 +500,7 @@ internal unsafe static class GraphicImpl
             }
 
         }
-        Log.Info("Is Suitable");
+        // Log.Info("Is Suitable");
         //  bool extensionsSupported = checkDeviceExtensionSupport(device);
         // SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device)
 
@@ -725,7 +729,8 @@ internal unsafe static class GraphicImpl
 
             result = Vk.vkCreateFramebuffer(contextData->Device, &framebufferInfo[0], null, &contextData->Framebuffers[i]);//;//.Check("failed to create framebuffer!"); 
 
-            // _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i} Create FrameBuffer {contextData->Framebuffers[i]}");
+            if (VkResult.VK_SUCCESS != result) {
+                Log.Error($"-{i} Create FrameBuffer {contextData->Framebuffers[i]}"); }
         }
     }
 
@@ -740,6 +745,8 @@ internal unsafe static class GraphicImpl
 
         // if (contextData->ImageAvailableSemaphores == null)
         contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+        contextData->ImageAvailableSemaphores = Memory (contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+        //TODO : change NAtiveMEmor
 
         // if (contextData->RenderFinishedSemaphores == null)
         contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
