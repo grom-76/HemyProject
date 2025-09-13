@@ -73,12 +73,19 @@ internal unsafe static class GraphicImpl
 
         DisposeDevice(contextData);
 
-        NativeMemory.Free(contextData->CommandBuffers);
-        NativeMemory.Free(contextData->InFlightFences);
-        NativeMemory.Free(contextData->ImageAvailableSemaphores);
-        NativeMemory.Free(contextData->RenderFinishedSemaphores);
-        NativeMemory.Free(contextData->RenderPassClearValues);
-        NativeMemory.Free(contextData->RenderPassArea);
+        
+        Memory.Memory.DisposeArray(contextData->InFlightFences);
+        Memory.Memory.DisposeArray(contextData->ImageAvailableSemaphores);
+        Memory.Memory.DisposeArray(contextData->RenderFinishedSemaphores);
+        Memory.Memory.DisposeArray(contextData->CommandBuffers);
+        Memory.Memory.DisposeArray(contextData->RenderPassClearValues);
+        Memory.Memory.DisposeArray(contextData->RenderPassArea);
+        // NativeMemory.Free(contextData->InFlightFences);
+        // NativeMemory.Free(contextData->ImageAvailableSemaphores);
+        // NativeMemory.Free(contextData->RenderFinishedSemaphores);
+        // NativeMemory.Free(contextData->CommandBuffers);
+        // NativeMemory.Free(contextData->RenderPassClearValues);
+        // NativeMemory.Free(contextData->RenderPassArea);
         NativeMemory.Free(contextData->SwapChainImageViews);
         NativeMemory.Free(contextData->SwapChainImages);
         NativeMemory.Free(contextData->Framebuffers);
@@ -174,6 +181,7 @@ internal unsafe static class GraphicImpl
         {
 #if DEBUG
             result = Vk.vkCreateDebugUtilsMessengerEXT(contextData->Instance, &debugCreateInfo[0], null, &contextData->DebugMessenger);
+            Log.Info("Create Debug ");
 #endif
         }
 #if WINDOWS
@@ -398,7 +406,9 @@ internal unsafe static class GraphicImpl
 
         contextData->SwapChainImageViewsCount = SwapChainImageViewsCount;
         contextData->SwapChainImageFormat = VkFormat.VK_FORMAT_B8G8R8A8_SRGB;
-        contextData->RenderPassArea = (VkRect2D*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkRect2D>());
+
+        contextData->RenderPassArea = Memory.Memory.NewArray<VkRect2D>(1);
+        // contextData->RenderPassArea = (VkRect2D*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkRect2D>());
         contextData->RenderPassArea->extent = SwapChainSurfaceSize;
         contextData->RenderPassArea->offset.x = 0;
         contextData->RenderPassArea->offset.y = 0;
@@ -636,8 +646,10 @@ internal unsafe static class GraphicImpl
         // WindowsGraphicRender.CreateShader(contextData);
         // RENDER PASS AREA 
         // if 2 joeur split screen 
+        if (contextData->RenderPassClearValues == null)
+            contextData->RenderPassClearValues = Memory.Memory.NewArray<VkClearValue>(/*depth buffer =2*/ 1);
+            // contextData->RenderPassClearValues = (VkClearValue*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkClearValue>());
 
-        contextData->RenderPassClearValues = (VkClearValue*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkClearValue>());
         ChangeBackGroundColor(contextData);
 
         // COLOR 
@@ -743,13 +755,14 @@ internal unsafe static class GraphicImpl
     {
         VkResult result;
 
-        // if (contextData->ImageAvailableSemaphores == null)
-        contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
-        contextData->ImageAvailableSemaphores = Memory (contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+        if (contextData->ImageAvailableSemaphores == null)
+        // contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+            contextData->ImageAvailableSemaphores = Memory.Memory.NewArray<VkSemaphore> (contextData->MaxFrameInFlight );
         //TODO : change NAtiveMEmor
 
-        // if (contextData->RenderFinishedSemaphores == null)
-        contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+        if (contextData->RenderFinishedSemaphores == null)
+        // contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+            contextData->RenderFinishedSemaphores = Memory.Memory.NewArray<VkSemaphore> (contextData->MaxFrameInFlight );
 
         VkSemaphoreCreateInfo* semaphoreInfo = stackalloc VkSemaphoreCreateInfo[1];
         semaphoreInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -768,8 +781,9 @@ internal unsafe static class GraphicImpl
 
         }
 
-        // if (contextData->InFlightFences == null)
-        contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
+        if (contextData->InFlightFences == null)
+            // contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
+            contextData->InFlightFences =  Memory.Memory.NewArray<VkFence>(contextData->MaxFrameInFlight );
 
         VkFenceCreateInfo* fenceInfo = stackalloc VkFenceCreateInfo[1];
         fenceInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -791,10 +805,11 @@ internal unsafe static class GraphicImpl
 
         // _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create Command Pool {contextData->CommandPool}") ? 1 : 0;
 
-        // if (graphicData->CommandBuffers == null)
-        contextData->CommandBuffers = (VkCommandBuffer*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkCommandBuffer>());
+        if (contextData->CommandBuffers == null)
+            contextData->CommandBuffers = Memory.Memory.NewArray<VkCommandBuffer>(contextData->MaxFrameInFlight);
+        // contextData->CommandBuffers = (VkCommandBuffer*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkCommandBuffer>());
 
-        VkCommandBufferAllocateInfo* allocInfo = stackalloc VkCommandBufferAllocateInfo[1];
+            VkCommandBufferAllocateInfo* allocInfo = stackalloc VkCommandBufferAllocateInfo[1];
         allocInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo[0].commandPool = contextData->CommandPool;
         allocInfo[0].level = VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY;

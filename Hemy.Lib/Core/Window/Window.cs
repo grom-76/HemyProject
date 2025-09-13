@@ -110,10 +110,10 @@ public unsafe sealed class Window : IDisposable
     {
         switch (message)
         {
-            case WM_QUIT:
+            // case WM_QUIT:
             case WM_CLOSE:
                 Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.PostQuitMessage(0);
-
+                _windowData->IsRunning = false;
                 // _eventsData->OnQuit(wParam, lParam);
                 return null;
 

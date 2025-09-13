@@ -14,13 +14,13 @@ using HRESULT = System.UInt32;
 using BOOL = System.Int32;
 using Hemy.Lib.Core.Memory;
 
+[SkipLocalsInit]
+// [SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WindowData()
 {
-
     internal fixed byte GameName[256];
     internal fixed byte EngineName[16];
-
-    // internal MSG* Msg = null;
     internal bool IsRunning = false;
     internal void* Handle = null;
     internal void* HInstance = null;
