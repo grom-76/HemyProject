@@ -59,6 +59,9 @@ public unsafe sealed class Window : IDisposable
     [SuppressUnmanagedCodeSecurity]
     public void CreateWindow()
     {
+#if SPEC
+        Hemy.Lib.Core.Log.Info("COUCOU");
+#endif
 #if WINDOWS
         WindowImpl.Init(_windowData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);

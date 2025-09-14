@@ -2,15 +2,39 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <!-- <ImplicitUsings>enable</ImplicitUsings> -->
-    <!-- <Nullable>enable</Nullable> -->
-
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DefineConstants>WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup >
 		<None Include="Logo.ico"  CopyToOutputDirectory="PreserveNewest"  />
+		<None Include=".\Runtime\ShaderCompiler\Win-x64\Shaderc_shared.dll"  CopyToOutputDirectory="PreserveNewest"  Link="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup> 
+
+  <PropertyGroup Condition ="'$(Configuration)' == 'Release'" >
+
+		<DebugSymbols>false</DebugSymbols>
+		<Optimize>true</Optimize>
+		<Prefer32Bit>false</Prefer32Bit>
+		<optimised>true</optimised>
+		<optimised>true</optimised>
+		<PlatformTarget>x64</PlatformTarget> 
+		<EnableComHosting>false</EnableComHosting>
+		<Platforms>x64</Platforms>
+
+		<AOTMode>LLVMOnly</AOTMode>
+		<NoStdLib>true</NoStdLib>
+		<NoWin32Manifest />
+		<RunAOTCompilation>true</RunAOTCompilation> 
+		<IsAotCompatible>true</IsAotCompatible>
+		<PublishAot>true</PublishAot>
+
+		<EnableDynamicLoading>false</EnableDynamicLoading>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<OptimizationPreference>Speed</OptimizationPreference>
+
+		<PublishTrimmed>true</PublishTrimmed>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
 
 </Project>

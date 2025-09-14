@@ -14,15 +14,6 @@
           "comments": []
         },
         {
-          "id": "5387e9ea-dc77-4e3a-a065-cb27ffa61d4c",
-          "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
-          "title": "Ajouter les couleur dans TestingDraw",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "961bbc4c-12c9-4582-8d4e-00ca24d0e408",
           "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
           "title": "Voir pour faire la palette de couleur en Float[] ?",
@@ -54,7 +45,18 @@
     {
       "id": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
       "title": "To Do",
-      "cards": []
+      "cards": [
+        {
+          "id": "5387e9ea-dc77-4e3a-a065-cb27ffa61d4c",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Ajouter les couleur dans TestingDraw",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": [],
+          "dueDate": "2025-09-14T13:36:00.000Z"
+        }
+      ]
     },
     {
       "id": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",

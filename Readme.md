@@ -56,3 +56,7 @@ code```
 
 -
 
+INSTALL BEFORE PUBLISH :  https://aka.ms/vs/17/release/vs_BuildTools.exe  
+ dotnet nuget add source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json" 
+ dotnet build -c Release /p:Configuration=Release /p:Platform=x64  
+ dotnet publish -c Release -r win-x64  -p:PublishAot=true 
