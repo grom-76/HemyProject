@@ -6,14 +6,15 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using Hemy.Lib.Core.Platform.Vulkan;
-using Hemy.Lib.Core.Platform.Windows.Window;
+
 
 using WORD = System.UInt16;
 using DWORD = System.UInt32; // A 32-bit unsigned integer. The range is 0 through 4294967295 decimal.
 using HRESULT = System.UInt32;
 using BOOL = System.Int32;
-
+using Hemy.Lib.Core.Sys;
+using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using Hemy.Lib.Core;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
@@ -53,7 +54,7 @@ internal unsafe static class AudioImpl
             return 1;
         }
 
-        Load(WindowsLibrary.GetSymbol, contextData->AudioModule);
+        Load(LibraryLoader.GetSymbol, contextData->AudioModule);
 
         IXAudio2* Instance = null;
         var err = XAudio2Create(&Instance, 0, AudioConsts.XAUDIO2_DEFAULT_PROCESSOR);
@@ -123,7 +124,7 @@ internal unsafe static class AudioImpl
         Memory.Memory.Dispose(audioData->MasterVoice);
         // Memory.Dispose(audioData->Handle3D); // TODO ne pas faire dispose Pourquoi ?
 
-        WindowsLibrary.Unload(audioData->AudioModule);
+        LibraryLoader.Unload(audioData->AudioModule);
     }
 
     internal static void SetVolume(AudioData* audioData, float value)
@@ -415,15 +416,15 @@ internal unsafe static class AudioImpl
 
     static nint GetAudioModuleDLL()
     {
-        var AudioModule = WindowsLibrary.Load(LibrariesName.XAudio2_9);
+        var AudioModule = LibraryLoader.Load(XAudio2_9);
 
         if (AudioModule != nint.Zero) { return AudioModule; }
 
-        AudioModule = WindowsLibrary.Load(LibrariesName.XAudio2_8);
+        AudioModule = LibraryLoader.Load(XAudio2_8);
 
         if (AudioModule != nint.Zero) { return AudioModule; }
 
-        AudioModule = WindowsLibrary.Load(LibrariesName.XAudio1_7);
+        AudioModule = LibraryLoader.Load(XAudio1_7);
 
         if (AudioModule != nint.Zero) { return AudioModule; }
 
