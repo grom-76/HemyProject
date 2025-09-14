@@ -64,13 +64,32 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "489d144c-f9e1-4a5a-8f4c-ddd8f1dfb51d",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Ameliorer le code pour le gamepad",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
     {
       "id": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
       "title": "Doing",
-      "cards": []
+      "cards": [
+        {
+          "id": "f700becf-0552-4a31-84a0-682fac08befa",
+          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "title": "Calcul de la dead zone pour le controller",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
     },
     {
       "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
