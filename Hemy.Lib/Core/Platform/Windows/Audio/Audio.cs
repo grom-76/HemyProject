@@ -432,7 +432,7 @@ internal unsafe static class AudioImpl
     
      // TODO replace System.MAth by own method  ( Log10 , Sin POw ASin )
     public static float XAudio2DecibelsToAmplitudeRatio(float Decibels)
-        => MathNative.powf(10.0f, Decibels / 20.0f);
+        => Math.MathFuncs.powf(10.0f, Decibels / 20.0f);
 
     /// <summary>
     /// // Inline function that converts an amplitude ratio value to a decibel value.
@@ -440,22 +440,22 @@ internal unsafe static class AudioImpl
     /// <param name="Volume"></param>
     /// <returns></returns>
     public static float XAudio2AmplitudeRatioToDecibels(float Volume)
-        => Volume == 0.0f ? -3.402823466e+38f : 20.0f * MathNative.clog10f(Volume);
+        => Volume == 0.0f ? -3.402823466e+38f : 20.0f * Math.MathFuncs.clog10f(Volume);
 
     public static float XAudio2SemitonesToFrequencyRatio(float Semitones)
-        => MathNative.powf(2.0f, Semitones / 12.0f);
+        => Math.MathFuncs.powf(2.0f, Semitones / 12.0f);
 
     public static float XAudio2FrequencyRatioToSemitones(float FrequencyRatio)
-        => 39.86313713864835f * MathNative.clog10f(FrequencyRatio);
+        => 39.86313713864835f * Math.MathFuncs.clog10f(FrequencyRatio);
 
     public static float XAudio2CutoffFrequencyToRadians(float CutoffFrequency, uint SampleRate)
-        => (uint)(CutoffFrequency * 6.0f) >= SampleRate ? 1.0f : 2.0f * MathNative.sinf((float)3.14159265358979323846 * CutoffFrequency / SampleRate);
+        => (uint)(CutoffFrequency * 6.0f) >= SampleRate ? 1.0f : 2.0f * Math.MathFuncs.sinf((float)3.14159265358979323846 * CutoffFrequency / SampleRate);
 
     public static float XAudio2RadiansToCutoffFrequency(float Radians, float SampleRate)
-        => SampleRate * MathNative.asinf(Radians / 2.0f) / (float)3.14159265358979323846;
+        => SampleRate * Math.MathFuncs.asinf(Radians / 2.0f) / (float)3.14159265358979323846;
 
     public static float XAudio2CutoffFrequencyToOnePoleCoefficient(float CutoffFrequency, uint SampleRate)
-        => (uint)CutoffFrequency >= SampleRate ? 1.0f : 1.0f - MathNative.powf(1.0f - (2.0f * CutoffFrequency / SampleRate), 2.0f);
+        => (uint)CutoffFrequency >= SampleRate ? 1.0f : 1.0f - Math.MathFuncs.powf(1.0f - (2.0f * CutoffFrequency / SampleRate), 2.0f);
 
 
     /// <summary> Creates a new XAudio2 object and returns a pointer to its IXAudio2 interface. </summary>
