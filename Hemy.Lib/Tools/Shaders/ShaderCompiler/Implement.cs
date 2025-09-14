@@ -1,4 +1,4 @@
-namespace HE2.Tools.Shaders.ShaderCompiler;
+namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using static HE2.Tools.Shaders.ShaderCompiler.Native;
+using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
 
 /// <summary>
 /// Defines a shader macro.

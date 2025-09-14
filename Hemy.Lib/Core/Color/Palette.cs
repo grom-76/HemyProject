@@ -3,170 +3,172 @@ namespace Hemy.Lib.Core.Color;
 
 public static class PantoneColors
 {
-   
-// // color Graphics Adapter - https://lospec.com/
 
-// public static float[] cga_02 = [0.961F, 0.333F, 0.333F]; cga_02(245,85,85]; // FF555555
-// public static float[] cga_03 = [0.98F, 0.667F, 0.667F];
-// public static float[] cga_05 = [0.941F, 0F, 0.039F];
-// public static float[] cga_06 = [0.961F, 0.333F, 0.373F];
-// public static float[] cga_07 = [0.941F, 0.039F, 0.627F];
-// public static float[] cga_08 = [0.961F, 0.373F, 0.961F];
-// public static float[] cga_09 = [0.941F, 0.039F, 0.667F];
-// public static float[] cga_10 = [0.961F, 0.373F, 1F];
-// public static float[] cga_11 = [0.98F, 0.627F, 0F];
-// public static float[] cga_12 = [1F, 0.961F, 0.333F];
-// public static float[] cga_13 = [0.98F, 0.627F, 0.039F];
-// public static float[] cga_14 = [1F, 0.961F, 0.373F];
-// public static float[] cga_15 = [0.98F, 0.647F, 0.314F];
-// public static float[] cga_16 = [1F, 1F, 0.961F];
+    // // color Graphics Adapter - https://lospec.com/
 
-// // Commodore 64 - https://lospec.com/
+    // public static float[] cga_02 = [0.961F, 0.333F, 0.333F]; cga_02(245,85,85]; // FF555555
+    // public static float[] cga_03 = [0.98F, 0.667F, 0.667F];
+    // public static float[] cga_05 = [0.941F, 0F, 0.039F];
+    // public static float[] cga_06 = [0.961F, 0.333F, 0.373F];
+    // public static float[] cga_07 = [0.941F, 0.039F, 0.627F];
+    // public static float[] cga_08 = [0.961F, 0.373F, 0.961F];
+    // public static float[] cga_09 = [0.941F, 0.039F, 0.667F];
+    // public static float[] cga_10 = [0.961F, 0.373F, 1F];
+    // public static float[] cga_11 = [0.98F, 0.627F, 0F];
+    // public static float[] cga_12 = [1F, 0.961F, 0.333F];
+    // public static float[] cga_13 = [0.98F, 0.627F, 0.039F];
+    // public static float[] cga_14 = [1F, 0.961F, 0.373F];
+    // public static float[] cga_15 = [0.98F, 0.647F, 0.314F];
+    // public static float[] cga_16 = [1F, 1F, 0.961F];
 
-// public static float[] com64_02 = [0.965F, 0.149F, 0.149F];
-// public static float[] com64_03 = [0.973F, 0.596F, 0.596F];
-// public static float[] com64_04 = [0.98F, 0.855F, 0.855F];
-// public static float[] com64_06 = [0.976F, 0.957F, 0.894F];
-// public static float[] com64_07 = [0.988F, 0.718F, 0.906F];
-// public static float[] com64_08 = [0.965F, 0.835F, 0.255F];
-// public static float[] com64_09 = [0.98F, 0.086F, 0.514F];
-// public static float[] com64_10 = [0.988F, 0.616F, 0.282F];
-// public static float[] com64_11 = [0.976F, 0.682F, 0.161F];
-// public static float[] com64_12 = [0.961F, 0.792F, 0.71F];
-// public static float[] com64_13 = [0.965F, 0.671F, 0.988F];
-// public static float[] com64_14 = [0.973F, 0.529F, 0.925F];
-// public static float[] com64_15 = [0.961F, 0.016F, 0.349F];
-// public static float[] com64_16 = [0.98F, 0.02F, 0.478F];
+    // // Commodore 64 - https://lospec.com/
 
-// // MSX - https://lospec.com/
+    // public static float[] com64_02 = [0.965F, 0.149F, 0.149F];
+    // public static float[] com64_03 = [0.973F, 0.596F, 0.596F];
+    // public static float[] com64_04 = [0.98F, 0.855F, 0.855F];
+    // public static float[] com64_06 = [0.976F, 0.957F, 0.894F];
+    // public static float[] com64_07 = [0.988F, 0.718F, 0.906F];
+    // public static float[] com64_08 = [0.965F, 0.835F, 0.255F];
+    // public static float[] com64_09 = [0.98F, 0.086F, 0.514F];
+    // public static float[] com64_10 = [0.988F, 0.616F, 0.282F];
+    // public static float[] com64_11 = [0.976F, 0.682F, 0.161F];
+    // public static float[] com64_12 = [0.961F, 0.792F, 0.71F];
+    // public static float[] com64_13 = [0.965F, 0.671F, 0.988F];
+    // public static float[] com64_14 = [0.973F, 0.529F, 0.925F];
+    // public static float[] com64_15 = [0.961F, 0.016F, 0.349F];
+    // public static float[] com64_16 = [0.98F, 0.02F, 0.478F];
 
-// public static float[] msx_02 = [0.988F, 0.675F, 0.675F];
-// public static float[] msx_03 = [1F, 1F, 1F];
-// public static float[] msx_04 = [0.984F, 0.459F, 0.898F];
-// public static float[] msx_05 = [0.992F, 0.588F, 0.271F];
-// public static float[] msx_06 = [1F, 0.91F, 0.467F];
-// public static float[] msx_07 = [0.988F, 0.675F, 0.082F];
-// public static float[] msx_08 = [0.992F, 0.863F, 0.91F];
-// public static float[] msx_09 = [0.953F, 0.792F, 0.016F];
-// public static float[] msx_10 = [0.957F, 0.043F, 0.392F];
-// public static float[] msx_11 = [0.969F, 0.235F, 0.906F];
-// public static float[] msx_12 = [0.961F, 0.584F, 0.365F];
-// public static float[] msx_13 = [0.969F, 0.906F, 0.373F];
-// public static float[] msx_14 = [0.965F, 0.302F, 0.682F];
-// public static float[] msx_15 = [0.984F, 0.337F, 0.357F];
+    // // MSX - https://lospec.com/
 
-// // Macintosh II - https://lospec.com/
+    // public static float[] msx_02 = [0.988F, 0.675F, 0.675F];
+    // public static float[] msx_03 = [1F, 1F, 1F];
+    // public static float[] msx_04 = [0.984F, 0.459F, 0.898F];
+    // public static float[] msx_05 = [0.992F, 0.588F, 0.271F];
+    // public static float[] msx_06 = [1F, 0.91F, 0.467F];
+    // public static float[] msx_07 = [0.988F, 0.675F, 0.082F];
+    // public static float[] msx_08 = [0.992F, 0.863F, 0.91F];
+    // public static float[] msx_09 = [0.953F, 0.792F, 0.016F];
+    // public static float[] msx_10 = [0.957F, 0.043F, 0.392F];
+    // public static float[] msx_11 = [0.969F, 0.235F, 0.906F];
+    // public static float[] msx_12 = [0.961F, 0.584F, 0.365F];
+    // public static float[] msx_13 = [0.969F, 0.906F, 0.373F];
+    // public static float[] msx_14 = [0.965F, 0.302F, 0.682F];
+    // public static float[] msx_15 = [0.984F, 0.337F, 0.357F];
 
-// public static float[] mac2_01 = [1F, 1F, 1F];
-// public static float[] mac2_02 = [1F, 1F, 0.941F];
-// public static float[] mac2_03 = [1F, 0.965F, 0.314F];
-// public static float[] mac2_04 = [0.992F, 0.753F, 0F];
-// public static float[] mac2_05 = [1F, 0.941F, 0.035F];
-// public static float[] mac2_06 = [0.953F, 0.376F, 0.035F];
-// public static float[] mac2_07 = [0.941F, 0F, 0.047F];
-// public static float[] mac2_08 = [0.941F, 0.035F, 0.498F];
-// public static float[] mac2_09 = [0.941F, 0.039F, 0.502F];
-// public static float[] mac2_10 = [0.941F, 0.024F, 0.314F];
-// public static float[] mac2_11 = [0.965F, 0.325F, 0.376F];
-// public static float[] mac2_12 = [0.976F, 0.463F, 0.325F];
-// public static float[] mac2_13 = [0.984F, 0.608F, 0.608F];
-// public static float[] mac2_14 = [0.973F, 0.408F, 0.408F];
-// public static float[] mac2_15 = [0.957F, 0.329F, 0.329F];
-// public static float[] mac2_16 = [0.941F, 0F, 0F];
+    // // Macintosh II - https://lospec.com/
 
-// // ZX Spectrum - https://lospec.com/
+    // public static float[] mac2_01 = [1F, 1F, 1F];
+    // public static float[] mac2_02 = [1F, 1F, 0.941F];
+    // public static float[] mac2_03 = [1F, 0.965F, 0.314F];
+    // public static float[] mac2_04 = [0.992F, 0.753F, 0F];
+    // public static float[] mac2_05 = [1F, 0.941F, 0.035F];
+    // public static float[] mac2_06 = [0.953F, 0.376F, 0.035F];
+    // public static float[] mac2_07 = [0.941F, 0F, 0.047F];
+    // public static float[] mac2_08 = [0.941F, 0.035F, 0.498F];
+    // public static float[] mac2_09 = [0.941F, 0.039F, 0.502F];
+    // public static float[] mac2_10 = [0.941F, 0.024F, 0.314F];
+    // public static float[] mac2_11 = [0.965F, 0.325F, 0.376F];
+    // public static float[] mac2_12 = [0.976F, 0.463F, 0.325F];
+    // public static float[] mac2_13 = [0.984F, 0.608F, 0.608F];
+    // public static float[] mac2_14 = [0.973F, 0.408F, 0.408F];
+    // public static float[] mac2_15 = [0.957F, 0.329F, 0.329F];
+    // public static float[] mac2_16 = [0.941F, 0F, 0F];
 
-// public static float[] zxspec_02 = [0.941F, 0.008F, 0.173F];
-// public static float[] zxspec_03 = [0.941F, 0.008F, 0.749F];
-// public static float[] zxspec_04 = [0.992F, 0.384F, 0.506F];
-// public static float[] zxspec_05 = [1F, 0.953F, 0.192F];
-// public static float[] zxspec_06 = [0.992F, 0.263F, 0.235F];
-// public static float[] zxspec_07 = [1F, 0.957F, 0.059F];
-// public static float[] zxspec_08 = [0.941F, 0.047F, 0.322F];
-// public static float[] zxspec_09 = [0.941F, 0.059F, 0.573F];
-// public static float[] zxspec_10 = [0.941F, 0.047F, 0.486F];
-// public static float[] zxspec_11 = [0.941F, 0.059F, 0.749F];
-// public static float[] zxspec_12 = [0.988F, 0.8F, 0.51F];
-// public static float[] zxspec_13 = [1F, 1F, 0.765F];
-// public static float[] zxspec_14 = [0.988F, 0.675F, 0.675F];
-// public static float[] zxspec_15 = [1F, 1F, 1F];
+    // // ZX Spectrum - https://lospec.com/
 
-// // Nintendo Entertainment System - 55 available colors from a 64 static float[] palette - https://lospec.com/
+    // public static float[] zxspec_02 = [0.941F, 0.008F, 0.173F];
+    // public static float[] zxspec_03 = [0.941F, 0.008F, 0.749F];
+    // public static float[] zxspec_04 = [0.992F, 0.384F, 0.506F];
+    // public static float[] zxspec_05 = [1F, 0.953F, 0.192F];
+    // public static float[] zxspec_06 = [0.992F, 0.263F, 0.235F];
+    // public static float[] zxspec_07 = [1F, 0.957F, 0.059F];
+    // public static float[] zxspec_08 = [0.941F, 0.047F, 0.322F];
+    // public static float[] zxspec_09 = [0.941F, 0.059F, 0.573F];
+    // public static float[] zxspec_10 = [0.941F, 0.047F, 0.486F];
+    // public static float[] zxspec_11 = [0.941F, 0.059F, 0.749F];
+    // public static float[] zxspec_12 = [0.988F, 0.8F, 0.51F];
+    // public static float[] zxspec_13 = [1F, 1F, 0.765F];
+    // public static float[] zxspec_14 = [0.988F, 0.675F, 0.675F];
+    // public static float[] zxspec_15 = [1F, 1F, 1F];
 
-// public static float[] nes_02 = [1F, 0.812F, 0.812F];
-// public static float[] nes_03 = [1F, 0.561F, 0.561F];
-// public static float[] nes_04 = [0.984F, 0.796F, 0.796F];
-// public static float[] nes_05 = [0.969F, 0.78F, 0.78F];
-// public static float[] nes_06 = [0.98F, 0.306F, 0.31F];
-// public static float[] nes_07 = [0.953F, 0.796F, 0.812F];
-// public static float[] nes_08 = [0.941F, 0.027F, 0.561F];
-// public static float[] nes_09 = [0.941F, 0F, 0.059F];
-// public static float[] nes_10 = [0.984F, 0.545F, 0.561F];
-// public static float[] nes_11 = [0.965F, 0.533F, 0.561F];
-// public static float[] nes_12 = [0.941F, 0.02F, 0.561F];
-// public static float[] nes_13 = [0.941F, 0F, 0.043F];
-// public static float[] nes_14 = [0.992F, 0.545F, 0.561F];
-// public static float[] nes_15 = [0.976F, 0.529F, 0.561F];
-// public static float[] nes_16 = [0.965F, 0.518F, 0.31F];
-// public static float[] nes_17 = [0.957F, 0.259F, 0.545F];
-// public static float[] nes_18 = [1F, 0.545F, 0.561F];
-// public static float[] nes_19 = [1F, 0.529F, 0.561F];
-// public static float[] nes_20 = [0.992F, 0.502F, 0.047F];
-// public static float[] nes_21 = [0.976F, 0.251F, 0.031F];
-// public static float[] nes_22 = [1F, 0.541F, 0.298F];
-// public static float[] nes_23 = [1F, 0.522F, 0.537F];
-// public static float[] nes_24 = [0.996F, 0.251F, 0.02F];
-// public static float[] nes_25 = [0.98F, 0.502F, 0.008F];
-// public static float[] nes_26 = [1F, 0.051F, 0.043F];
-// public static float[] nes_27 = [1F, 0.529F, 0.522F];
-// public static float[] nes_28 = [1F, 0.514F, 0.502F];
-// public static float[] nes_29 = [0.98F, 0.506F, 0F];
-// public static float[] nes_30 = [1F, 0.808F, 0.039F];
-// public static float[] nes_31 = [1F, 0.792F, 0.016F];
-// public static float[] nes_32 = [0.996F, 0.271F, 0.757F];
-// public static float[] nes_33 = [0.973F, 0.506F, 0.251F];
-// public static float[] nes_34 = [1F, 0.553F, 0.529F];
-// public static float[] nes_35 = [1F, 0.545F, 0.502F];
-// public static float[] nes_36 = [0.98F, 0.78F, 0.753F];
-// public static float[] nes_37 = [0.961F, 0.012F, 0F];
-// public static float[] nes_38 = [0.992F, 0.561F, 0.529F];
-// public static float[] nes_39 = [0.984F, 0.561F, 0.506F];
-// public static float[] nes_40 = [0.941F, 0.043F, 0.502F];
-// public static float[] nes_41 = [0.941F, 0.027F, 0.502F];
-// public static float[] nes_42 = [0.984F, 0.561F, 0.545F];
-// public static float[] nes_43 = [0.961F, 0.553F, 0.522F];
-// public static float[] nes_44 = [0.941F, 0.039F, 0.502F];
-// public static float[] nes_45 = [0.941F, 0.024F, 0.502F];
-// public static float[] nes_46 = [0.984F, 0.561F, 0.553F];
-// public static float[] nes_47 = [0.961F, 0.561F, 0.537F];
-// public static float[] nes_48 = [0.941F, 0.039F, 0.518F];
-// public static float[] nes_49 = [0.941F, 0.02F, 0.502F];
-// public static float[] nes_50 = [0.941F, 0.059F, 0.812F];
-// public static float[] nes_51 = [0.941F, 0.055F, 0.553F];
-// public static float[] nes_52 = [0.941F, 0.031F, 0.533F];
-// public static float[] nes_53 = [0.941F, 0.016F, 0.02F];
-// public static float[] nes_54 = [1F, 0.553F, 0.561F];
-// public static float[] nes_55 = [0.969F, 0.529F, 0.529F];
+    // // Nintendo Entertainment System - 55 available colors from a 64 static float[] palette - https://lospec.com/
 
-// // SG-1000 - http://www.smspower.org/Development/Palette
+    // public static float[] nes_02 = [1F, 0.812F, 0.812F];
+    // public static float[] nes_03 = [1F, 0.561F, 0.561F];
+    // public static float[] nes_04 = [0.984F, 0.796F, 0.796F];
+    // public static float[] nes_05 = [0.969F, 0.78F, 0.78F];
+    // public static float[] nes_06 = [0.98F, 0.306F, 0.31F];
+    // public static float[] nes_07 = [0.953F, 0.796F, 0.812F];
+    // public static float[] nes_08 = [0.941F, 0.027F, 0.561F];
+    // public static float[] nes_09 = [0.941F, 0F, 0.059F];
+    // public static float[] nes_10 = [0.984F, 0.545F, 0.561F];
+    // public static float[] nes_11 = [0.965F, 0.533F, 0.561F];
+    // public static float[] nes_12 = [0.941F, 0.02F, 0.561F];
+    // public static float[] nes_13 = [0.941F, 0F, 0.043F];
+    // public static float[] nes_14 = [0.992F, 0.545F, 0.561F];
+    // public static float[] nes_15 = [0.976F, 0.529F, 0.561F];
+    // public static float[] nes_16 = [0.965F, 0.518F, 0.31F];
+    // public static float[] nes_17 = [0.957F, 0.259F, 0.545F];
+    // public static float[] nes_18 = [1F, 0.545F, 0.561F];
+    // public static float[] nes_19 = [1F, 0.529F, 0.561F];
+    // public static float[] nes_20 = [0.992F, 0.502F, 0.047F];
+    // public static float[] nes_21 = [0.976F, 0.251F, 0.031F];
+    // public static float[] nes_22 = [1F, 0.541F, 0.298F];
+    // public static float[] nes_23 = [1F, 0.522F, 0.537F];
+    // public static float[] nes_24 = [0.996F, 0.251F, 0.02F];
+    // public static float[] nes_25 = [0.98F, 0.502F, 0.008F];
+    // public static float[] nes_26 = [1F, 0.051F, 0.043F];
+    // public static float[] nes_27 = [1F, 0.529F, 0.522F];
+    // public static float[] nes_28 = [1F, 0.514F, 0.502F];
+    // public static float[] nes_29 = [0.98F, 0.506F, 0F];
+    // public static float[] nes_30 = [1F, 0.808F, 0.039F];
+    // public static float[] nes_31 = [1F, 0.792F, 0.016F];
+    // public static float[] nes_32 = [0.996F, 0.271F, 0.757F];
+    // public static float[] nes_33 = [0.973F, 0.506F, 0.251F];
+    // public static float[] nes_34 = [1F, 0.553F, 0.529F];
+    // public static float[] nes_35 = [1F, 0.545F, 0.502F];
+    // public static float[] nes_36 = [0.98F, 0.78F, 0.753F];
+    // public static float[] nes_37 = [0.961F, 0.012F, 0F];
+    // public static float[] nes_38 = [0.992F, 0.561F, 0.529F];
+    // public static float[] nes_39 = [0.984F, 0.561F, 0.506F];
+    // public static float[] nes_40 = [0.941F, 0.043F, 0.502F];
+    // public static float[] nes_41 = [0.941F, 0.027F, 0.502F];
+    // public static float[] nes_42 = [0.984F, 0.561F, 0.545F];
+    // public static float[] nes_43 = [0.961F, 0.553F, 0.522F];
+    // public static float[] nes_44 = [0.941F, 0.039F, 0.502F];
+    // public static float[] nes_45 = [0.941F, 0.024F, 0.502F];
+    // public static float[] nes_46 = [0.984F, 0.561F, 0.553F];
+    // public static float[] nes_47 = [0.961F, 0.561F, 0.537F];
+    // public static float[] nes_48 = [0.941F, 0.039F, 0.518F];
+    // public static float[] nes_49 = [0.941F, 0.02F, 0.502F];
+    // public static float[] nes_50 = [0.941F, 0.059F, 0.812F];
+    // public static float[] nes_51 = [0.941F, 0.055F, 0.553F];
+    // public static float[] nes_52 = [0.941F, 0.031F, 0.533F];
+    // public static float[] nes_53 = [0.941F, 0.016F, 0.02F];
+    // public static float[] nes_54 = [1F, 0.553F, 0.561F];
+    // public static float[] nes_55 = [0.969F, 0.529F, 0.529F];
 
-// public static float[] sg1000_medium_green = [0.129F, 0.784F, 0.259F];
-// public static float[] sg1000_light_green = [0.369F, 0.863F, 0.471F];
-// public static float[] sg1000_dark_blue = [0.329F, 0.333F, 0.929F];
-// public static float[] sg1000_light_blue = [0.49F, 0.463F, 0.988F];
-// public static float[] sg1000_dark_red = [0.831F, 0.322F, 0.302F];
-// public static float[] sg1000_cyan = [0.259F, 0.922F, 0.961F];
-// public static float[] sg1000_medium_red = [0.988F, 0.333F, 0.329F];
-// public static float[] sg1000_light_red = [1F, 0.475F, 0.471F];
-// public static float[] sg1000_dark_yellow = [0.831F, 0.757F, 0.329F];
-// public static float[] sg1000_light_yellow = [0.902F, 0.808F, 0.502F];
-// public static float[] sg1000_dark_green = [0.129F, 0.69F, 0.231F];
-// public static float[] sg1000_magenta = [0.788F, 0.357F, 0.729F];
-// public static float[] sg1000_gray = [0.8F, 0.8F, 0.8F];
+    // // SG-1000 - http://www.smspower.org/Development/Palette
 
-// // Pantone Named Colors list found here: https://github.com/Margaret2/pantone-colors
-// // static float[] names are copyright Pantone, hex numbers via: https://www.pantone.com/
+    // public static float[] sg1000_medium_green = [0.129F, 0.784F, 0.259F];
+    // public static float[] sg1000_light_green = [0.369F, 0.863F, 0.471F];
+    // public static float[] sg1000_dark_blue = [0.329F, 0.333F, 0.929F];
+    // public static float[] sg1000_light_blue = [0.49F, 0.463F, 0.988F];
+    // public static float[] sg1000_dark_red = [0.831F, 0.322F, 0.302F];
+    // public static float[] sg1000_cyan = [0.259F, 0.922F, 0.961F];
+    // public static float[] sg1000_medium_red = [0.988F, 0.333F, 0.329F];
+    // public static float[] sg1000_light_red = [1F, 0.475F, 0.471F];
+    // public static float[] sg1000_dark_yellow = [0.831F, 0.757F, 0.329F];
+    // public static float[] sg1000_light_yellow = [0.902F, 0.808F, 0.502F];
+    // public static float[] sg1000_dark_green = [0.129F, 0.69F, 0.231F];
+    // public static float[] sg1000_magenta = [0.788F, 0.357F, 0.729F];
+    // public static float[] sg1000_gray = [0.8F, 0.8F, 0.8F];
 
+    // // Pantone Named Colors list found here: https://github.com/Margaret2/pantone-colors
+    // // static float[] names are copyright Pantone, hex numbers via: https://www.pantone.com/
+
+/// https://github.com/chrisBRN/Lots_Of_Colors/blob/main/lots_of_colors_unity.cs
+/// 
 public static float[] egret = [0.953f, 0.925f, 0.878f];
 public static float[] snow_white = [0.949F, 0.941F, 0.922F];
 public static float[] bright_white = [0.957F, 0.961F, 0.941F];
