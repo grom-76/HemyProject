@@ -8,7 +8,8 @@ public class Program
 
         // TestLog();
         // FirstWindow();
-        FirstGraphic();
+        // FirstGraphic();
+        FirstInput();
 
     }
 
@@ -30,7 +31,7 @@ public class Program
         }
 
     }
-    
+
     public static void FirstGraphic()
     {
         using Hemy.Lib.Core.Window.Window window = new();
@@ -40,6 +41,28 @@ public class Program
         while (window.IsRunning())
         {
             window.Update();
+
+
+            window.TestingDraw();
+        }
+
+    }
+    
+    public static void FirstInput()
+    {
+        using Hemy.Lib.Core.Window.Window window = new();
+
+        window.CreateWindow();
+        
+
+        while (window.IsRunning())
+        {
+            window.Update();
+
+            if (window.Keyboard.IsPressed(Lib.Core.Input.Key.Escape))
+            {
+                window.RequestClose();
+            }
 
 
             window.TestingDraw();

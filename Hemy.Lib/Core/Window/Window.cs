@@ -11,6 +11,8 @@ using Hemy.Lib.Core.Platform.Windows.Graphic;
 using static Hemy.Lib.Core.Platform.Windows.Window.WindowConsts;
 using Hemy.Lib.Core.Platform.Windows.Audio;
 using Hemy.Lib.Core.Platform.Windows.Sys;
+using Hemy.Lib.Core.Platform.Windows.Input;
+using Hemy.Lib.Core.Input;
 
 
 #endif
@@ -25,9 +27,17 @@ public unsafe sealed class Window : IDisposable
     private GraphicData* _graphicData = null;
     private AudioData* _audioData = null;
     private TimeData* _timeData = null;
+    private InputData* _inputData = null;
 #else
 #endif
     private bool _isDisposed = false;
+
+    [SkipLocalsInit]
+    public Keyboard Keyboard
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization| MethodImplOptions.AggressiveInlining)]
+        get;
+    }
 
     [SkipLocalsInit]
     public Window()
@@ -37,6 +47,10 @@ public unsafe sealed class Window : IDisposable
         _graphicData = Memory.Memory.New<GraphicData>(true);
         _audioData = Memory.Memory.New<AudioData>(true);
         _timeData = Memory.Memory.New<TimeData>(true);
+        _inputData = Memory.Memory.New<InputData>(true);
+
+
+        Keyboard = new(_inputData);
 #endif
     }
 
@@ -53,6 +67,7 @@ public unsafe sealed class Window : IDisposable
         RenderImpl.CreateRender(_graphicData);
 
         AudioImpl.Init(_audioData);
+        InputImpl.MapKeys(_inputData, 0);
 
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
@@ -70,7 +85,20 @@ public unsafe sealed class Window : IDisposable
         => false;
 #endif
 
-[SkipLocalsInit]
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public void RequestClose()
+    {
+#if WINDOWS
+        WindowImpl.RequestClose(_windowData);
+#else
+        
+#endif
+    }
+
+
+    [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     public void TestingDraw()
@@ -88,6 +116,7 @@ public unsafe sealed class Window : IDisposable
         if (_isDisposed) return;
 
 #if WINDOWS
+        
         AudioImpl.Dispose(_audioData);
         GraphicImpl.Dispose(_graphicData);
         WindowImpl.Dispose(_windowData);
@@ -96,6 +125,7 @@ public unsafe sealed class Window : IDisposable
         Memory.Memory.Dispose(_graphicData);
         Memory.Memory.Dispose(_audioData);
         Memory.Memory.Dispose(_timeData);
+        Memory.Memory.Dispose(_inputData);
 #endif
 
         _isDisposed = true;
@@ -111,7 +141,7 @@ public unsafe sealed class Window : IDisposable
 #if WINDOWS
         WindowImpl.Update(_windowData);
         TimeImpl.Update(_timeData);
-        
+        InputImpl.UpdateInput(_inputData);
 #endif
     }
 

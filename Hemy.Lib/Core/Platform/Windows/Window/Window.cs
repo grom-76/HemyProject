@@ -109,11 +109,11 @@ internal unsafe static partial class WindowImpl
         }
     }
 
-    // internal static void RequestClose(WindowData* contextData)
-    // {
-    //     PostQuitMessage(0);
-    //     contextData->IsRunning = false;
-    // }
+    internal static void RequestClose(WindowData* contextData)
+    {
+        contextData->IsRunning = false;
+        PostQuitMessage(0);
+    }
 
     internal static void Show(WindowData* contextData)
     {
