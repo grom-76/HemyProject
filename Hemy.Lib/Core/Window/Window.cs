@@ -19,7 +19,7 @@ using Hemy.Lib.Core.Input;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
-[StructLayout(LayoutKind.Sequential)]    
+[StructLayout(LayoutKind.Sequential)]
 public unsafe sealed class Window : IDisposable
 {
 #if WINDOWS
@@ -35,7 +35,7 @@ public unsafe sealed class Window : IDisposable
     [SkipLocalsInit]
     public Keyboard Keyboard
     {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization| MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         get;
     }
 
@@ -119,7 +119,7 @@ public unsafe sealed class Window : IDisposable
         if (_isDisposed) return;
 
 #if WINDOWS
-        
+
         AudioImpl.Dispose(_audioData);
         GraphicImpl.Dispose(_graphicData);
         WindowImpl.Dispose(_windowData);
