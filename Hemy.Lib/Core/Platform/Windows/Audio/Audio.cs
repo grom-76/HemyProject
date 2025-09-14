@@ -88,7 +88,7 @@ internal unsafe static class AudioImpl
         IXAudio2MasteringVoice* tempMaster = null;
         err = contextData->AudioInstance->CreateMasteringVoice(&tempMaster, 2, 0, 0, null, null, AudioConsts.AUDIO_STREAM_CATEGORY_GameEffects);
 
-        if (contextData->Debug == null) { Log.Error("Create Xaudio2 Master Voice"); return 1; }
+        if (tempMaster == null) { Log.Error("Create Xaudio2 Master Voice"); return 1; }
 
         IXAudio2MasteringVoice iXAudio2MasteringVoice = new(tempMaster);
         contextData->MasterVoice = Memory.Memory.New<IXAudio2MasteringVoice>(false);

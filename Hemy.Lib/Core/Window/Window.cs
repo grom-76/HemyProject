@@ -10,6 +10,7 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 using Hemy.Lib.Core.Platform.Windows.Graphic;
 using static Hemy.Lib.Core.Platform.Windows.Window.WindowConsts;
 using Hemy.Lib.Core.Platform.Windows.Audio;
+using Hemy.Lib.Core.Platform.Windows.Sys;
 
 
 #endif
@@ -23,6 +24,7 @@ public unsafe sealed class Window : IDisposable
     private WindowData* _windowData = null;
     private GraphicData* _graphicData = null;
     private AudioData* _audioData = null;
+    private TimeData* _timeData = null;
 #else
 #endif
     private bool _isDisposed = false;
@@ -34,6 +36,7 @@ public unsafe sealed class Window : IDisposable
         _windowData = Memory.Memory.New<WindowData>(true);
         _graphicData = Memory.Memory.New<GraphicData>(true);
         _audioData = Memory.Memory.New<AudioData>(true);
+        _timeData = Memory.Memory.New<TimeData>(true);
 #endif
     }
 
@@ -52,6 +55,7 @@ public unsafe sealed class Window : IDisposable
         AudioImpl.Init(_audioData);
 
         WindowImpl.Show(_windowData);
+        TimeImpl.Start(_timeData);
 #endif
 
     }
@@ -91,6 +95,7 @@ public unsafe sealed class Window : IDisposable
         Memory.Memory.Dispose(_windowData);
         Memory.Memory.Dispose(_graphicData);
         Memory.Memory.Dispose(_audioData);
+        Memory.Memory.Dispose(_timeData);
 #endif
 
         _isDisposed = true;
@@ -105,6 +110,8 @@ public unsafe sealed class Window : IDisposable
     {
 #if WINDOWS
         WindowImpl.Update(_windowData);
+        TimeImpl.Update(_timeData);
+        
 #endif
     }
 
