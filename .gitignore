@@ -486,3 +486,5 @@ $RECYCLE.BIN/
 # Folder OLD
 [Oo][Ll][Dd]/
 
+#Vulkan File
+*.gfxr

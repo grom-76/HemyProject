@@ -10,6 +10,7 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 using Hemy.Lib.Core.Platform.Windows.Graphic;
 using static Hemy.Lib.Core.Platform.Windows.Window.WindowConsts;
 
+
 #endif
 
 [SkipLocalsInit]
@@ -43,8 +44,8 @@ public unsafe sealed class Window : IDisposable
         WindowImpl.Init(_windowData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);
 
-        GraphicImpl.CreateRenderPass(_graphicData);
-        GraphicImpl.CreateRender(_graphicData);
+        RenderImpl.CreateRenderPass(_graphicData);
+        RenderImpl.CreateRender(_graphicData);
 
 
         WindowImpl.Show(_windowData);
@@ -67,7 +68,7 @@ public unsafe sealed class Window : IDisposable
     [SuppressUnmanagedCodeSecurity]
     public void TestingDraw()
 #if WINDOWS 
-        => GraphicImpl.Draw(_graphicData);
+        => RenderImpl.Draw(_graphicData);
 #else
         => false;
 #endif
