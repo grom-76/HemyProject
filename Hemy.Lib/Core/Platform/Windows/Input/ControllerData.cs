@@ -148,11 +148,11 @@ internal unsafe static partial class ControllerImpl
         GetCapabilities(controllerData);
     }
 
-    internal unsafe static void NEWInit(NewControllerData* controllersData)
+    internal unsafe static void NEWInit(NewControllerData* controllersData, uint id)
     {
         // MapControllerButtonsToXbox360(controllersData[0]);
         // GetCapabilities(controllerData);
-        int ID = 0;
+        uint ID = id * 32;
         controllersData->Buttons[(int)ControllerButton.A * ID] = ControllerConsts.XINPUT_GAMEPAD_A;
         controllersData->Buttons[(int)ControllerButton.B * ID] = ControllerConsts.XINPUT_GAMEPAD_B;
         controllersData->Buttons[(int)ControllerButton.X * ID] = ControllerConsts.XINPUT_GAMEPAD_X;
@@ -163,30 +163,30 @@ internal unsafe static partial class ControllerImpl
         controllersData->Buttons[(int)ControllerButton.LeftShoulder * ID] = ControllerConsts.XINPUT_GAMEPAD_LEFT_SHOULDER;
         controllersData->Buttons[(int)ControllerButton.RightThumb * ID] = ControllerConsts.XINPUT_GAMEPAD_RIGHT_THUMB;
         controllersData->Buttons[(int)ControllerButton.LefThumb * ID] = ControllerConsts.XINPUT_GAMEPAD_LEFT_THUMB;
-        ID = 1 * 32;
-        controllersData->Buttons[(int)ControllerButton.A * ID] = ControllerConsts.XINPUT_GAMEPAD_A;
+        // ID = 1 * 32;
+        // controllersData->Buttons[(int)ControllerButton.A * ID] = ControllerConsts.XINPUT_GAMEPAD_A;
         // ...
 
         XINPUT_CAPABILITIES pCapabilities = default;
 
-        ID = 0;
-        uint error = XInputGetCapabilities((uint)ID, ControllerConsts.XINPUT_FLAG_GAMEPAD, &pCapabilities);
-        controllersData->IsConntected[ID] = error == 0;
+        
+        uint error = XInputGetCapabilities((uint)id, ControllerConsts.XINPUT_FLAG_GAMEPAD, &pCapabilities);
+        controllersData->IsConntected[id] = error == 0;
 
-        if (!controllersData->IsConntected[ID]) return;
+        if (!controllersData->IsConntected[id]) return;
 
         // TODO : Verifier l'utilite de Feature Type SubType
-        // controllersData->Features[ID] = /*(CapabilitieFeatures) */pCapabilities.Flags;
-        // controllersData->Type[ID] = /*(CapabilitiesDevType)*/pCapabilities.Type;
-        // controllersData->SubType[ID] = /*(CapabilitiesDevSubType)*/pCapabilities.SubType;
+        // controllersData->Features[id] = /*(CapabilitieFeatures) */pCapabilities.Flags;
+        // controllersData->Type[id] = /*(CapabilitiesDevType)*/pCapabilities.Type;
+        // controllersData->SubType[id] = /*(CapabilitiesDevSubType)*/pCapabilities.SubType;
 
         XINPUT_VIBRATION vibration = pCapabilities.Vibration;
 
         if (vibration.wLeftMotorSpeed > 0 || vibration.wRightMotorSpeed > 0)
         {
-            // controllersData->HaveVibration[ID] = true;  // TODO: IsHaveRumble =  LeftMotorSpeedMax !=0 && RightMotorSpeedMax !=0
-            controllersData->LeftMotorSpeedMax[ID] = vibration.wLeftMotorSpeed;
-            controllersData->RightMotorSpeedMax[ID] = vibration.wRightMotorSpeed;
+            // controllersData->HaveVibration[id] = true;  // TODO: IsHaveRumble =  LeftMotorSpeedMax !=0 && RightMotorSpeedMax !=0
+            controllersData->LeftMotorSpeedMax[id] = vibration.wLeftMotorSpeed;
+            controllersData->RightMotorSpeedMax[id] = vibration.wRightMotorSpeed;
         }
 
         //   ApplyLinearDeadZone
@@ -319,10 +319,10 @@ internal unsafe static partial class ControllerImpl
         float dist = Math.Sqrt( x*x + y * y);
         float wanted = ApplyLinearDeadZone(dist, maxValue, deadZoneSize);
 
-        float scale = (wanted > 0.0f) ? (wanted / dist) : 0.0f;
+        // float scale = (wanted > 0.0f) ? (wanted / dist) : 0.0f;
 
-        var resultX = Math.Max(-1.0f, Math.Min(x * scale, 1.0f));
-        var resultY = Math.Max(-1.0f, Math.Min(y * scale, 1.0f));
+        // var resultX = Math.Max(-1.0f, Math.Min(x * scale, 1.0f));
+        // var resultY = Math.Max(-1.0f, Math.Min(y * scale, 1.0f));
     }
 
     public static void ApplyStickDeadZone( float x,    float y,int deadZoneMode, float maxValue,  float deadZoneSize,float* resultX, float* resultY) 
@@ -330,26 +330,26 @@ internal unsafe static partial class ControllerImpl
         switch (deadZoneMode)
         {
 
-            case GamePad::DEAD_ZONE_INDEPENDENT_AXES:
-            resultX = ApplyLinearDeadZone(x, maxValue, deadZoneSize);
-            resultY = ApplyLinearDeadZone(y, maxValue, deadZoneSize);
+            case 0://GamePad::DEAD_ZONE_INDEPENDENT_AXES:
+            *resultX = ApplyLinearDeadZone(x, maxValue, deadZoneSize);
+            *resultY = ApplyLinearDeadZone(y, maxValue, deadZoneSize);
             break;
 
-        case GamePad::DEAD_ZONE_CIRCULAR:
+            case 1://GamePad::DEAD_ZONE_CIRCULAR:
             {
-                const float dist = sqrtf(x*x + y * y);
-                const float wanted = ApplyLinearDeadZone(dist, maxValue, deadZoneSize);
+                float dist = Math.Sqrt(x*x + y * y);
+                float wanted = ApplyLinearDeadZone(dist, maxValue, deadZoneSize);
 
-                const float scale = (wanted > 0.f) ? (wanted / dist) : 0.f;
+                float scale = (wanted > 0.0f) ? (wanted / dist) : 0.0f;
 
-                resultX = std::max(-1.f, std::min(x * scale, 1.f));
-                resultY = std::max(-1.f, std::min(y * scale, 1.f));
+                *resultX = Math.Max(-1.0f, Math.Min(x * scale, 1.0f));
+                *resultY = Math.Max(-1.0f, Math.Min(y * scale, 1.0f));
             }
             break;
 
         default: // GamePad::DEAD_ZONE_NONE
-            resultX = ApplyLinearDeadZone(x, maxValue, 0);
-            resultY = ApplyLinearDeadZone(y, maxValue, 0);
+            *resultX = ApplyLinearDeadZone(x, maxValue, deadZoneSize);
+            *resultY = ApplyLinearDeadZone(y, maxValue, deadZoneSize);
             break;
         }
     }
