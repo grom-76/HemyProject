@@ -91,8 +91,6 @@ public unsafe struct ControllerData(uint id)
     internal byte Right_Trigger = 0;
 }
 
-
-
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct NewControllerData()
@@ -192,7 +190,7 @@ internal unsafe static partial class ControllerImpl
         //   ApplyLinearDeadZone
         
     }
-    
+
     internal static void NEWUpdateController(NewControllerData* controllersData, uint id)
     {
         if (controllersData->IsConntected[id] == false) return;
@@ -211,6 +209,20 @@ internal unsafe static partial class ControllerImpl
         controllersData->Right_Y[id] = state[0].Gamepad.sThumbRY;
         // GeKeysStateXInput(data);
 
+        float triggers_left = ApplyLinearDeadZone((float)state[0].Gamepad.bLeftTrigger, 255.0f, 0.0f);
+        float triggers_right = ApplyLinearDeadZone((float)state[0].Gamepad.bRightTrigger, 255.0f, 0.0f);
+
+        float thumb_leftX = 0.0f;
+        float thumb_leftY = 0.0f;
+        ApplyStickDeadZone((float)state[0].Gamepad.sThumbLX, (float)state[0].Gamepad.sThumbLX,
+                    deadZoneMode: 1, 32767.0f, (float)ControllerConsts.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
+                    &thumb_leftX, &thumb_leftY);
+
+        float thumb_rightX = 0.0f;
+        float thumb_rightY = 0.0f; 
+        ApplyStickDeadZone((float)state[0].Gamepad.sThumbRX, (float)state[0].Gamepad.sThumbRX,
+                    deadZoneMode:1, 32767.0f, (float) ControllerConsts.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE,
+                    &thumb_rightX, &thumb_rightY);                  
     }
 
     internal static void UpdateController(ControllerData* controllerData)
@@ -313,19 +325,19 @@ internal unsafe static partial class ControllerImpl
 
 
     //Linear DeadZone
-    private static void ApplyCircularDeadZone(float x,float y, float maxValue, float deadZoneSize) 
+    private static void ApplyCircularDeadZone(float x,float y, float maxValue, float deadZoneSize,float* resultX, float* resultY) 
     {
 
         float dist = Math.Sqrt( x*x + y * y);
         float wanted = ApplyLinearDeadZone(dist, maxValue, deadZoneSize);
 
-        // float scale = (wanted > 0.0f) ? (wanted / dist) : 0.0f;
+        float scale = (wanted > 0.0f) ? (wanted / dist) : 0.0f;
 
-        // var resultX = Math.Max(-1.0f, Math.Min(x * scale, 1.0f));
-        // var resultY = Math.Max(-1.0f, Math.Min(y * scale, 1.0f));
+        *resultX = Math.Max(-1.0f, Math.Min(x * scale, 1.0f));
+        *resultY = Math.Max(-1.0f, Math.Min(y * scale, 1.0f));
     }
 
-    public static void ApplyStickDeadZone( float x,    float y,int deadZoneMode, float maxValue,  float deadZoneSize,float* resultX, float* resultY) 
+    public static void ApplyStickDeadZone( float x, float y, int deadZoneMode, float maxValue,  float deadZoneSize,float* resultX, float* resultY) 
     {
         switch (deadZoneMode)
         {
