@@ -46,7 +46,7 @@ public class Program
             window.Update();
 
 
-            window.TestingDraw();
+            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue);
         }
 
     }
@@ -68,40 +68,46 @@ public class Program
             }
 
 
-            window.TestingDraw();
+            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue);
         }
 
     }
     
-     public static void FirstGamePad()
+    public static void FirstGamePad()
     {
         using Hemy.Lib.Core.Window.Window window = new();
 
         window.CreateWindow();
         var joy1 = window.GetGamePad(Lib.Core.Input.ControlerPlayer.Player1);
+        var mouse = window.Mouse;
+        var keyboard = window.Keyboard;
         
 
         while (window.IsRunning())
         {
             window.Update();
 
-            if (joy1.IsPressed(Lib.Core.Input.ControllerButton.A) )
+            if (joy1.IsPressed(Lib.Core.Input.ControllerButton.A))
             {
                 window.RequestClose();
             }
 
             if (joy1.IsLeftStickMove)
             {
-                Log.Info($"Left stickmove : { joy1.StickLeft_X } ; {joy1.StickLeft_Y}");
+                Log.Info($"Left stickmove : {joy1.StickLeft_X} ; {joy1.StickLeft_Y}");
             }
 
-            if (window.Keyboard.IsPressed(Lib.Core.Input.Key.Escape))
+            if ( keyboard.IsPressed(Lib.Core.Input.Key.Escape))
             {
                 window.RequestClose();
             }
 
+            if (mouse.IsMouseMove)
+            {
+                Log.Info("Mouse Move :" + mouse.ToString());
+            }
 
-            window.TestingDraw();
+            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue );
         }
         
     }

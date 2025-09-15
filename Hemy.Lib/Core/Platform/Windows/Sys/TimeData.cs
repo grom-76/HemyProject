@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct TimeData()
+public unsafe struct TimeData()
 {
     internal ulong PreviousTick = 0L;
     internal ulong BaseTime = 0L;

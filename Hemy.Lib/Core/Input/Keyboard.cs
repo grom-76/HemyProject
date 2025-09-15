@@ -237,7 +237,7 @@ public unsafe sealed class Keyboard(
         // VirtualKeys.VK_NONAME => Key.A,
         // VirtualKeys.VK_PA1 => Key.A,
         // VirtualKeys.VK_OEM_CLEAR => Key.A,
-        _ => Key.Unknown
+        _ => 0
     };
 #else
     => key.Unknown;

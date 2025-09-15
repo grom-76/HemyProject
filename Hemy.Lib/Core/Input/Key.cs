@@ -397,7 +397,7 @@ public enum Key : byte
     /// <summary></summary>
     OEMClear, // 0xFE
 
-    Unknown ,
+    // Unknown ,
 }
 
 #endregion

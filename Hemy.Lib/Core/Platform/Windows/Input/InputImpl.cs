@@ -15,6 +15,12 @@ using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class InputImpl
 {
+    internal static void Init(InputData* inputData, void* windowHandle, uint keyboardType )
+    {
+        inputData->Handle = windowHandle;
+        MapKeys(inputData, keyboardType);        
+    }
+
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
@@ -76,6 +82,49 @@ internal unsafe static partial class InputImpl
         inputData->Mouse_CurrentFrame_Position_X = x;
         inputData->Mouse_CurrentFrame_Position_Y = y;
     }
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort GET_KEYSTATE_WPARAM(nuint wParam) => (ushort)((wParam) & 0xFFFF);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort GET_XBUTTON_WPARAM(uint* wParam) => HIWORD(wParam);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_X_LPARAM(long* lParam) => (short)LOWORD((uint*)lParam);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_Y_LPARAM(long* lParam) => (short)HIWORD((uint*)lParam);
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static short GET_WHEEL_DELTA_WPARAM(uint* wPARAM) => (short)HIWORD(wPARAM);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort HIWORD(uint* wParam) => (ushort)((*wParam >> 16) & 0xFFFF);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort LOWORD(uint* wParam) => (ushort)(*wParam & 0xFFFF);
+
+    
 
     internal static void MapKeys(InputData* inputData, uint keyboardType = 0)
     {

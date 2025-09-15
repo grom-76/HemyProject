@@ -95,9 +95,9 @@ internal unsafe static class RenderImpl
     static byte Get_g(uint argbcolor) => (byte)(argbcolor >> 8);
     static byte Get_b(uint argbcolor) => (byte)(argbcolor & 0x000000FF);
 
-    internal static void ChangeBackGroundColor(GraphicData* contextData)
+    internal static void ChangeBackGroundColor(GraphicData* contextData, uint color )
     {
-        var cl = PaletteToFloatRGBA(4284782061u); // TODO : be careful with color RGBA ARGBA ( 16 or 32bit ) see ColorFormat in GraphicDevice
+        var cl = PaletteToFloatRGBA(color); // TODO : be careful with color RGBA ARGBA ( 16 or 32bit ) see ColorFormat in GraphicDevice
         // contextData->RenderPassClearValues[0].color = new(cl);
         contextData->RenderPassClearValues[0].color.float32[0] = cl[0];
         contextData->RenderPassClearValues[0].color.float32[1] = cl[1];
@@ -122,7 +122,7 @@ internal unsafe static class RenderImpl
             contextData->RenderPassClearValues = Memory.Memory.NewArray<VkClearValue>(/*depth buffer =2*/ 1);
             // contextData->RenderPassClearValues = (VkClearValue*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkClearValue>());
 
-        ChangeBackGroundColor(contextData);
+        ChangeBackGroundColor(contextData,4284782061u);
 
         // COLOR 
         VkAttachmentDescription* colorAttachment = stackalloc VkAttachmentDescription[1];

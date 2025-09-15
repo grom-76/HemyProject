@@ -14,6 +14,7 @@ using Hemy.Lib.Core.Platform.Windows.Sys;
 using Hemy.Lib.Core.Platform.Windows.Input;
 using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Monitor;
+using Hemy.Lib.Core.Color;
 
 
 #endif
@@ -41,8 +42,19 @@ public unsafe sealed class Window : IDisposable
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         get;
     }
+    [SkipLocalsInit]
+    public Mouse Mouse
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get;
+    }
 
-
+    [SkipLocalsInit]
+    public double DeltaTime
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get => _timeData->ElapsedInMiliSec;
+    }
     [SkipLocalsInit]
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
 
@@ -58,7 +70,9 @@ public unsafe sealed class Window : IDisposable
         _controllers = Memory.Memory.New<ControllerData>(true);
         _monitorData = Memory.Memory.New<MonitorData>(true);
 
-        Keyboard = new(_inputData);
+
+        Mouse = new(_inputData);
+        Keyboard = new(_inputData);  
 #endif
     }
 
@@ -70,14 +84,14 @@ public unsafe sealed class Window : IDisposable
 
 #if WINDOWS
 
-        WindowImpl.Init(_windowData,_monitorData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
+        WindowImpl.Init(_windowData, _monitorData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);
 
         RenderImpl.CreateRenderPass(_graphicData);
         RenderImpl.CreateRender(_graphicData);
 
         AudioImpl.Init(_audioData);
-        InputImpl.MapKeys(_inputData, 0);
+        InputImpl.Init(_inputData, _windowData->Handle, 0);
 
         ControllerImpl.Init(_controllers, 0);
         ControllerImpl.Init(_controllers, 1);
@@ -86,6 +100,8 @@ public unsafe sealed class Window : IDisposable
 
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
+        
+     
 #endif
 
     }
@@ -116,12 +132,17 @@ public unsafe sealed class Window : IDisposable
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public void TestingDraw()
-#if WINDOWS 
-        => RenderImpl.Draw(_graphicData);
+    public void TestingDraw(Palette screenColor)
+    {
+#if WINDOWS
+        //Settings plaette to float[]
+        RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
+        RenderImpl.Draw(_graphicData);
 #else
-        => false;
+        
 #endif
+        
+    }
 
     [SkipLocalsInit]
     [SuppressGCTransition]
@@ -184,8 +205,10 @@ public unsafe sealed class Window : IDisposable
 
             case WM_SIZE:
                 // TODO AdjustWindowSize ( Wide Screen => 16/9 )
-                // int width = Utils.GET_WIDTH(lParam);
-                // int height = Utils.GET_HEIGHT(lParam);
+                int width = WindowImpl.GET_WIDTH(lParam);
+                int height = WindowImpl.GET_HEIGHT(lParam);
+                _windowData->Width = width; _windowData->Height = height;
+
                 return null;
 
             case WM_KEYDOWN:

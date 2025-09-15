@@ -27,8 +27,22 @@ internal unsafe struct WindowDataInfo()
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class WindowImpl
 {
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_WIDTH(long* lParam) => (int)lParam & 0xFFFF; //LOWORD
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_HEIGHT(long* lParam) => (int)lParam >> 16; // HIWORD
+
+
     internal static uint StyleToValue(WindowStyle style)
-        => style switch {
+        => style switch
+        {
             WindowStyle.standard => WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME,
             WindowStyle.None => WS_OVERLAPPED,
             WindowStyle.Fixed => WS_CAPTION | WS_SYSMENU | WS_OVERLAPPED | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
@@ -74,8 +88,6 @@ internal unsafe static partial class WindowImpl
             CenterWindow(contextData, &Left, &Top);
             // data->WindowState = Consts.SW_SHOWNORMAL;
         }
-
-
 
         WndClassExA* wndClassExA = stackalloc WndClassExA[1];
         wndClassExA->cbSize = (uint)Unsafe.SizeOf<WndClassExA>();
