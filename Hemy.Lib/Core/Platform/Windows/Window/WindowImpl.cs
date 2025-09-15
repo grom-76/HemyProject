@@ -111,6 +111,8 @@ internal unsafe static partial class WindowImpl
 
     internal static void RequestClose(WindowData* contextData)
     {
+        if (contextData->IsRunning == false) return;
+        
         contextData->IsRunning = false;
         PostQuitMessage(0);
     }
