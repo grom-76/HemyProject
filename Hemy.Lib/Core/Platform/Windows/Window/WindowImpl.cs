@@ -13,7 +13,8 @@ using DWORD = System.UInt32; // A 32-bit unsigned integer. The range is 0 throug
 using HRESULT = System.UInt32;
 using BOOL = System.Int32;
 using Hemy.Lib.Core.Memory;
-
+using Hemy.Lib.Core.Platform.Windows.Monitor;
+using Hemy.Lib.Core.Window;
 
 internal unsafe struct WindowDataInfo()
 {
@@ -26,25 +27,59 @@ internal unsafe struct WindowDataInfo()
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class WindowImpl
 {
+    internal static uint StyleToValue(WindowStyle style)
+        => style switch {
+            WindowStyle.standard => WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME,
+            WindowStyle.None => WS_OVERLAPPED,
+            WindowStyle.Fixed => WS_CAPTION | WS_SYSMENU | WS_OVERLAPPED | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+            WindowStyle.Sizable => WS_CAPTION | WS_SYSMENU | WS_OVERLAPPED | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEFRAME,
+            WindowStyle.Fullscreen => WS_POPUP,
+            _ => 0,
+        };
 
-    internal static uint Init(WindowData* contextData,WindowDataInfo* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
+    internal static uint Init(WindowData* contextData, MonitorData* monitorData, WindowDataInfo* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
     {
+        WindowStyle WinStyle = WindowStyle.standard;
         Str.StringToBytes(contextData->GameName, "New game appliance");
         Str.StringToBytes(contextData->EngineName, "Hemy Engine");
         byte* LogoIcon = Memory.NewStr("Logo.ico");
         contextData->HInstance = GetModuleHandleA(null);
 
         var styleEx = WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
-        var Left = CW_USEDEFAULT;
-        var Top = CW_USEDEFAULT;
-        var Style = WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME;
+        int Left = CW_USEDEFAULT;
+        int Top = CW_USEDEFAULT;
+        uint Style = StyleToValue(WinStyle);  // WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME;
         contextData->IsRunning = true;
         contextData->Width = 1280;
         contextData->Height = 720;
 
+        MonitorImpl.MonitorsInfo(monitorData);
+
+        if (WinStyle == WindowStyle.None)
+        {
+            styleEx &= ~(uint)WS_EX_WINDOWEDGE;
+        }
+
+        if (WinStyle == WindowStyle.Fullscreen)
+        {
+            contextData->Width = monitorData->ScreenWidth;
+            contextData->Height = monitorData->ScreenHeight;
+            Left = monitorData->ScreenLeft;
+            Top = monitorData->ScreenTop;
+            // contextData->WindowState = Consts.SW_SHOWMAXIMIZED;
+        }
+        else
+        {
+            AdjustAreaSize(contextData, Left, Top, Style, WinStyle != WindowStyle.Fullscreen || WinStyle != WindowStyle.Fixed);
+            CenterWindow(contextData, &Left, &Top);
+            // data->WindowState = Consts.SW_SHOWNORMAL;
+        }
+
+
+
         WndClassExA* wndClassExA = stackalloc WndClassExA[1];
         wndClassExA->cbSize = (uint)Unsafe.SizeOf<WndClassExA>();
-        wndClassExA->style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC; ;
+        wndClassExA->style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC;
         wndClassExA->WindowPrecedureMessage = WinMessageProcedure;
         wndClassExA->cbClsExtra = 0;
         wndClassExA->cbWndExtra = 0;
@@ -76,10 +111,10 @@ internal unsafe static partial class WindowImpl
 
         if (contextData->Handle == null)
         {
-            Log.Error("Failed to create Handle" );
-            return 1;    
+            Log.Error("Failed to create Handle");
+            return 1;
         }
-        return Common.Consts.HRESULT_S_OK ;
+        return 0;
     }
 
     internal static void Dispose(WindowData* contextData)
@@ -126,21 +161,64 @@ internal unsafe static partial class WindowImpl
         if ( SetForegroundWindow(contextData->Handle) == 0) Log.Warning( "Set Foreground  ");
     }
 
-    // internal static void AdjustAreaSize(WindowsContextData* contextData, bool menu)
-	// {
-	// 	RECT rect = new(contextData->Left, contextData->Top, contextData->Width + contextData->Left, contextData->Height + contextData->Top);
-	// 	_ = AdjustWindowRect(&rect, contextData->Style, menu ? 0 : 1);
-	// 	contextData->Width = rect.Right - rect.Left;
-	// 	contextData->Height = rect.Bottom - rect.Top;
-	// }
+    
+    internal static void Settings(WindowData* windowData, MonitorData* monitorData)
+    {
+        /*  FIRST INIT CONVERT GENERAL systemSettings TO SPECIFIC DATA/INFO */
+        // data->Handle = null;
+        // data->GameVersion = Hemy.Core.HemySystem.Version.StrToUint(systemSettings.GameVersion);
+        // data->LogoIcon = Mem.NewBytesFromString(systemSettings.LogoIcon);
+        // data->GameName = Mem.NewBytesFromString(systemSettings.GameTitle);
+        // data->EngineName = Mem.NewBytesFromString(HemySystem.Name);
+        // data->EngineVersion = Hemy.Core.HemySystem.Version.StrToUint(HemySystem.Ver);
+        // data->HInstance = GetModuleHandleA(null);
+        // data->StyleCs = Consts.CS_HREDRAW | Consts.CS_VREDRAW | Consts.CS_DBLCLKS | Consts.CS_OWNDC;
+        // data->StyleEx = Consts.WS_EX_LEFT | Consts.WS_EX_LTRREADING | Consts.WS_EX_WINDOWEDGE | Consts.WS_EX_APPWINDOW;
+       
+        // (data->Width, data->Height) = GraphicsWindowImpl.ResolutionToSize(systemSettings.Resolution);
 
-	// internal static void CenterWindow(WindowsContextData* contextData)
-	// {
-	// 	int screenX = GetSystemMetrics(WindowConsts.SM_CXSCREEN);
-	// 	int screenY = GetSystemMetrics(WindowConsts.SM_CYSCREEN);
-	// 	contextData->Left = (screenX / 2) - (contextData->Width / 2);
-	// 	contextData->Top = (screenY / 2) - (contextData->Height / 2);
-	// }
+        // data->Left = Consts.CW_USEDEFAULT;
+        // data->Top = Consts.CW_USEDEFAULT;
+
+        // data->Style = GraphicsWindowImpl.StyleToValue(systemSettings.Style);
+        // MonitorImpl.MonitorsInfo(monitorData);
+
+        // if (systemSettings.Style == WindowStyle.None)
+        // {
+        //     data->StyleEx &= ~(uint)Consts.WS_EX_WINDOWEDGE;
+        // }
+
+        // if (systemSettings.Style == WindowStyle.Fullscreen)
+        // {
+        //     data->Width = monitorData->ScreenWidth;
+        //     data->Height = monitorData->ScreenHeight;
+        //     data->Left = monitorData->ScreenLeft;
+        //     data->Top = monitorData->ScreenTop;
+        //     data->WindowState = Consts.SW_SHOWMAXIMIZED;
+        // }
+        // else
+        // {
+        //     GraphicsWindowImpl.AdjustAreaSize(data, systemSettings.Style != WindowStyle.Fullscreen || systemSettings.Style != WindowStyle.Fixed);
+        //     GraphicsWindowImpl.CenterWindow(data);
+        //     data->WindowState = Consts.SW_SHOWNORMAL;
+        // }
+    }
+
+    internal static void AdjustAreaSize(WindowData* contextData, int left, int top, uint style, bool menu)
+    {
+        RECT rect = new(left, top, contextData->Width + left, contextData->Height + top);
+        _ = AdjustWindowRect(&rect, style, menu ? 0 : 1);
+        contextData->Width = rect.Right - rect.Left;
+        contextData->Height = rect.Bottom - rect.Top;
+    }
+
+	internal static void CenterWindow(WindowData* contextData , int* left, int* top )
+	{
+		int screenX = GetSystemMetrics(WindowConsts.SM_CXSCREEN);
+		int screenY = GetSystemMetrics(WindowConsts.SM_CYSCREEN);
+		*left = (screenX / 2) - (contextData->Width / 2);
+		*top = (screenY / 2) - (contextData->Height / 2);
+	}
 
     [SkipLocalsInit]
     // [SuppressGCTransition]

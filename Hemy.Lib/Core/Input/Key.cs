@@ -396,6 +396,8 @@ public enum Key : byte
     PA1, // 0xFD,
     /// <summary></summary>
     OEMClear, // 0xFE
+
+    Unknown ,
 }
 
 #endregion

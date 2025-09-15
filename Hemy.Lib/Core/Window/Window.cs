@@ -13,6 +13,7 @@ using Hemy.Lib.Core.Platform.Windows.Audio;
 using Hemy.Lib.Core.Platform.Windows.Sys;
 using Hemy.Lib.Core.Platform.Windows.Input;
 using Hemy.Lib.Core.Input;
+using Hemy.Lib.Core.Platform.Windows.Monitor;
 
 
 #endif
@@ -29,6 +30,7 @@ public unsafe sealed class Window : IDisposable
     private TimeData* _timeData = null;
     private InputData* _inputData = null;
     private ControllerData* _controllers = null;
+    private MonitorData* _monitorData = null;
 #else
 #endif
     private bool _isDisposed = false;
@@ -54,6 +56,7 @@ public unsafe sealed class Window : IDisposable
         _timeData = Memory.Memory.New<TimeData>(true);
         _inputData = Memory.Memory.New<InputData>(true);
         _controllers = Memory.Memory.New<ControllerData>(true);
+        _monitorData = Memory.Memory.New<MonitorData>(true);
 
         Keyboard = new(_inputData);
 #endif
@@ -64,11 +67,10 @@ public unsafe sealed class Window : IDisposable
     [SuppressUnmanagedCodeSecurity]
     public void CreateWindow()
     {
-#if SPEC
-        Hemy.Lib.Core.Log.Info("COUCOU");
-#endif
+
 #if WINDOWS
-        WindowImpl.Init(_windowData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
+
+        WindowImpl.Init(_windowData,_monitorData, null, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);
 
         RenderImpl.CreateRenderPass(_graphicData);
@@ -140,6 +142,7 @@ public unsafe sealed class Window : IDisposable
         Memory.Memory.Dispose(_timeData);
         Memory.Memory.Dispose(_inputData);
         Memory.Memory.Dispose(_controllers);
+        Memory.Memory.Dispose(_monitorData);
 #endif
 
         _isDisposed = true;
