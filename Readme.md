@@ -1,4 +1,4 @@
-# Hemy ENGINE
+# HEMY ENGINE
 
 Light-weight cross platform Game Engine Purly in C# ( vulkan native )
 I re-invent  wheel just for fun.
@@ -9,8 +9,6 @@ I re-invent  wheel just for fun.
 - Minimal code, fast   , low memory use.
 - Inspired by : TerraFx, GODOT , stride3D , raylib , Vortice Vulkan, MonoGame.... and many other
 - Support Many platforms without pain : Window, Linux, Mac(WIP) , IOS(Not Yet), ANDRoiD(Not Yet), Web(WIP), Nintendo NES(Wip) ,Megadrive(Wip) Builder+ SDK  in progress
-
-
 
 
 ## Prerequis 
@@ -32,7 +30,7 @@ For writing 2D or 3D game, in differents way.
 
 Like Raylib  :
 
-```
+```C#
 
 using Hemy.Lib.Core.Window.Window window = new();
 
@@ -65,7 +63,7 @@ while (window.IsRunning())
 
 Like monogame :
 
-```
+```C#
 
 
 ```
