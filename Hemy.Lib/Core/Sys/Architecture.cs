@@ -1,5 +1,6 @@
 namespace Hemy.Lib.Core.Sys;
-#if WINDOWS
+
+
 /// <summary> ARchitecture system possible pour la platform selectionné </summary>
 public enum Architecture : byte
 {

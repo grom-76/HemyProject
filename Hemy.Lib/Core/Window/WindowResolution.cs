@@ -1,5 +1,5 @@
 namespace Hemy.Lib.Core.Window;
-#if WINDOWS
+
 public enum WindowResolution : byte
 {
 	Fullscreen = 0,

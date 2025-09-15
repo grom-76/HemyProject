@@ -1,5 +1,5 @@
 namespace Hemy.Lib.Core.Sys;
-#if WINDOWS
+
 /// <summary> liste des platforms disponible </summary>
 public enum Platform : byte
 {

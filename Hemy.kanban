@@ -47,16 +47,6 @@
       "title": "To Do",
       "cards": [
         {
-          "id": "5387e9ea-dc77-4e3a-a065-cb27ffa61d4c",
-          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
-          "title": "Ajouter les couleur dans TestingDraw",
-          "description": "",
-          "dueDate": "2025-09-14T13:36:00.000Z",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "6dbd3ded-04e1-4d07-a441-ee1c06a0c7e9",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Test une nouvelle facon pour controller :SAO",
@@ -66,9 +56,9 @@
           "comments": []
         },
         {
-          "id": "489d144c-f9e1-4a5a-8f4c-ddd8f1dfb51d",
+          "id": "f0680877-f06f-49e7-9496-44bc1b37fa17",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
-          "title": "Ameliorer le code pour le gamepad",
+          "title": "Ajouter le Delta time pour les gamepad Update",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -81,12 +71,28 @@
       "title": "Doing",
       "cards": [
         {
-          "id": "f700becf-0552-4a31-84a0-682fac08befa",
+          "id": "489d144c-f9e1-4a5a-8f4c-ddd8f1dfb51d",
           "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
-          "title": "Calcul de la dead zone pour le controller",
+          "title": "Ameliorer le code pour le gamepad",
           "description": "",
           "labels": [],
-          "checkboxes": [],
+          "checkboxes": [
+            {
+              "id": "c8967467-b7ef-4f99-bbeb-fa30f8099b87",
+              "title": "Get Controller Name",
+              "checked": false
+            },
+            {
+              "id": "f5f4558c-727a-4ed7-a849-ee411905b9b5",
+              "title": "Add Controller",
+              "checked": false
+            },
+            {
+              "id": "276b4293-8377-469a-ba11-62b2cb05727d",
+              "title": "Remove Controller",
+              "checked": false
+            }
+          ],
           "comments": []
         }
       ]
@@ -94,7 +100,27 @@
     {
       "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
       "title": "Done",
-      "cards": []
+      "cards": [
+        {
+          "id": "f700becf-0552-4a31-84a0-682fac08befa",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Calcul de la dead zone pour le controller",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "5387e9ea-dc77-4e3a-a065-cb27ffa61d4c",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Ajouter les couleur dans TestingDraw",
+          "description": "",
+          "dueDate": "2025-09-14T13:36:00.000Z",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
     }
   ],
   "archive": {

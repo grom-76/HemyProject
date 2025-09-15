@@ -28,6 +28,7 @@ public unsafe sealed class Window : IDisposable
     private AudioData* _audioData = null;
     private TimeData* _timeData = null;
     private InputData* _inputData = null;
+    private ControllerData* _controllers = null;
 #else
 #endif
     private bool _isDisposed = false;
@@ -39,6 +40,10 @@ public unsafe sealed class Window : IDisposable
         get;
     }
 
+
+    [SkipLocalsInit]
+    public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
+
     [SkipLocalsInit]
     public Window()
     {
@@ -48,7 +53,7 @@ public unsafe sealed class Window : IDisposable
         _audioData = Memory.Memory.New<AudioData>(true);
         _timeData = Memory.Memory.New<TimeData>(true);
         _inputData = Memory.Memory.New<InputData>(true);
-
+        _controllers = Memory.Memory.New<ControllerData>(true);
 
         Keyboard = new(_inputData);
 #endif
@@ -71,6 +76,11 @@ public unsafe sealed class Window : IDisposable
 
         AudioImpl.Init(_audioData);
         InputImpl.MapKeys(_inputData, 0);
+
+        ControllerImpl.Init(_controllers, 0);
+        ControllerImpl.Init(_controllers, 1);
+        ControllerImpl.Init(_controllers, 2);
+        ControllerImpl.Init(_controllers, 3);
 
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
@@ -129,6 +139,7 @@ public unsafe sealed class Window : IDisposable
         Memory.Memory.Dispose(_audioData);
         Memory.Memory.Dispose(_timeData);
         Memory.Memory.Dispose(_inputData);
+        Memory.Memory.Dispose(_controllers);
 #endif
 
         _isDisposed = true;
@@ -145,6 +156,11 @@ public unsafe sealed class Window : IDisposable
         WindowImpl.Update(_windowData);
         TimeImpl.Update(_timeData);
         InputImpl.UpdateInput(_inputData);
+
+        ControllerImpl.UpdateController(_controllers, 0);
+        ControllerImpl.UpdateController(_controllers, 1);
+        ControllerImpl.UpdateController(_controllers, 2);
+        ControllerImpl.UpdateController(_controllers, 3);
 #endif
     }
 
@@ -222,7 +238,10 @@ public unsafe sealed class Window : IDisposable
             case WM_SYSCHAR:
 
                 return null;
+            case WM_ACTIVATEAPP:
+                // https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputenable 
 
+                return null; 
             default:
                 return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
         }

@@ -27,18 +27,18 @@ public unsafe sealed class Keyboard(
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     public bool IsReleased(Key key)
-        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) != 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) == 0;
+        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) == 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) != 0;
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     public bool IsDown(Key key)
-        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) != 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) == 0;
+        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) != 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) != 0;
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     public bool IsUp(Key key)
-        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) != 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) == 0;
+        => (data->Current[data->Keys[(short)key] & 0xff] & 0x80) == 0 && (data->Previous[data->Keys[(short)key] & 0xff] & 0x80) == 0;
 
 }
