@@ -7,7 +7,7 @@ using System.Security;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public readonly unsafe struct Array(uint count, uint itemMaxSize)
+public readonly unsafe struct StrArray(uint count, uint itemMaxSize)
 {
     readonly uint _count = count;
     readonly uint _maxSizeItem = itemMaxSize;
@@ -134,5 +134,5 @@ public readonly unsafe struct Array(uint count, uint itemMaxSize)
         Memory.DisposeArray(_pointer);
     }
 
-    public static implicit operator byte**(Array array) => (byte**)array._pointer;
+    public static implicit operator byte**(StrArray array) => (byte**)array._pointer;
 }

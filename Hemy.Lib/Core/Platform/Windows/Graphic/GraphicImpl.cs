@@ -58,7 +58,7 @@ internal unsafe static class GraphicImpl
         result = Vk.vkEnumerateInstanceLayerProperties(&layerCount, layerProperties);
         if (result != VkResult.VK_SUCCESS || layerCount == 0) { return 1; }
 
-        Hemy.Lib.Core.Memory.Array ValidationLayers = new(layerCount, VK.VK_MAX_DESCRIPTION_SIZE);
+        Hemy.Lib.Core.Memory.StrArray ValidationLayers = new(layerCount, VK.VK_MAX_DESCRIPTION_SIZE);
 
         for (uint i = 0; i < layerCount; i++)
         {
@@ -76,7 +76,7 @@ internal unsafe static class GraphicImpl
         result = Vk.vkEnumerateInstanceExtensionProperties(null, &instanceExtCount, props);
         if (result != VkResult.VK_SUCCESS) { return 1; }
 
-        Hemy.Lib.Core.Memory.Array InstanceExtensions = new(instanceExtCount, VK.VK_MAX_DESCRIPTION_SIZE);
+        Hemy.Lib.Core.Memory.StrArray InstanceExtensions = new(instanceExtCount, VK.VK_MAX_DESCRIPTION_SIZE);
 
         for (uint i = 0; i < instanceExtCount; i++)
         {
@@ -184,7 +184,7 @@ internal unsafe static class GraphicImpl
         result = Vk.vkEnumerateDeviceExtensionProperties(contextData->DevicePhysical, null, &devicePropertiesExtCount, properties);
         // if (Log.Check(result != VkResult.VK_SUCCESS, "Error Create Enumerate Physical Device" + result)) { return 1; }
 
-        Hemy.Lib.Core.Memory.Array DeviceExtensions = new(devicePropertiesExtCount, VK.VK_MAX_DESCRIPTION_SIZE);
+        Hemy.Lib.Core.Memory.StrArray DeviceExtensions = new(devicePropertiesExtCount, VK.VK_MAX_DESCRIPTION_SIZE);
 
         for (uint i = 0; i < devicePropertiesExtCount; i++)
         {

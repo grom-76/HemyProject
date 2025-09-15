@@ -75,7 +75,7 @@ public static class Loader
 
     public unsafe delegate void* LoadFunction(void* ptr, string name);
 
-    public unsafe static void Load(LoadFunction load, void* ptr, Hemy.Lib.Core.Memory.Array* extensions)
+    public unsafe static void Load(LoadFunction load, void* ptr, Hemy.Lib.Core.Memory.StrArray* extensions)
     {
         
         for (uint i = 0; i < extensions->Count; i++)

@@ -234,13 +234,13 @@ public sealed class MiniPCG32 : IDisposable, IEquatable<MiniPCG32>
 
     #region [ public OVERRIDE ]
     ///<inherit />
-    public bool Equals(MiniPCG32? other) => false;
+    public bool Equals(MiniPCG32 other) => false;
     ///<inherit />
     public static bool operator ==(MiniPCG32 left, MiniPCG32 right) => false;
     ///<inherit />
     public static bool operator !=(MiniPCG32 left, MiniPCG32 right) => true;
     ///<inherit />
-    public override bool Equals(object? obj) => false;
+    public override bool Equals(object obj) => false;
     ///<inherit />
     public override string ToString() => $"-Random Generator  : MinPCG32 - {this._state} ";
     ///<inherit />
