@@ -81,7 +81,9 @@ public class Program
         var joy1 = window.GetGamePad(Lib.Core.Input.ControlerPlayer.Player1);
         var mouse = window.Mouse;
         var keyboard = window.Keyboard;
-        
+
+        Hemy.Lib.Core.Math.Random.MiniPCG32 random = new();
+        Lib.Core.Color.Palette clearColor = Lib.Core.Color.Palette.CornflowerBlue;
 
         while (window.IsRunning())
         {
@@ -97,7 +99,7 @@ public class Program
                 Log.Info($"Left stickmove : {joy1.StickLeft_X} ; {joy1.StickLeft_Y}");
             }
 
-            if ( keyboard.IsPressed(Lib.Core.Input.Key.Escape))
+            if (keyboard.IsPressed(Lib.Core.Input.Key.Escape))
             {
                 window.RequestClose();
             }
@@ -107,7 +109,13 @@ public class Program
                 Log.Info("Mouse Move :" + mouse.ToString());
             }
 
-            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue );
+            if (joy1.IsPressed(Lib.Core.Input.ControllerButton.B))
+            {
+                Array values = Enum.GetValues(typeof(Lib.Core.Color.Palette));
+                clearColor = (Lib.Core.Color.Palette)values.GetValue(random.Next(values.Length));
+            }
+
+            window.TestingDraw(clearColor);
         }
         
     }
