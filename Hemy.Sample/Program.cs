@@ -14,7 +14,8 @@ public class Program
         // FirstGraphic();
         // FirstInput();
         // FirstGamePad();
-        FirstCommand();
+        // FirstCommand();
+        FirstSound();
     }
 
     public static void TestLog()

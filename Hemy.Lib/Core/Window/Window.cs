@@ -15,6 +15,7 @@ using Hemy.Lib.Core.Platform.Windows.Input;
 using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Monitor;
 using Hemy.Lib.Core.Color;
+using Hemy.Lib.Core.Audio;
 
 
 #endif
@@ -59,6 +60,13 @@ public unsafe sealed class Window : IDisposable
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
 
     [SkipLocalsInit]
+    public AudioDevice AudioDevice
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
     public Window()
     {
 #if WINDOWS
@@ -72,7 +80,9 @@ public unsafe sealed class Window : IDisposable
 
 
         Mouse = new(_inputData);
-        Keyboard = new(_inputData);  
+        Keyboard = new(_inputData);
+
+        AudioDevice = new(_audioData);
 #endif
     }
 

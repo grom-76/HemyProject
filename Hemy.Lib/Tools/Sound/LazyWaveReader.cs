@@ -1,6 +1,4 @@
-
-
-namespace Hemy.Lib.Core.Audio;
+namespace Hemy.Lib.Tools.Sound;
 
 using System;
 using System.IO;

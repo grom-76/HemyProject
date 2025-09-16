@@ -2,11 +2,12 @@ namespace Hemy.Lib.Core.Audio;
 
 using System;
 using Hemy.Lib.Core.Platform.Windows.Audio;
+using Hemy.Lib.Tools.Sound;
 
 /// <summary>
 /// Class de base pour jouer un son stéréo à valeur de test
 /// </summary>
-public unsafe sealed class Sound2D : IDisposable
+public unsafe sealed class Sound2D( AudioData* audiodevice ) : IDisposable
 {
     private string filename = string.Empty;
     // private XAUDIO2_BUFFER Buffer= new();
@@ -15,10 +16,11 @@ public unsafe sealed class Sound2D : IDisposable
     // private byte[] Data= null!;
     // private uint Size =0;
 
-    public Sound2D() { }
-    public void Init(AudioData* audiodevice, string filename)
+
+    public void Load( string filename)
     {
         Log.Info("Init Source Win32");
+        Sourcevoice = Memory.Memory.New<IXAudio2SourceVoice>(false);
 
         //  DECODE WAV 
         LazyWaveReader wav = new(filename);
@@ -55,27 +57,30 @@ public unsafe sealed class Sound2D : IDisposable
         // Buffer.LoopCount =XAUDIO2_LOOP_INFINITE;
         // Buffer.pContext = null;
 
-        IXAudio2SourceVoice* sourcevoice = null;
-        uint err = audiodevice->AudioInstance->CreateSourceVoice(&sourcevoice, &wfx);
+        IXAudio2SourceVoice* svoice =null;
 
-        Sourcevoice = Memory.Memory.New<IXAudio2SourceVoice>(false);
-        IXAudio2SourceVoice temp = new IXAudio2SourceVoice(sourcevoice);
+        uint err = audiodevice->AudioInstance->CreateSourceVoice(&svoice, &wfx);
+
+
+        IXAudio2SourceVoice temp = new IXAudio2SourceVoice(svoice);
+
         Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), Sourcevoice, (uint)Memory.Memory.Size<IXAudio2SourceVoice>());
         Log.Info($"Create Source voice Error Code : {err} ");
 
-        err = sourcevoice->SubmitSourceBuffer(&buffer, null);
+        err = Sourcevoice->SubmitSourceBuffer(&buffer, null);
         Log.Info($"Submit source buffer  Error Code : {err} ");
     }
 
-    public void PlaySource() => Sourcevoice->Start();
+    public void Play() => Sourcevoice->Start();
     public void Stop() => Sourcevoice->Stop();
 
     public void Dispose()
     {
-        Log.Info(" Dispose PlayerSound2D");
+        Log.Info(" Dispose Sound2D");
         Sourcevoice->Stop();
         Sourcevoice->DestroyVoice();
 
+        Memory.Memory.Dispose(Sourcevoice);
         GC.SuppressFinalize(this);
     }
 

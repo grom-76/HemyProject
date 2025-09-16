@@ -26,7 +26,7 @@ public unsafe struct CommandData(ulong name, delegate* unmanaged<byte, bool> act
 
 }
 
-public unsafe struct Commands()
+public unsafe sealed class Commands() : IDisposable
 {
     public delegate bool EventDelegate(byte value);
     public delegate bool EventDelegateK(Key value);
@@ -36,7 +36,7 @@ public unsafe struct Commands()
     private List<CommandData> _commands = [];
  
 
-    internal static ulong BytesToULong(string data)
+    private static ulong BytesToULong(string data)
     =>  (data.Length >= 1 ? ( (ulong)data[0] << 0) : 0 << 0 ) |
         (data.Length >= 2 ? ( (ulong)data[1] << 8) : 0 << 8 ) |
         (data.Length >= 3 ? ( (ulong)data[2] << 16) : 0 << 16 ) |  
@@ -46,27 +46,25 @@ public unsafe struct Commands()
         (data.Length >= 7 ? ( (ulong)data[6] << 48) : 0 << 48 ) |    
         (data.Length >= 8 ? ( (ulong)data[7] << 56) : 0 << 56 ) ;
 
-
-
-    public readonly void Add(string commandName8CarMax, EventDelegateK eventDelegate, Key Key)
+    public void Add(string commandName8CarMax, EventDelegateK eventDelegate, Key Key)
     {
         CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
         _commands.Add(temp);
     }
     
-    public readonly void Add(string commandName8CarMax, EventDelegateM eventDelegate, MouseButton Key)
+    public void Add(string commandName8CarMax, EventDelegateM eventDelegate, MouseButton Key)
     {
         CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
         _commands.Add(temp);
     }
 
-    public readonly void Add(string commandName8CarMax, EventDelegateG eventDelegate, ControllerButton Key)
+    public void Add(string commandName8CarMax, EventDelegateG eventDelegate, ControllerButton Key)
     {
         CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
         _commands.Add(temp);
     }
 
-    public readonly bool IsAction(string commandName)
+    public bool IsAction(string commandName)
     {
         ulong name = BytesToULong(commandName);
         bool result = false;
@@ -78,4 +76,10 @@ public unsafe struct Commands()
         return result;
     }
 
+    public void Dispose()
+    {
+        _commands.Clear();
+        _commands = null;
+        GC.SuppressFinalize(this);
+    }
 }
