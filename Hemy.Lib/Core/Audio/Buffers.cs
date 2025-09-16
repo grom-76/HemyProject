@@ -1,17 +1,26 @@
-
-
 namespace Hemy.Lib.Core.Audio;
 
+using System.Runtime.InteropServices;
 
-public class Buffers
+
+[StructLayout(LayoutKind.Explicit)]
+public unsafe struct Buffer
 {
-    public enum BufferState { Compressed, stream, normal, fixe, circular, ring }
+    // public enum BufferState { Compressed, stream, normal, fixe, circular, ring }
 
-    //USe sounds 
-    public void Create(BufferState state)
-    {
-        // Sounds.Decode.ReadPCMFrame();
-    }
+     /// <summary> Number of Bytes</summary>
+    [FieldOffset(0)]
+    public int numberOfBytes;
+    [FieldOffset(8)]
+    private byte[] byteBuffer;
+    [FieldOffset(8)]
+    private float[] floatBuffer;
+    [FieldOffset(8)]
+    private short[] shortBuffer;
+    [FieldOffset(8)]
+    private int[] intBuffer;
+
+   
 
     public void RingBuffer() { }// Or circular 
 
@@ -48,19 +57,10 @@ public class Buffers
         public int Length => data == null ? 0 : data.Length;
     }
 
-    public class Buffer
-    {
+
         public enum BufferState { Compressed, stream, normal, fixe, circle }
 
-        //USe sounds 
-        public void Create(BufferState state)
-        {
-            // Sounds.LoadSound();
-        }
-
-        public void RingBuffer() { }
-
-    }
+  
 
 }
 

@@ -93,9 +93,8 @@ USE NAUDIO => no longer maintien https://github.com/naudio/NAudio
 /// </summary>
 public class Effects
 {
-    //BarGates , Chorus Flanger Glitcher WahWah
-
-   
+    //BarGates , Chorus Flanger Glitcher WahWah// https://github.com/piRepos/pEngine-del/ 
+ 
    // Echo reverb delay
 }
 

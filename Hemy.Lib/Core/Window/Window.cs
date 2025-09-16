@@ -178,7 +178,13 @@ public unsafe sealed class Window : IDisposable
 
         _isDisposed = true;
 
+        Log.Info(" Memory remaining : " + Memory.Memory.RemainingmEMORY);
+
         GC.SuppressFinalize(this);
+
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
     }
 
     [SkipLocalsInit]

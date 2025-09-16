@@ -19,11 +19,10 @@ public static partial class Example
         var cmd = new Hemy.Lib.Core.Input.Commands();
         cmd.Add(Play, keyboard.IsPressed, Lib.Core.Input.Key.Space);
         cmd.Add(Quit, keyboard.IsPressed, Lib.Core.Input.Key.Escape);
-
+        window.AudioDevice.SetVolume(0.5f);
         var snd = window.AudioDevice.GetSound2D();
 
         snd.Load(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
-
 
         while (window.IsRunning())
         {

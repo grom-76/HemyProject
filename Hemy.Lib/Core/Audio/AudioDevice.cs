@@ -20,13 +20,17 @@ public unsafe sealed class AudioDevice(
     public void SetVolume(float volume)
     {
 #if WINDOWS
-        Hemy.Lib.Core.Platform.Windows.Audio.AudioImpl.SetVolume(audioData, volume);
+        AudioImpl.SetVolume(audioData, volume);
 #endif
     }
 
     public Sound2D GetSound2D()
     {
+#if WINDOWS        
         return new Sound2D(audioData);
+#else
+        return new();
+#endif
     }
 
 }

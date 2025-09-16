@@ -144,10 +144,18 @@ public unsafe static class Memory
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
 	[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-    internal static void Fill(void* destination, int valueToFill, nuint bytesCount)
+	internal static void Fill(void* destination, int valueToFill, nuint bytesCount)
 #if WINDOWS
-		=> Hemy.Lib.Core.Platform.Windows.Memory.Memory.Fill(destination,valueToFill,bytesCount);
+		=> Hemy.Lib.Core.Platform.Windows.Memory.Memory.Fill(destination, valueToFill, bytesCount);
 #else
         => null;
 #endif
+
+	public static long RemainingmEMORY
+#if WINDOWS
+		=> Hemy.Lib.Core.Platform.Windows.Memory.Memory.ReminingMemory;
+#else
+        => 0L;
+#endif
+
 }
