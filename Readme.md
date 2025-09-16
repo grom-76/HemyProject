@@ -10,6 +10,21 @@ I re-invent  wheel just for fun.
 - Inspired by : TerraFx, GODOT , stride3D , raylib , Vortice Vulkan, MonoGame.... and many other
 - Support Many platforms without pain : Window, Linux, Mac(WIP) , IOS(Not Yet), ANDRoiD(Not Yet), Web(WIP), Nintendo NES(Wip) ,Megadrive(Wip) Builder+ SDK  in progress
 
+- Minimal Code 
+- Low CPU usage
+- Minimum Memory Footrprint
+- Documentation each methods
+- Evolutive architecture , cross platform
+- Only C# , few depedencies ( asimp, shadescrosscompiler )
+- No Exception, only error 
+- Stand Alone components
+- 2D 3D usage but only 3D inside
+- Programing like raylib
+- One Dll referencies for game 
+- Use native vulkan ( No Dx12 or opengl )
+- Intensive usage of attributs  , Unmanaged   code and always return value  code
+- Data Oriented Design
+- Tools for read write many files formats
 
 ## Prerequis 
 

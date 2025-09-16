@@ -1,16 +1,18 @@
 /**/
 namespace Hemy.Lib.Core.Input;
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Hemy.Lib.Core.Memory;
 
-public unsafe struct CommandData
+public unsafe struct CommandData(ulong name, delegate* unmanaged<byte, bool> action, byte key)
 {
-    public delegate bool PFN_Action(int id, int key);
-    public PFN_Action fN_Action = null!;
-    public int ActionName = -1;
-    int _Player = 0;
-    int _Key = 0;  // correspond MouseButton, Keys, Joystick_Button
-    bool _isValid = false;
+    public delegate* unmanaged<byte, bool> Action = action;
+    // public fixed byte Name[8];// store the name //  string impossble 
+    public ulong ActionName = name; // convert ulong To byte[] fast search 
+    public byte Key = key;  // correspond MouseButton, Keys, Joystick_Button
+
     // public int TypeOrder =0; // si plusieurs joystick , clavier ou souris
     // public Inputs_Type Type;
     // public Inputs_State State;
@@ -18,88 +20,62 @@ public unsafe struct CommandData
     // public float Duree =0.0f;
     // public float StarTime = 0.0f; 
     // public float AccumulateTime = 0.0f;
-    public CommandData(int name  , int key, int player =0)
-    { 
-        ActionName = name;
-        _Player = player;
-        _Key = key;
-    }
+    public bool IsAction = false;
 
-    public bool IsCompleted => _isValid ;
-
-    public void Update( double elpasedTime )
-    {
-        // AccumulateTime = StarTime + elpased; 
-
-        _isValid = fN_Action(_Player, _Key);
-
-        // //...... if Accumultae Time = duree Reset 
-        // if ( IsValid)
-        // {
-        //     StarTime = 1000.0f;
-        // }
-    }
+    public bool Update() =>  Action(Key);
 
 }
 
-public readonly unsafe struct Commands()
+public unsafe struct Commands()
 {
-    readonly Dictionary<int, CommandData> _commands = new();
-    /*
-        Add command :
-            Command Name ( string )
-            InputType ( Gesture , touch , gampad(player) , keyboard, mouse )
-            InputState (Click, Double click, pressed, released , up , down , )
-            Touch/Buttons  use it ( Key, mouse button , ControllerButton)
-            Timer 
+    public delegate bool EventDelegate(byte value);
+    public delegate bool EventDelegateK(Key value);
+    public delegate bool EventDelegateM(MouseButton value);
+    public delegate bool EventDelegateG(ControllerButton value);
 
-    */
-    public void AddCommand(int command_Name, InputState inputState, InputType inputType , int Key, int player = 0 )
+    private List<CommandData> _commands = [];
+ 
+
+    internal static ulong BytesToULong(string data)
+    =>  (data.Length >= 1 ? ( (ulong)data[0] << 0) : 0 << 0 ) |
+        (data.Length >= 2 ? ( (ulong)data[1] << 8) : 0 << 8 ) |
+        (data.Length >= 3 ? ( (ulong)data[2] << 16) : 0 << 16 ) |  
+        (data.Length >= 4 ? ( (ulong)data[3] << 24) : 0 << 24 ) |
+        (data.Length >= 5 ? ( (ulong)data[4] << 32) : 0 << 32 ) |    
+        (data.Length >= 6 ? ( (ulong)data[5] << 40) : 0 << 40 ) |    
+        (data.Length >= 7 ? ( (ulong)data[6] << 48) : 0 << 48 ) |    
+        (data.Length >= 8 ? ( (ulong)data[7] << 56) : 0 << 56 ) ;
+
+
+
+    public readonly void Add(string commandName8CarMax, EventDelegateK eventDelegate, Key Key)
     {
-        CommandData temp = new(command_Name,Key, player);
-        
-        if ( inputType == InputType.Keyboard)
-        {
-            // if ( inputState == InputState.Pressed)
-            //     temp.fN_Action=  IsKeyPressed;
-            // if ( inputState == InputState.Release)
-            //     temp.fN_Action= IsKeyReleased;
-            // if ( inputState == InputState.Down)
-            //     temp.fN_Action= IsKeyDown;
-            // if ( inputState == InputState.Up)
-            //     temp.fN_Action= IsKeyUp;
-        }
-        if ( inputType == InputType.Mouse)
-        {
-            // if ( inputState == InputState.Pressed)
-            //     temp.fN_Action= IsMouseButtonPressed;
-            // if ( inputState == InputState.Release)
-            //     temp.fN_Action= IsMouseButtonReleased;
-            // if ( inputState == InputState.Down)
-            //     temp.fN_Action= IsMouseButtonDown;
-            // if ( inputState == InputState.Up)
-            //     temp.fN_Action= IsMouseButtonUp;
-        }	
-        if ( inputType == InputType.Joystick)
-        {
-            // if ( inputState == InputState.Pressed)
-            //     temp.fN_Action= IsJoystickButtonPressed;
-            // if ( inputState == InputState.Release)
-            //     temp.fN_Action=   IsJoystickButtonReleased;
-            // if ( inputState == InputState.Down)
-            //     temp.fN_Action= IsJoystickButtonDown;
-            // if ( inputState == InputState.Up)
-            //     temp.fN_Action= IsJoystickButtonUp;
-        }
-
-        _commands.Add (command_Name,temp );
+        CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
+        _commands.Add(temp);
+    }
+    
+    public readonly void Add(string commandName8CarMax, EventDelegateM eventDelegate, MouseButton Key)
+    {
+        CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
+        _commands.Add(temp);
     }
 
-    public void RemoveCommand(int command_name)
+    public readonly void Add(string commandName8CarMax, EventDelegateG eventDelegate, ControllerButton Key)
     {
-        _commands.Remove(command_name);
+        CommandData temp = new(BytesToULong(commandName8CarMax), (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate( eventDelegate), (byte)Key);
+        _commands.Add(temp);
     }
 
-    public bool IsAction(int commandName)
-        => _commands.ContainsKey(commandName) && _commands[commandName].IsCompleted;
+    public readonly bool IsAction(string commandName)
+    {
+        ulong name = BytesToULong(commandName);
+        bool result = false;
+        for (int i = 0; i < _commands.Count; i++)
+        {
+            if (name == _commands[i].ActionName)
+                result = result || _commands[i].Update();
+        }
+        return result;
+    }
+
 }

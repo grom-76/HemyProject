@@ -5,9 +5,10 @@ using System.CommandLine.Invocation;
 
 public static class Program
 {
-
+    
     public static int Main(string[] args)
     {
+       
         var rootCommand = new RootCommand
         {
             new Option<int>("--number", "An integer option"),

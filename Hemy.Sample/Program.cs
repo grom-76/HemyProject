@@ -12,8 +12,8 @@ public class Program
         // FirstWindow();
         // FirstGraphic();
         // FirstInput();
-        FirstGamePad();
-
+        // FirstGamePad();
+        FirstCommand();
     }
 
     public static void TestLog()
@@ -46,7 +46,7 @@ public class Program
             window.Update();
 
 
-            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue);
+            window.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
         }
 
     }
@@ -68,11 +68,11 @@ public class Program
             }
 
 
-            window.TestingDraw( Lib.Core.Color.Palette.CornflowerBlue);
+            window.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
         }
 
     }
-    
+
     public static void FirstGamePad()
     {
         using Hemy.Lib.Core.Window.Window window = new();
@@ -116,6 +116,41 @@ public class Program
             }
 
             window.TestingDraw(clearColor);
+        }
+
+    }
+    public static void FirstCommand()
+    {
+        const string Jump = "JUMP";
+        using Hemy.Lib.Core.Window.Window window = new();
+
+        window.CreateWindow();
+        var joy1 = window.GetGamePad(Lib.Core.Input.ControlerPlayer.Player1);
+        var mouse = window.Mouse;
+        var keyboard = window.Keyboard;
+
+        var cmd = new Hemy.Lib.Core.Input.Commands();
+
+        cmd.Add(Jump, keyboard.IsPressed , Lib.Core.Input.Key.Space );
+        cmd.Add(Jump, joy1.IsPressed , Lib.Core.Input.ControllerButton.A );
+
+
+        while (window.IsRunning())
+        {
+            window.Update();
+
+            if (keyboard.IsPressed(Lib.Core.Input.Key.Escape))
+            {
+                window.RequestClose();
+            }
+
+            if (cmd.IsAction(Jump))
+            {
+                Log.Info("Jump ....." + window.DeltaTime );
+            }
+
+
+            window.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
         }
         
     }
