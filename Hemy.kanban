@@ -1,36 +1,21 @@
 {
   "lists": [
     {
-      "id": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
-      "title": "Links And Others",
-      "cards": [
-        {
-          "id": "282a28eb-6d30-4bde-8899-3a78e0d2c8fb",
-          "listId": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
-          "title": "https://github.com/raysan5/raylib/tree/master",
-          "description": "",
-          "labels": [
-            {
-              "id": "d2fabd58-04b8-4eea-b68d-6713626d1a90",
-              "title": "Links",
-              "color": "#0079bf"
-            }
-          ],
-          "checkboxes": [],
-          "comments": []
-        }
-      ]
-    },
-    {
       "id": "0a834815-9496-4b83-bc74-4cbaec8e8574",
-      "title": "Backlog",
+      "title": "Features",
       "cards": [
         {
           "id": "7b4b1033-6821-4cc5-8654-877ba67079ea",
           "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
           "title": "Ajouter les différentes classes Audio",
           "description": "",
-          "labels": [],
+          "labels": [
+            {
+              "id": "1edc7048-577b-46f6-a608-7245104ecd38",
+              "title": "SFX",
+              "color": "#eb5a46"
+            }
+          ],
           "checkboxes": [],
           "comments": []
         },
@@ -48,7 +33,13 @@
           "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
           "title": "Ajouter a la place de Keyboard et mouse Commands ...",
           "description": "",
-          "labels": [],
+          "labels": [
+            {
+              "id": "fef11a67-c3ac-4f8a-9325-4ca11e339218",
+              "title": "IO",
+              "color": "#61bd4f"
+            }
+          ],
           "checkboxes": [],
           "comments": []
         },
@@ -57,7 +48,13 @@
           "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
           "title": "Tester Reader/Writer",
           "description": "",
-          "labels": [],
+          "labels": [
+            {
+              "id": "db0d515d-0f87-4adb-853a-816585f992b1",
+              "title": "Test",
+              "color": "#344563"
+            }
+          ],
           "checkboxes": [],
           "comments": []
         },
@@ -104,7 +101,8 @@
               "checked": false
             }
           ],
-          "comments": []
+          "comments": [],
+          "dueDate": "2025-09-15T05:39:00.000Z"
         }
       ]
     },
@@ -144,7 +142,29 @@
     }
   ],
   "archive": {
-    "lists": [],
+    "lists": [
+      {
+        "id": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
+        "title": "Links And Others",
+        "cards": [
+          {
+            "id": "282a28eb-6d30-4bde-8899-3a78e0d2c8fb",
+            "listId": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
+            "title": "https://github.com/raysan5/raylib/tree/master",
+            "description": "",
+            "labels": [
+              {
+                "id": "d2fabd58-04b8-4eea-b68d-6713626d1a90",
+                "title": "Links",
+                "color": "#0079bf"
+              }
+            ],
+            "checkboxes": [],
+            "comments": []
+          }
+        ]
+      }
+    ],
     "cards": [
       {
         "id": "f0680877-f06f-49e7-9496-44bc1b37fa17",
@@ -154,6 +174,21 @@
         "labels": [],
         "checkboxes": [],
         "comments": []
+      },
+      {
+        "id": "282a28eb-6d30-4bde-8899-3a78e0d2c8fb",
+        "listId": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
+        "title": "https://github.com/raysan5/raylib/tree/master",
+        "description": "",
+        "labels": [
+          {
+            "id": "d2fabd58-04b8-4eea-b68d-6713626d1a90",
+            "title": "Links",
+            "color": "#0079bf"
+          }
+        ],
+        "checkboxes": [],
+        "comments": []
       }
     ]
   },
@@ -161,8 +196,38 @@
     "labels": [
       {
         "id": "d2fabd58-04b8-4eea-b68d-6713626d1a90",
-        "title": "Links",
+        "title": "GFX",
         "color": "#0079bf"
+      },
+      {
+        "id": "1edc7048-577b-46f6-a608-7245104ecd38",
+        "title": "SFX",
+        "color": "#eb5a46"
+      },
+      {
+        "id": "fef11a67-c3ac-4f8a-9325-4ca11e339218",
+        "title": "IO",
+        "color": "#61bd4f"
+      },
+      {
+        "id": "d9dc53b9-d3ab-4d01-8b1c-0acec42e6174",
+        "title": "Math",
+        "color": "#00c2e0"
+      },
+      {
+        "id": "d5b5511a-53b8-49d0-83ec-08af8409a244",
+        "title": "IA",
+        "color": "#00c2e0"
+      },
+      {
+        "id": "aa94d2d8-6a07-4cbc-ba9b-3e96e0077a7b",
+        "title": "Code",
+        "color": "#f2d600"
+      },
+      {
+        "id": "db0d515d-0f87-4adb-853a-816585f992b1",
+        "title": "Test",
+        "color": "#344563"
       }
     ]
   }

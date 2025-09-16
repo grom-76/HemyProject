@@ -1,0 +1,187 @@
+{
+  "lists": [
+    {
+      "id": "e8a51352-8e7c-487b-a559-5720e805dc1a",
+      "title": "Links",
+      "cards": [
+        {
+          "id": "84dc3a21-eb3f-412e-8a1b-9b2c9622cf96",
+          "listId": "e8a51352-8e7c-487b-a559-5720e805dc1a",
+          "title": "https://github.com/raysan5/raylib/tree/master",
+          "description": "",
+          "labels": [
+            {
+              "id": "54a7b89c-69a3-4e0a-9d9f-f5643d506d57",
+              "title": "Code",
+              "color": "#f2d600"
+            },
+            {
+              "id": "f586a097-a701-43bd-8a17-3e26c25996b2",
+              "title": "Engine",
+              "color": "#344563"
+            },
+            {
+              "id": "4e2eab22-a810-417d-a8f1-1899b6628b96",
+              "title": "Link",
+              "color": "#51e898"
+            }
+          ],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "f34d135f-4426-4abf-86c1-757290449a4c",
+          "listId": "e8a51352-8e7c-487b-a559-5720e805dc1a",
+          "title": "https://github.com/godotengine/godot",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "2e796183-9f51-45d0-9980-886250d43f8a",
+      "title": "Graphics",
+      "cards": []
+    },
+    {
+      "id": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+      "title": "Other",
+      "cards": [
+        {
+          "id": "d292d544-a460-46f8-8d0b-9489b9c2698e",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Raytracing Audio",
+          "description": "Vericidium\n\nGodot\n",
+          "labels": [
+            {
+              "id": "fa02f0e6-7457-4112-84f0-1d03cb6fedba",
+              "title": "Audio",
+              "color": "#eb5a46"
+            }
+          ],
+          "checkboxes": [
+            {
+              "id": "2ce620fb-c048-4c93-b968-a7789aed26f3",
+              "title": "Vericidium",
+              "checked": true
+            },
+            {
+              "id": "0d584637-b855-4002-ba72-8ac55f09f7ee",
+              "title": "Godot",
+              "checked": true
+            }
+          ],
+          "comments": []
+        },
+        {
+          "id": "68111edd-fe70-4448-9c7f-9acacdee39d4",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Move 3D in 3 line of code",
+          "description": "Mina pecheux : https://www.youtube.com/watch?v=pw1VLFpGpZ0",
+          "labels": [
+            {
+              "id": "b00ecedb-ce32-4808-b566-0bcef27d6a7d",
+              "title": "GFX",
+              "color": "#0079bf"
+            }
+          ],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "542b5644-d9a0-4f5a-9818-52e66a7e0f67",
+      "title": "Audio",
+      "cards": []
+    },
+    {
+      "id": "650c6f22-f189-4d6d-8cf4-6a3d3562e000",
+      "title": "Engine",
+      "cards": [
+        {
+          "id": "c843526d-89e0-4ec8-b0e6-0197ac2ddea0",
+          "listId": "650c6f22-f189-4d6d-8cf4-6a3d3562e000",
+          "title": "IA",
+          "description": "",
+          "labels": [
+            {
+              "id": "b573601d-4d68-47be-b897-450d10b9740d",
+              "title": "Math",
+              "color": "#00c2e0"
+            }
+          ],
+          "checkboxes": [
+            {
+              "id": "712cc197-dd06-4c34-b0f0-cb72dec2860f",
+              "title": "AStar",
+              "checked": false
+            }
+          ],
+          "comments": []
+        },
+        {
+          "id": "a759606c-32f8-40b9-a95a-5f23455382c0",
+          "listId": "650c6f22-f189-4d6d-8cf4-6a3d3562e000",
+          "title": "Collision",
+          "description": "",
+          "labels": [
+            {
+              "id": "b573601d-4d68-47be-b897-450d10b9740d",
+              "title": "Math",
+              "color": "#00c2e0"
+            }
+          ],
+          "checkboxes": [
+            {
+              "id": "31bfbc4f-4e97-45b2-b722-a6289ab77711",
+              "title": "AABB",
+              "checked": false
+            }
+          ],
+          "comments": []
+        }
+      ]
+    }
+  ],
+  "archive": {
+    "lists": [],
+    "cards": []
+  },
+  "settings": {
+    "labels": [
+      {
+        "id": "fa02f0e6-7457-4112-84f0-1d03cb6fedba",
+        "title": "Audio",
+        "color": "#eb5a46"
+      },
+      {
+        "id": "4e2eab22-a810-417d-a8f1-1899b6628b96",
+        "title": "Link",
+        "color": "#51e898"
+      },
+      {
+        "id": "54a7b89c-69a3-4e0a-9d9f-f5643d506d57",
+        "title": "Code",
+        "color": "#f2d600"
+      },
+      {
+        "id": "f586a097-a701-43bd-8a17-3e26c25996b2",
+        "title": "Engine",
+        "color": "#344563"
+      },
+      {
+        "id": "b00ecedb-ce32-4808-b566-0bcef27d6a7d",
+        "title": "GFX",
+        "color": "#0079bf"
+      },
+      {
+        "id": "b573601d-4d68-47be-b897-450d10b9740d",
+        "title": "Math",
+        "color": "#00c2e0"
+      }
+    ]
+  }
+}
