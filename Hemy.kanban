@@ -87,6 +87,33 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "b3a88196-4275-490a-8de0-4d8b230b1291",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Ajouter un mode Modify Command",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "80c8b063-8f8c-48b1-974f-b6f1db7ab1ea",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Ajouter un mode RemoveCommand",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "a52a9fda-f21a-47d7-b955-753941acbf86",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Command Changer List<CommandData> par Internal Array  capacity 10",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -99,6 +126,7 @@
           "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
           "title": "Ameliorer le code pour le gamepad",
           "description": "",
+          "dueDate": "2025-09-15T05:39:00.000Z",
           "labels": [],
           "checkboxes": [
             {
@@ -117,8 +145,7 @@
               "checked": false
             }
           ],
-          "comments": [],
-          "dueDate": "2025-09-15T05:39:00.000Z"
+          "comments": []
         }
       ]
     },
@@ -161,24 +188,7 @@
     "lists": [
       {
         "id": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
-        "title": "Links And Others",
-        "cards": [
-          {
-            "id": "282a28eb-6d30-4bde-8899-3a78e0d2c8fb",
-            "listId": "99247e9f-f4c0-498e-aac2-69eff461a4ab",
-            "title": "https://github.com/raysan5/raylib/tree/master",
-            "description": "",
-            "labels": [
-              {
-                "id": "d2fabd58-04b8-4eea-b68d-6713626d1a90",
-                "title": "Links",
-                "color": "#0079bf"
-              }
-            ],
-            "checkboxes": [],
-            "comments": []
-          }
-        ]
+        "title": "Links And Others"
       }
     ],
     "cards": [
