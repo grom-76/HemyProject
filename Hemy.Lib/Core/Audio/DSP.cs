@@ -7,7 +7,7 @@ namespace Hemy.Lib.Core.Audio;
 /// A node graph system for advanced mixing and effect processing.
 ///  TODO : like blueprint 
 /// </summary>
-public class DSP //NodesGraph
+public class DSP //NodesGraph  https://learn.microsoft.com/en-us/windows/win32/xaudio2/xaudio2-audio-graph
 {
     
    

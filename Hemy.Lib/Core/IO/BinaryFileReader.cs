@@ -32,6 +32,7 @@ internal unsafe struct BinaryFileReader()
 	{
 		IoImpl.CloseFile(_data);
 
+		Memory.Memory.Dispose(_data->Chunk);
 		Memory.Memory.Dispose(_data);
 
 		_data = null;

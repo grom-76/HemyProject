@@ -7,17 +7,16 @@ using Hemy.Lib.Tools.Sound;
 /// <summary>
 /// Class de base pour jouer un son stéréo à valeur de test
 /// </summary>
-public unsafe sealed class Sound2D( AudioData* audiodevice ) : IDisposable
+public unsafe sealed class Sound2D(
+#if WINDOWS    
+    AudioData* audiodevice 
+#endif
+    ) : IDisposable
 {
-    private string filename = string.Empty;
-    // private XAUDIO2_BUFFER Buffer= new();
-    // private WAVEFORMATEX wfx=new();
+
     private IXAudio2SourceVoice* Sourcevoice = null;
-    // private byte[] Data= null!;
-    // private uint Size =0;
-
-
-    public void Load( string filename)
+    
+    public void Load(string filename)
     {
         Log.Info("Init Source Win32");
         Sourcevoice = Memory.Memory.New<IXAudio2SourceVoice>(false);
@@ -57,7 +56,7 @@ public unsafe sealed class Sound2D( AudioData* audiodevice ) : IDisposable
         // Buffer.LoopCount =XAUDIO2_LOOP_INFINITE;
         // Buffer.pContext = null;
 
-        IXAudio2SourceVoice* svoice =null;
+        IXAudio2SourceVoice* svoice = null;
 
         uint err = audiodevice->AudioInstance->CreateSourceVoice(&svoice, &wfx);
 
