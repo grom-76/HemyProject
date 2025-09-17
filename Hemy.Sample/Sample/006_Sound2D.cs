@@ -12,7 +12,7 @@ public static partial class Example
 
         const string Play = "PLAY";
         const string Quit = "QUIT";
-        using Hemy.Lib.Core.Window.Window window = new();
+        using Hemy.Lib.Core.Context window = new();
         window.CreateWindow();
 
         var player1 = new Hemy.Lib.Core.Input.Commands();

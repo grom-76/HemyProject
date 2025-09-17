@@ -8,7 +8,7 @@ using System.Security;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct WindowData()
+public unsafe struct WindowData()
 {
     internal fixed byte GameName[256];
     internal fixed byte EngineName[16];

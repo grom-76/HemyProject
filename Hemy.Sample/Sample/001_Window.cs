@@ -8,13 +8,13 @@ public static partial class Example
 
     public static void FirstWindow()
     {
-        using Hemy.Lib.Core.Window.Window window = new();
+        using Hemy.Lib.Core.Context context = new();
 
-        window.CreateWindow();
+        context.CreateWindow();
 
-        while (window.IsRunning())
+        while (context.IsRunning())
         {
-            window.Update();
+            context.Update();
         }
 
     }

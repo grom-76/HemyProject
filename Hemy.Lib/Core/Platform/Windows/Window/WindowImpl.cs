@@ -56,7 +56,7 @@ internal unsafe static partial class WindowImpl
         WindowStyle WinStyle = WindowStyle.standard;
         Str.StringToBytes(contextData->GameName, "New game appliance");
         Str.StringToBytes(contextData->EngineName, "Hemy Engine");
-        byte* LogoIcon = Memory.NewStr("Logo.ico");
+        byte* LogoIcon = Str.New("Logo.ico");
         contextData->HInstance = GetModuleHandleA(null);
 
         var styleEx = WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
@@ -119,7 +119,7 @@ internal unsafe static partial class WindowImpl
             null, null,
             contextData->HInstance, null);
 
-        Memory.DisposeStr(LogoIcon);
+        Str.Dispose(LogoIcon);
 
         if (contextData->Handle == null)
         {
@@ -128,17 +128,30 @@ internal unsafe static partial class WindowImpl
         }
         return 0;
     }
+    
+    public unsafe static void UpdateCaptionTitleBar(WindowData* contextData , string title)
+    {
+		byte* bytes = Str.New(title);
+		int result = SetWindowTextA(contextData->Handle , bytes );
+		Str.Dispose(bytes);
+
+		if (result == 0)
+			Log.Error($"Change caption title to {title}");
+    }
 
     internal static void Dispose(WindowData* contextData)
     {
+        Monitor.MonitorImpl.Monitors.Clear();
+        Monitor.MonitorImpl.Monitors = null;
+
         if (contextData->Handle != null)
         {
-            if( 0== DestroyWindow(contextData->Handle))
+            if (0 == DestroyWindow(contextData->Handle))
                 Log.Warning("Destroy Window  ");
         }
 
-        if( 0 == UnregisterClassA(contextData->EngineName, contextData->HInstance))
-            Log.Warning("Unregister Window   ") ;
+        if (0 == UnregisterClassA(contextData->EngineName, contextData->HInstance))
+            Log.Warning("Unregister Window   ");
     }
 
     [SkipLocalsInit]

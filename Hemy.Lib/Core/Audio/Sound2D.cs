@@ -19,7 +19,11 @@ public unsafe sealed class Sound2D(
     private Hemy.Lib.Core.Platform.Windows.Audio.AudioEmiterData* _emiter= Memory.Memory.New<AudioEmiterData>();
 #endif
 
-
+    public float Volume
+    {
+        get => GetVolume();
+        set => SetVolume(value);
+    }
     public void CreateFromFile(string filename)
     {
 #if WINDOWS
@@ -39,6 +43,13 @@ public unsafe sealed class Sound2D(
     {
 #if WINDOWS
         AudioResourceImpl.EmiterSetVolume(_emiter, volume);
+#endif        
+    }
+
+    public float GetVolume()
+    {
+#if WINDOWS
+        return AudioResourceImpl.EmiterGetVolume(_emiter);
 #endif        
     }
 

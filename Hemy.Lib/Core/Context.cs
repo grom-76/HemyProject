@@ -1,4 +1,4 @@
-namespace Hemy.Lib.Core.Window;
+namespace Hemy.Lib.Core;
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -23,7 +23,7 @@ using Hemy.Lib.Core.Audio;
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Window : IDisposable
+public unsafe sealed class Context : IDisposable
 {
 #if WINDOWS
     private WindowData* _windowData = null;
@@ -67,7 +67,14 @@ public unsafe sealed class Window : IDisposable
     }
 
     [SkipLocalsInit]
-    public Window()
+    public Window.Window Window
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public Context()
     {
 #if WINDOWS
         _windowData = Memory.Memory.New<WindowData>(true);
@@ -81,8 +88,8 @@ public unsafe sealed class Window : IDisposable
 
         Mouse = new(_inputData);
         Keyboard = new(_inputData);
-
         AudioDevice = new(_audioData);
+        Window = new(_windowData);
 #endif
     }
 
@@ -250,7 +257,8 @@ public unsafe sealed class Window : IDisposable
                 return null;
 
             case WM_MOUSELEAVE:
-                // STOP TRACKING MOUSE ?
+                // STOP TRACKING MOUSE ? // App in pause 
+                Log.Info("Mouse Leave Window");
                 return null;
 
             case WM_MOUSEWHEEL:
@@ -265,11 +273,11 @@ public unsafe sealed class Window : IDisposable
                 return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
 
             case WM_KILLFOCUS:
-
+                Log.Info("App Kill Focus ");
                 return null;
 
             case WM_SETFOCUS:
-
+                Log.Info("App Set Focus ");
                 return null;
 
             case WM_SYSCOMMAND:

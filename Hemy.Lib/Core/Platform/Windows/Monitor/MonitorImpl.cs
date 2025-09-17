@@ -12,7 +12,7 @@ using HRESULT = System.UInt32;
 using BOOL = System.Int32;
 using LONG = System.Int32;
 using System.Security;
-
+using System.Collections.Generic;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
@@ -21,6 +21,35 @@ internal unsafe static partial class MonitorImpl
 {
     internal static delegate*<void*, void*, RECT*, long*, BOOL> MONITORENUMPROC = null;
 
+    internal struct MonitorMode(int id, DEVMODEW devmod)
+    {
+        public int Mode = id;
+        public int Width = devmod.dmPelsWidth;
+        public int Height = devmod.dmPelsHeight;
+        public int BitDepth = devmod.dmBitsPerPel;
+        public int Frequency = devmod.dmDisplayFrequency;
+
+    }
+    //Log.Info($"Mode {iMode}: {devmod.dmPelsWidth}x{devmod.dmPelsHeight}, {devmod.dmBitsPerPel} bits, {devmod.dmDisplayFrequency} Hz");
+
+    internal struct Monitor(MONITORINFOEX monitorInfo )
+    {
+        string DeviceName = new (monitorInfo.DeviceName);
+        public uint Flags = monitorInfo.Flags;
+        public int Width = monitorInfo.Monitor.Right;
+        public int Height = monitorInfo.Monitor.Bottom;
+        public int Left = monitorInfo.Monitor.Left;
+        public int Top = monitorInfo.Monitor.Top;
+        public int WorkAreaRight = monitorInfo.Work.Right;
+        public int WorkAreaBottom =  monitorInfo.Work.Bottom;
+        public int WorkAreaLeft =  monitorInfo.Work.Left;
+        public int WorkAreaTop =  monitorInfo.Work.Top;
+        public List<MonitorMode> Modes = [];
+
+    }
+
+    internal static List<Monitor> Monitors = [] ;
+
     private static int MonitorEnumProc(void* hMonitor, void* hdcMonitor, RECT* lprcMonitor, long* dwData)
     {
         MONITORINFOEX monitorInfo = new MONITORINFOEX();
@@ -28,9 +57,10 @@ internal unsafe static partial class MonitorImpl
         int res = GetMonitorInfoW((void*)hMonitor, &monitorInfo);
         if (res != 0)
         {
-            string deviceName = new(monitorInfo.DeviceName);
+            // string deviceName = new(monitorInfo.DeviceName);
 
-            Log.Info($"Monitor: {deviceName}, Resolution: Resolution: {monitorInfo.Monitor.Right}x{monitorInfo.Monitor.Bottom}, Position: {monitorInfo.Monitor.Left},{monitorInfo.Monitor.Top}");
+            // Log.Info($"Monitor: {deviceName}, Resolution: Resolution: {monitorInfo.Monitor.Right}x{monitorInfo.Monitor.Bottom}, Position: {monitorInfo.Monitor.Left},{monitorInfo.Monitor.Top}");
+            Monitor m = new(monitorInfo);
 
             // GET VIDEOS MODES 
             DEVMODEW devmod = new();
@@ -41,12 +71,15 @@ internal unsafe static partial class MonitorImpl
                 res = EnumDisplaySettingsW((char*)monitorInfo.DeviceName, iMode, &devmod);
                 if (res != 0)
                 {
-                    Log.Info($"Mode {iMode}: {devmod.dmPelsWidth}x{devmod.dmPelsHeight}, {devmod.dmBitsPerPel} bits, {devmod.dmDisplayFrequency} Hz");
-
+                    // Log.Info($"Mode {iMode}: {devmod.dmPelsWidth}x{devmod.dmPelsHeight}, {devmod.dmBitsPerPel} bits, {devmod.dmDisplayFrequency} Hz");
+                    m.Modes.Add(new(iMode, devmod));
                 }
                 iMode++;
             } while (res != 0);
+
+            Monitors.Add(m);
         }
+
         return 1;
     }
 

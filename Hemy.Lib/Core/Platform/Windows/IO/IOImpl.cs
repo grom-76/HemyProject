@@ -205,7 +205,7 @@ internal unsafe static partial class IoFileRWImpl
 	{
 		//Check if file Exist ??? return error    Mode =-1 file not exist
 
-		var strfile = Memory.Memory.NewStr(filename);
+		var strfile = Hemy.Lib.Core.Memory.Str.New(filename);
 
 		// src : https://learn.microsoft.com/en-us/windows/win32/fileio/opening-a-file-for-reading-or-writing
 		fileData->Handle = CreateFileA(strfile,                // name of the write
@@ -218,7 +218,7 @@ internal unsafe static partial class IoFileRWImpl
 
 		if (fileData->Handle == null) Log.Error("Open file Handle null ");
 
-		Memory.Memory.DisposeStr(strfile);
+		 Hemy.Lib.Core.Memory.Str.Dispose(strfile);
 
 
 		var err = GetFileSizeEx(fileData->Handle, &fileData->Size);

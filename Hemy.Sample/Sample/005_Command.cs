@@ -12,7 +12,7 @@ public static partial class Example
     {
         const string Jump = "JUMP";
         const string Quit = "QUIT";
-        using Hemy.Lib.Core.Window.Window window = new();
+        using Hemy.Lib.Core.Context window = new();
 
         window.CreateWindow();
         var joy1 = window.GetGamePad(Lib.Core.Input.ControlerPlayer.Player1);

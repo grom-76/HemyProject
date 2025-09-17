@@ -16,14 +16,8 @@ public class Program
         // FirstGamePad();
         // FirstCommand();
         // FirstSound();
-        Hemy.Lib.Tools.Sound.LazyWaveReader.TestNEwReader(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
+        // Hemy.Lib.Tools.Sound.LazyWaveReader.TestNEwReader(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
+        FirstChangeTitleBar();
     }
-
-    public static void TestLog()
-    {
-        Hemy.Lib.Core.Log.Warning("Bonjour");
-    }
-
-  
 
 }

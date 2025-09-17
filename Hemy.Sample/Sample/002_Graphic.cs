@@ -9,7 +9,7 @@ public static partial class Example
  
     public static void FirstGraphic()
     {
-        using Hemy.Lib.Core.Window.Window window = new();
+        using Hemy.Lib.Core.Context window = new();
 
         window.CreateWindow();
 

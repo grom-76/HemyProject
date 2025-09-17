@@ -52,9 +52,9 @@ public static class Loader
     public unsafe static void* LoadInstanceFunc(void* vkInstance, string name)
     {
 #if WINDOWS        
-        byte* str = Hemy.Lib.Core.Memory.Memory.NewStr(name);
+        byte* str = Memory.Str.New(name);
         void* result = Vk.vkGetInstanceProcAddr((VkInstance)vkInstance, str);
-        Hemy.Lib.Core.Memory.Memory.DisposeStr(str);
+        Hemy.Lib.Core.Memory.Str.Dispose(str);
         if ( result == null)
             Log.Warning( "Instance function pointer not found for : " + name);
 #endif
@@ -64,9 +64,9 @@ public static class Loader
     public unsafe static void* LoadDeviceFunc(void* vkDevice, string name)
     {
 #if WINDOWS
-        byte* str = Hemy.Lib.Core.Memory.Memory.NewStr(name);
+        byte* str = Memory.Str.New(name);
         void* result = Vk.vkGetDeviceProcAddr((VkDevice)vkDevice, str);
-        Hemy.Lib.Core.Memory.Memory.DisposeStr(str);
+        Hemy.Lib.Core.Memory.Str.Dispose(str);
         if ( result == null)
             Log.Warning( "Instance function pointer not found for : " + name);
 #endif

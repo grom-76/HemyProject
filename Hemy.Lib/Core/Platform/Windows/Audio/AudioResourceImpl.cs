@@ -135,6 +135,14 @@ internal unsafe static class AudioResourceImpl
         audioEmiter->Sourcevoice->SetVolume(volume);
     }
 
+    internal static float EmiterGetVolume(AudioEmiterData* audioEmiter)
+    {
+        // Send Command SetVolume 
+        float volume = 0.0f;
+        audioEmiter->Sourcevoice->GetVolume(&volume);
+        return volume;
+    }
+
     internal static void PlayEmiter(AudioEmiterData* audioEmiter)
     {
         // Send Command Start 

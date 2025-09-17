@@ -11,11 +11,34 @@ using System.Security;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe sealed partial class Str : IEquatable<Str>, IDisposable
 {
+    
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-    internal static void StringToBytes(byte* bytes, string text)
+    public static byte* New( string text)
+#if WINDOWS
+        => Hemy.Lib.Core.Platform.Windows.Memory.Memory.NewStr( text);
+#else
+        => null;
+#endif
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    public static void Dispose( byte* pointer)
+#if WINDOWS
+        => Hemy.Lib.Core.Platform.Windows.Memory.Memory.DisposeStr( pointer);
+#else
+        => null;
+#endif
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    public static void StringToBytes(byte* bytes, string text)
 #if WINDOWS
         => Hemy.Lib.Core.Platform.Windows.Memory.Memory.FillBytesWithString(bytes, text);
 #else
