@@ -8,38 +8,38 @@ using System.Runtime.InteropServices;
 using Hemy.Lib.Core.Platform.Windows.IO;
 #endif
 
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal unsafe struct BinaryFileWriter()
-{
+// [SkipLocalsInit]
+// [StructLayout(LayoutKind.Sequential)]
+// internal unsafe struct BinaryFileWriter()
+// {
 
-#if WINDOWS
-	FileData* _data = null;
-#endif
+// #if WINDOWS
+// 	FileData* _data = null;
+// #endif
 
-	internal void Open(string filename, uint chunksize = 0)
-	{
-		_data = Memory.Memory.New<FileData>(true);
+// 	internal void Open(string filename, uint chunksize = 0)
+// 	{
+// 		_data = Memory.Memory.New<FileData>(true);
 
-		if (!Files.Exist(filename))
-		{
-			// Log.Error($"File {filename} Not exist");
-			// return;
-			// TODO CreateFile ????
-		}
+// 		if (!Files.Exist(filename))
+// 		{
+// 			// Log.Error($"File {filename} Not exist");
+// 			// return;
+// 			// TODO CreateFile ????
+// 		}
 
-		IoImpl.OpenFileWrited(_data, filename, chunksize);
-	}
+// 		IoImpl.OpenFileWrited(_data, filename, chunksize);
+// 	}
 
-	internal void Close()
-	{
-		IoImpl.CloseFile(_data);
+// 	internal void Close()
+// 	{
+// 		IoImpl.CloseFile(_data);
 
-		Memory.Memory.Dispose(_data);
+// 		Memory.Memory.Dispose(_data);
 
-		_data = null;
-	}
+// 		_data = null;
+// 	}
 
-}
+// }
 
 

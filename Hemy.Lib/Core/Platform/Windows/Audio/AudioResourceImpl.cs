@@ -21,46 +21,27 @@ internal unsafe static class AudioResourceImpl
     {
         audioBuffer->buffer = Memory.Memory.New<XAUDIO2_BUFFER>();
         audioBuffer->wavformat = Memory.Memory.New<WAVEFORMATEX>(); 
-        // internal byte* RawData = null;
-        //  DECODE WAV 
-        using LazyWaveReader wav = new(filename);
-        wav.ReadHeader();
 
+        using LazyWaveReader wav = new();
+        wav.ReadHeader(filename);
 
-        uint Size = wav.DataSize;
-        byte[] Data = new byte[Size];
-        audioBuffer->RawData = Memory.Memory.NewArray<byte>(Size);
+        audioBuffer->RawData = wav.ReadChunk();
 
-        wav.ReadChunk(ref Data, Size);
-        fixed (byte* bytes = &Data[0])
-        {
-            Memory.Memory.Copy(bytes , audioBuffer->RawData, Size);           
-        }
-        
-        Log.Info(wav.ToString());
-
-        // CREATE SOURCE
-        // WAVEFORMATEX wfx = new();
         audioBuffer->wavformat->cbSize = 0;//no extra info
-        audioBuffer->wavformat->nChannels = (ushort)wav.Nbrcanaux; // 1;//2 = stereo
-        audioBuffer->wavformat->nSamplesPerSec = wav.Frequence; // 44100;
-        audioBuffer->wavformat->wBitsPerSample = (ushort)wav.BitsPerSample;//16; //8 or 24 or 32
-        audioBuffer->wavformat->nBlockAlign = (ushort)wav.BytePerBloc;
-        audioBuffer->wavformat->nAvgBytesPerSec = wav.BytePerSec;// wfx.nBlockAlign * wfx.nSamplesPerSec;
-        audioBuffer->wavformat->wFormatTag = (ushort)wav.AudioFormat;// (ushort)wav.AudioFormat;// 3;//WAVE_FORMAT_PCM;? see list ?
-
-        audioBuffer->buffer->AudioBytes = Size;
+        audioBuffer->wavformat->nChannels = (ushort)wav.Data.Nbrcanaux; // 1;//2 = stereo
+        audioBuffer->wavformat->nSamplesPerSec = wav.Data.Frequence; // 44100;
+        audioBuffer->wavformat->wBitsPerSample = (ushort)wav.Data.BitsPerSample;//16; //8 or 24 or 32
+        audioBuffer->wavformat->nBlockAlign = (ushort)wav.Data.BytePerBloc;
+        audioBuffer->wavformat->nAvgBytesPerSec = wav.Data.BytePerSec;// wfx.nBlockAlign * wfx.nSamplesPerSec;
+        audioBuffer->wavformat->wFormatTag = (ushort)wav.Data.AudioFormat;// (ushort)wav.AudioFormat;// 3;//WAVE_FORMAT_PCM;? see list ?
+        audioBuffer->buffer->AudioBytes = wav.Data.DataSize;
+        audioBuffer->buffer->Flags = AudioConsts.XAUDIO2_END_OF_STREAM;
+        audioBuffer->buffer->pAudioData =audioBuffer->RawData;
         // audioBuffer->buffer->LoopBegin = 1;
         // audioBuffer->buffer->LoopLength = 0;
         // audioBuffer->buffer->LoopCount = AudioConsts.XAUDIO2_LOOP_INFINITE;
         // audioBuffer->buffer->pContext = null;
-        audioBuffer->buffer->Flags = AudioConsts.XAUDIO2_END_OF_STREAM;
-        audioBuffer->buffer->pAudioData = audioBuffer->RawData;
-        // fixed (byte* bytes = &Data[0])
-        // {
-        //     audioBuffer->buffer->pAudioData = bytes;
-        // }
-
+       
     }
 
     internal static void AttachBufferToEmitter(AudioEmiterData* audioEmiter, AudioBufferData* audioBuffer)
@@ -82,11 +63,9 @@ internal unsafe static class AudioResourceImpl
     {
         Memory.Memory.Dispose(audioBuffer->buffer);
         Memory.Memory.Dispose(audioBuffer->wavformat);
-        Memory.Memory.DisposeArray(audioBuffer->RawData);
+        Memory.Memory.DisposeArray(audioBuffer->RawData);   
     }
         
-
-    
     internal static void CreateEmiter( AudioData* audioData , AudioEmiterData* audioEmiter, AudioBufferData* AudioBuffer  )
     {
         // Create source voice  for emitter 

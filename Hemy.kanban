@@ -57,6 +57,15 @@
           ],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "3c7d8e27-7abe-44b6-8f00-ec18b0395797",
+          "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
+          "title": "SetCaptureMouse ? savoir si elle rentre ou sors de la fenetre ?",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -127,15 +136,6 @@
           "comments": []
         },
         {
-          "id": "a7e02606-b695-4da5-b90c-e7f74dc18afb",
-          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
-          "title": "Change Window to context",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "15b80837-d620-4325-8333-cdf662259386",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Set / fous . active focus mettre l'app en pause",
@@ -148,6 +148,15 @@
           "id": "11edcb10-1fe6-4605-82ca-2c11c6f90140",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Problem read and write bytes",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "59a87cca-561f-4293-a212-f887e5ec0f53",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Finir RecreateSwapChain",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -236,6 +245,15 @@
           "id": "3b91cb15-b6f9-48bb-871e-fdff797cb360",
           "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
           "title": "Ajouter un allocation remaining dans dispose Context",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "a7e02606-b695-4da5-b90c-e7f74dc18afb",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Change Window to context",
           "description": "",
           "labels": [],
           "checkboxes": [],

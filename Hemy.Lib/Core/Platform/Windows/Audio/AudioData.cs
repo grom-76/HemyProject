@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 public unsafe struct AudioData()
 {
     internal nint AudioModule = 0;
-    // internal XAudio_Version Version = XAudio_Version.Unknown;
+    // internal XAudio_Version Version = XAudio_Version.Unknown; //Valeur de BAse ????
     // internal float Volume = 1.0f;
     // internal uint ChannelMask = 0;
     // internal uint Channels = 0;

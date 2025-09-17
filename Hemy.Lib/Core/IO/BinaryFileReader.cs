@@ -1,5 +1,6 @@
 namespace Hemy.Lib.Core.IO;
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,46 +8,89 @@ using System.Runtime.InteropServices;
 using Hemy.Lib.Core.Platform.Windows.IO;
 #endif
 
+
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct BinaryFileReader()
+[Obsolete]
+public unsafe struct BinaryFileReader()
 {
 #if WINDOWS
-	FileData* _data = null;
+	IoFileData* _data = Memory.Memory.New<IoFileData>(true);
 #endif
+	byte* Buffer = null;
+	int* BufferPosition = null;
+	uint BufferSize = 0;
 
-	internal void Open(string filename, uint chunksize = 0)
+	public enum Mode : uint
 	{
-		_data = Memory.Memory.New<FileData>(true);
+		Begin = IoFileRWImpl.SEEK_BEGIN,
+		End= IoFileRWImpl.SEEK_END,
+		Current= IoFileRWImpl.SEEK_CURRENT,
+	}
 
+	public void Open(string filename)
+	{
 		if (!Files.Exist(filename))
 		{
 			Log.Error($"File {filename} Not exist");
 			return;
 		}
-
-		IoImpl.OpenFileRead(_data, filename, chunksize);
+#if WINDOWS
+		IoFileRWImpl.Open(_data, filename);
+#endif
 	}
 
-	internal void Close()
+	public void Close()
 	{
-		IoImpl.CloseFile(_data);
+#if WINDOWS		
+		IoFileRWImpl.Close(_data);
+#endif
 
-		Memory.Memory.Dispose(_data->Chunk);
 		Memory.Memory.Dispose(_data);
-
 		_data = null;
-	}
-	internal readonly byte* ReadChunk(uint size)
-	{
-		IoImpl.ReadHeader(_data, size);
-		return _data->Chunk;
+		Memory.Memory.DisposeArray(Buffer);
+		Buffer = null;
 	}
 
-	internal readonly byte Byte() => IoImpl.ReadChar(_data);
-	internal readonly sbyte SByte() => (sbyte)Byte();
-	internal readonly uint UInt() => (uint)(Byte() + (Byte() << 8) + ((Byte() + (Byte() << 8)) << 16));
-	internal readonly short Short() => (short)(SByte() + (SByte() << 8));
+	public void ReadChunk(uint size)
+	{
+		if (size > BufferSize) return;
+
+		if (Buffer != null)
+		{
+			Memory.Memory.DisposeArray(Buffer);
+			Buffer = null;
+		}
+		Buffer = Memory.Memory.NewArray<byte>(size);
+
+		*BufferPosition = 0;
+		BufferSize = size;
+
+#if WINDOWS
+		_ = IoFileRWImpl.Read(_data, Buffer, size);
+#endif
+
+	}
+
+	public void Seek(long offset, Mode mode)
+	{
+#if WINDOWS
+		IoFileRWImpl.Seek(_data, offset, (uint)mode);
+#endif
+	}
+
+	public readonly byte Byte()
+#if WINDOWS	
+	=> IoFileRWImpl.Byte(Buffer, BufferPosition);
+#endif
+
+	public readonly sbyte SByte() => IoFileRWImpl.SByte(Buffer, BufferPosition);
+	public readonly uint UInt() => IoFileRWImpl.UInt(Buffer, BufferPosition);
+	public readonly int Int() => IoFileRWImpl.Int(Buffer, BufferPosition);
+	public readonly long Long() => IoFileRWImpl.Long(Buffer, BufferPosition);
+	public readonly ulong ULong() => IoFileRWImpl.ULong(Buffer, BufferPosition);
+	public readonly short Short() => IoFileRWImpl.Short(Buffer, BufferPosition);
+	public readonly ushort UShort() => IoFileRWImpl.UShort(Buffer, BufferPosition);
 }
 
 
