@@ -15,7 +15,8 @@ public class Program
         // FirstInput();
         // FirstGamePad();
         // FirstCommand();
-        FirstSound();
+        // FirstSound();
+        Hemy.Lib.Tools.Sound.LazyWaveReader.TestNEwReader(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
     }
 
     public static void TestLog()

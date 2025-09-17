@@ -3,6 +3,7 @@
 namespace Hemy.Lib.Core.Platform.Windows.Common;
 
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -13,11 +14,15 @@ using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
 [StructLayout(LayoutKind.Sequential)]
 internal static unsafe partial class Log
 {
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static void Display(string header, string message,  string file , string method , int line )
-            => puts($"{header,-6}[TH:{GetCurrentThreadId()}_{GetFileName(file)}.{method.PadRight(5)}:{line}] {message}\n");
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static void Display(string header, string message, string file, string method, int line)
+#if !DEBUG
+        => puts($"{header,-6}[TH:{GetCurrentThreadId()}_{GetFileName(file)}.{method.PadRight(5)}:{line}] {message}\n");
+#else
+		=> Debug.WriteLine($"{header,-6}[{GetFileName(file)}.{method.PadRight(5)}:{line}] {message}\n");
+#endif
 
     [SkipLocalsInit]
     [SuppressGCTransition]

@@ -9,79 +9,136 @@ using Hemy.Lib.Tools.Sound;
 /// </summary>
 public unsafe sealed class Sound2D(
 #if WINDOWS    
-    AudioData* audiodevice 
+    AudioData* audioData
 #endif
     ) : IDisposable
 {
 
-    private IXAudio2SourceVoice* Sourcevoice = null;
-    
-    public void Load(string filename)
+#if WINDOWS
+    private Hemy.Lib.Core.Platform.Windows.Audio.AudioBufferData* _buffer = Memory.Memory.New<AudioBufferData>();
+    private Hemy.Lib.Core.Platform.Windows.Audio.AudioEmiterData* _emiter= Memory.Memory.New<AudioEmiterData>();
+#endif
+
+
+    public void CreateFromFile(string filename)
     {
-        Log.Info("Init Source Win32");
-        Sourcevoice = Memory.Memory.New<IXAudio2SourceVoice>(false);
-
-        //  DECODE WAV 
-        LazyWaveReader wav = new(filename);
-        wav.ReadHeader();
-        //use own readfile wav ?
-        // uint wavSizeInBytes = wav.DataSize;
-        uint Size = wav.DataSize;
-        byte[] Data = new byte[Size];
-        wav.ReadChunk(ref Data, Size);
-        Log.Info(wav.ToString());
-
-        // CREATE SOURCE
-        WAVEFORMATEX wfx = new();
-        wfx.cbSize = 0;//no extra info
-        wfx.nChannels = (ushort)wav.Nbrcanaux; // 1;//2 = stereo
-        wfx.nSamplesPerSec = wav.Frequence; // 44100;
-        wfx.wBitsPerSample = (ushort)wav.BitsPerSample;//16; //8 or 24 or 32
-        wfx.nBlockAlign = (ushort)wav.BytePerBloc;
-        wfx.nAvgBytesPerSec = wav.BytePerSec;// wfx.nBlockAlign * wfx.nSamplesPerSec;
-        wfx.wFormatTag = (ushort)wav.AudioFormat;// (ushort)wav.AudioFormat;// 3;//WAVE_FORMAT_PCM;? see list ?
-
-        //CREATE BUFFER AND SATTACH TO SOURC
-        XAUDIO2_BUFFER buffer = new();
-        buffer.AudioBytes = Size;
-
-        fixed (byte* bytes = &Data[0])
-        {
-            buffer.pAudioData = bytes;
-        }
-        buffer.Flags = AudioConsts.XAUDIO2_END_OF_STREAM;
-
-        // Buffer.LoopBegin =1 ;
-        // Buffer.LoopLength =0;
-        // Buffer.LoopCount =XAUDIO2_LOOP_INFINITE;
-        // Buffer.pContext = null;
-
-        IXAudio2SourceVoice* svoice = null;
-
-        uint err = audiodevice->AudioInstance->CreateSourceVoice(&svoice, &wfx);
-
-
-        IXAudio2SourceVoice temp = new IXAudio2SourceVoice(svoice);
-
-        Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), Sourcevoice, (uint)Memory.Memory.Size<IXAudio2SourceVoice>());
-        Log.Info($"Create Source voice Error Code : {err} ");
-
-        err = Sourcevoice->SubmitSourceBuffer(&buffer, null);
-        Log.Info($"Submit source buffer  Error Code : {err} ");
+#if WINDOWS
+        AudioResourceImpl.CreateBufferFromWavFile(_buffer, filename);
+        AudioResourceImpl.CreateEmiter(audioData, _emiter, _buffer);
+        AudioResourceImpl.AttachBufferToEmitter(_emiter, _buffer);
+#endif
     }
 
-    public void Play() => Sourcevoice->Start();
-    public void Stop() => Sourcevoice->Stop();
+    public void Update()
+    {
+#if WINDOWS
+        AudioResourceImpl.UpdateEmiter(_emiter, _buffer);
+#endif        
+    }
+    public void SetVolume(float volume)
+    {
+#if WINDOWS
+        AudioResourceImpl.EmiterSetVolume(_emiter, volume);
+#endif        
+    }
+
+    public void Play()
+    {
+#if WINDOWS
+        AudioResourceImpl.PlayEmiter(_emiter);
+#endif        
+    }
+    
+    public void Stop()
+    {
+#if WINDOWS
+        AudioResourceImpl.StopEmiter(_emiter);
+#endif        
+    }
 
     public void Dispose()
     {
-        Log.Info(" Dispose Sound2D");
-        Sourcevoice->Stop();
-        Sourcevoice->DestroyVoice();
+        Stop();
+#if WINDOWS
+        AudioResourceImpl.DisposeEmiter(_emiter);
+        AudioResourceImpl.DisposeBuffer(_buffer);
 
-        Memory.Memory.Dispose(Sourcevoice);
+        Memory.Memory.Dispose(_emiter);
+        Memory.Memory.Dispose(_buffer);
+#endif
         GC.SuppressFinalize(this);
+
     }
+
+
+    // private IXAudio2SourceVoice* Sourcevoice = null;
+
+    // public void Load(string filename)
+    // {
+    //     Log.Info("Init Source Win32");
+    //     Sourcevoice = Memory.Memory.New<IXAudio2SourceVoice>(false);
+
+    //     //  DECODE WAV 
+    //     LazyWaveReader wav = new(filename);
+    //     wav.ReadHeader();
+    //     //use own readfile wav ?
+    //     // uint wavSizeInBytes = wav.DataSize;
+    //     uint Size = wav.DataSize;
+    //     byte[] Data = new byte[Size];
+    //     wav.ReadChunk(ref Data, Size);
+    //     Log.Info(wav.ToString());
+
+    //     // CREATE SOURCE
+    //     WAVEFORMATEX wfx = new();
+    //     wfx.cbSize = 0;//no extra info
+    //     wfx.nChannels = (ushort)wav.Nbrcanaux; // 1;//2 = stereo
+    //     wfx.nSamplesPerSec = wav.Frequence; // 44100;
+    //     wfx.wBitsPerSample = (ushort)wav.BitsPerSample;//16; //8 or 24 or 32
+    //     wfx.nBlockAlign = (ushort)wav.BytePerBloc;
+    //     wfx.nAvgBytesPerSec = wav.BytePerSec;// wfx.nBlockAlign * wfx.nSamplesPerSec;
+    //     wfx.wFormatTag = (ushort)wav.AudioFormat;// (ushort)wav.AudioFormat;// 3;//WAVE_FORMAT_PCM;? see list ?
+
+    //     //CREATE BUFFER AND SATTACH TO SOURC
+    //     XAUDIO2_BUFFER buffer = new();
+    //     buffer.AudioBytes = Size;
+
+    //     fixed (byte* bytes = &Data[0])
+    //     {
+    //         buffer.pAudioData = bytes;
+    //     }
+    //     buffer.Flags = AudioConsts.XAUDIO2_END_OF_STREAM;
+
+    //     // Buffer.LoopBegin =1 ;
+    //     // Buffer.LoopLength =0;
+    //     // Buffer.LoopCount =XAUDIO2_LOOP_INFINITE;
+    //     // Buffer.pContext = null;
+
+    //     IXAudio2SourceVoice* svoice = null;
+
+    //     uint err = audiodevice->AudioInstance->CreateSourceVoice(&svoice, &wfx);
+
+
+    //     IXAudio2SourceVoice temp = new IXAudio2SourceVoice(svoice);
+
+    //     Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), Sourcevoice, (uint)Memory.Memory.Size<IXAudio2SourceVoice>());
+    //     Log.Info($"Create Source voice Error Code : {err} ");
+
+    //     err = Sourcevoice->SubmitSourceBuffer(&buffer, null);
+    //     Log.Info($"Submit source buffer  Error Code : {err} ");
+    // }
+
+    // public void Play() => Sourcevoice->Start();
+    // public void Stop() => Sourcevoice->Stop();
+
+    // public void Dispose()
+    // {
+    //     Log.Info(" Dispose Sound2D");
+    //     Sourcevoice->Stop();
+    //     Sourcevoice->DestroyVoice();
+
+    //     Memory.Memory.Dispose(Sourcevoice);
+    //     GC.SuppressFinalize(this);
+    // }
 
     //      Wave LoadWave(const char *fileName);                            // Load wave data from file
     // Wave LoadWaveFromMemory(const char *fileType, const unsigned char *fileData, int dataSize); // Load wave from memory buffer, fileType refers to extension: i.e. '.wav'

@@ -6,43 +6,44 @@ using Hemy.Lib.Core;
 public static partial class Example
 {
 
-
-
     public static void FirstSound()
     {
+        
+
         const string Play = "PLAY";
         const string Quit = "QUIT";
         using Hemy.Lib.Core.Window.Window window = new();
-
         window.CreateWindow();
-        var keyboard = window.Keyboard;
-        var cmd = new Hemy.Lib.Core.Input.Commands();
-        cmd.Add(Play, keyboard.IsPressed, Lib.Core.Input.Key.Space);
-        cmd.Add(Quit, keyboard.IsPressed, Lib.Core.Input.Key.Escape);
-        window.AudioDevice.SetVolume(0.5f);
-        var snd = window.AudioDevice.GetSound2D();
 
-        snd.Load(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
+        var player1 = new Hemy.Lib.Core.Input.Commands();
+        player1.Add(Play,  window.Keyboard.IsPressed, Lib.Core.Input.Key.Space);
+        player1.Add(Quit,  window.Keyboard.IsPressed, Lib.Core.Input.Key.Escape);
+
+
+        var sound2D = window.AudioDevice.GetSound2D();
+        sound2D.CreateFromFile(@"C:\Users\Admin\Documents\HemyProject\Hemy.Sample\Assets\demo.wav");
+        sound2D.SetVolume(0.5f);
 
         while (window.IsRunning())
         {
             window.Update();
+            sound2D.Update();
 
-            if (cmd.IsAction(Quit))
+            if (player1.IsAction(Quit))
             {
                 window.RequestClose();
             }
 
-            if (cmd.IsAction(Play))
+            if (player1.IsAction(Play))
             {
-                snd.Play();
+                sound2D.Play();
             }
 
             window.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
         }
 
-        snd.Dispose();
-        cmd.Dispose();
+        sound2D.Dispose();
+        player1.Dispose();
         
     }
 }

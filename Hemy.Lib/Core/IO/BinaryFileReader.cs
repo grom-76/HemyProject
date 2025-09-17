@@ -39,7 +39,7 @@ internal unsafe struct BinaryFileReader()
 	}
 	internal readonly byte* ReadChunk(uint size)
 	{
-		IoImpl.ReadChunk(_data, size);
+		IoImpl.ReadHeader(_data, size);
 		return _data->Chunk;
 	}
 
