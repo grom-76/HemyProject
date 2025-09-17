@@ -11,7 +11,7 @@ using Hemy.Lib.Core.Platform.Windows.Input;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Mouse(
+public unsafe readonly struct Mouse(
 #if WINDOWS
     InputData* data
 #endif    

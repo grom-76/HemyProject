@@ -6,6 +6,7 @@ using Hemy.Lib.Core.Platform.Windows.IO;
 using Hemy.Lib.Core.Memory;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Hemy.Lib.Core;
 
 /// <summary>
 /// Simple class lecture fichier wav
@@ -94,15 +95,19 @@ public unsafe sealed class LazyWaveReader : IDisposable
     /// </summary>
     /// <param name="buffer"></param>
     /// <param name="size"></param>
-    public byte* ReadChunk()
+    public void ReadChunk(byte* buffer )
     {
-        byte* buffer = Memory.NewArray<byte>(_wavData->DataSize);
+        // byte* buffer = Memory.NewArray<byte>(_wavData->DataSize);
         IoFileRWImpl.Read(_fileData, buffer, _wavData->DataSize);
-        return buffer;
+        // return buffer;
     }
-
+    private bool _isDisposed = false;
     public void Dispose()
     {
+        if (_isDisposed) return;
+
+        _isDisposed = true;
+        Log.Info("Dispose WaveReader");
         IoFileRWImpl.Close(_fileData);
         Memory.Dispose(_fileData);
         Memory.Dispose(_wavData);

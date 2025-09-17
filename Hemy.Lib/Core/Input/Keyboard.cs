@@ -11,7 +11,7 @@ using Hemy.Lib.Core.Platform.Windows.Input;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Keyboard(
+public unsafe readonly struct  Keyboard(
 #if WINDOWS
     InputData* data
 #endif    

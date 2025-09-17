@@ -25,7 +25,8 @@ internal unsafe static class AudioResourceImpl
         using LazyWaveReader wav = new();
         wav.ReadHeader(filename);
 
-        audioBuffer->RawData = wav.ReadChunk();
+        audioBuffer->RawData = Memory.Memory.NewArray<byte>(wav.Data.DataSize);
+        wav.ReadChunk(audioBuffer->RawData);
 
         audioBuffer->wavformat->cbSize = 0;//no extra info
         audioBuffer->wavformat->nChannels = (ushort)wav.Data.Nbrcanaux; // 1;//2 = stereo
@@ -34,14 +35,22 @@ internal unsafe static class AudioResourceImpl
         audioBuffer->wavformat->nBlockAlign = (ushort)wav.Data.BytePerBloc;
         audioBuffer->wavformat->nAvgBytesPerSec = wav.Data.BytePerSec;// wfx.nBlockAlign * wfx.nSamplesPerSec;
         audioBuffer->wavformat->wFormatTag = (ushort)wav.Data.AudioFormat;// (ushort)wav.AudioFormat;// 3;//WAVE_FORMAT_PCM;? see list ?
+
+
         audioBuffer->buffer->AudioBytes = wav.Data.DataSize;
         audioBuffer->buffer->Flags = AudioConsts.XAUDIO2_END_OF_STREAM;
         audioBuffer->buffer->pAudioData =audioBuffer->RawData;
-        // audioBuffer->buffer->LoopBegin = 1;
-        // audioBuffer->buffer->LoopLength = 0;
-        // audioBuffer->buffer->LoopCount = AudioConsts.XAUDIO2_LOOP_INFINITE;
-        // audioBuffer->buffer->pContext = null;
-       
+        audioBuffer->buffer->LoopBegin = 0;
+        audioBuffer->buffer->LoopLength = 44100*10;
+        audioBuffer->buffer->LoopCount = AudioConsts.XAUDIO2_LOOP_INFINITE;
+        audioBuffer->buffer->pContext = null;
+
+        wav.Dispose();
+    }
+
+    internal static void SetBuffer()
+    {
+
     }
 
     internal static void AttachBufferToEmitter(AudioEmiterData* audioEmiter, AudioBufferData* audioBuffer)
