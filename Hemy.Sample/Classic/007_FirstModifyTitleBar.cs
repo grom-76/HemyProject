@@ -1,15 +1,13 @@
-namespace Hemy.Sample.Sample;
+namespace Hemy.Sample.Classic;
 
 using Hemy.Lib.Core;
 
 
-public static partial class Example
+public static partial class C007_FirstModifyTitleBarple
 {
 
-    public static void FirstChangeTitleBar()
+    public static void Run()
     {
-        
-
         const string Play = "PLAY";
         const string Quit = "QUIT";
         using Hemy.Lib.Core.Context context = new();
@@ -38,6 +36,6 @@ public static partial class Example
 
        
         player1.Dispose();
-        
+
     }
 }

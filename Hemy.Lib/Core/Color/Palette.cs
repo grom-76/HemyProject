@@ -2,7 +2,7 @@ namespace Hemy.Lib.Core.Color;
 
 
 /// <summary>  Packed color BGRA  </summary>   
-public enum Palette : uint
+public enum Palette : uint // TODO rename to standard Color 
 {
     Zero = 0,
     Transparent = Zero,

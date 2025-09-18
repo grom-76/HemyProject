@@ -158,19 +158,15 @@
     {
       "id": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
       "title": "Doing",
+      "cards": []
+    },
+    {
+      "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+      "title": "Done",
       "cards": [
         {
-          "id": "e7be45d4-507d-4e2e-8da2-f70704063cf8",
-          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
-          "title": "Ajouter un Setting Context",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "cba00568-1bab-4943-add9-1b7f534eee02",
-          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
           "title": "Timer",
           "description": "",
           "labels": [],
@@ -181,13 +177,16 @@
               "comment": "Compte à rebour : \nStartTime =  GetTick ;  duration in milisec convert in tick ; CurentTime \nUpdate  = Current -Start >= duration "
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
-      "title": "Done",
-      "cards": [
+        },
+        {
+          "id": "e7be45d4-507d-4e2e-8da2-f70704063cf8",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Ajouter un Setting Context",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "7b4b1033-6821-4cc5-8654-877ba67079ea",
           "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
