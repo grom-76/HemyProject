@@ -16,45 +16,19 @@ using Hemy.Lib.Core.Memory;
 using Hemy.Lib.Core.Platform.Windows.Monitor;
 using Hemy.Lib.Core.Window;
 
-internal unsafe struct WindowDataInfo()
-{
-    internal int PreferredWidth = 1280;
-}
-
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class WindowImpl
 {
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static int GET_WIDTH(long* lParam) => (int)lParam & 0xFFFF; //LOWORD
+ 
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static int GET_HEIGHT(long* lParam) => (int)lParam >> 16; // HIWORD
-
-
-    internal static uint StyleToValue(WindowStyle style)
-        => style switch
-        {
-            WindowStyle.standard => WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME,
-            WindowStyle.None => WS_OVERLAPPED,
-            WindowStyle.Fixed => WS_CAPTION | WS_SYSMENU | WS_OVERLAPPED | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
-            WindowStyle.Sizable => WS_CAPTION | WS_SYSMENU | WS_OVERLAPPED | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEFRAME,
-            WindowStyle.Fullscreen => WS_POPUP,
-            _ => 0,
-        };
-
-    internal static uint Init(WindowData* contextData, MonitorData* monitorData, WindowDataInfo* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
+    internal static uint Init(WindowData* contextData, MonitorData* monitorData, WindowsSetting* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
     {
-        WindowStyle WinStyle = WindowStyle.standard;
-        Str.StringToBytes(contextData->GameName, "New game appliance");
+        WindowStyle WinStyle =info->Style;
+
+        Str.StringToBytes(contextData->GameName, Str.BytesToString(info->GameName));
         Str.StringToBytes(contextData->EngineName, "Hemy Engine");
         byte* LogoIcon = Str.New("Logo.ico");
         contextData->HInstance = GetModuleHandleA(null);
@@ -62,10 +36,10 @@ internal unsafe static partial class WindowImpl
         var styleEx = WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
         int Left = CW_USEDEFAULT;
         int Top = CW_USEDEFAULT;
-        uint Style = StyleToValue(WinStyle);  // WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME;
+        uint Style = Utils.StyleToValue(WinStyle);  // WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME;
         contextData->IsRunning = true;
-        contextData->Width = 1280;
-        contextData->Height = 720;
+        contextData->Width = info->PreferredWidth;
+        contextData->Height = info->PreferredHeight;
 
         MonitorImpl.MonitorsInfo(monitorData);
 

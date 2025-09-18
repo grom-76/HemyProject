@@ -10,7 +10,7 @@ public static partial class Example
     {
         using Hemy.Lib.Core.Context window = new();
 
-        window.CreateWindow();
+        window.Create();
         var joy1 = window.GetGamePad(Lib.Core.Input.ControlerPlayer.Player1);
         var mouse = window.Mouse;
         var keyboard = window.Keyboard;

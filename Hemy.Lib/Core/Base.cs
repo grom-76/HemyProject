@@ -16,18 +16,95 @@ using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Monitor;
 using Hemy.Lib.Core.Color;
 using Hemy.Lib.Core.Audio;
-using System.Security.Principal;
-
 
 #endif
 
+/// <summary>
+/// Entrypoint for coding like monogame
+/// </summary>
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Context : IDisposable
+public unsafe abstract class Base : IDisposable
 {
+    public readonly Settings Settings = new();
 
-    public Settings Settings = new();
+    // public readonly GameConfig Config = new();
+
+    [SkipLocalsInit]
+    public Base()
+    {
+#if WINDOWS
+        _windowData = Memory.Memory.New<WindowData>(true);
+        _graphicData = Memory.Memory.New<GraphicData>(true);
+        _audioData = Memory.Memory.New<AudioData>(true);
+        _timeData = Memory.Memory.New<TimeData>(true);
+        _inputData = Memory.Memory.New<InputData>(true);
+        _controllers = Memory.Memory.New<ControllerData>(true);
+        _monitorData = Memory.Memory.New<MonitorData>(true);
+
+
+        Mouse = new(_inputData);
+        Keyboard = new(_inputData);
+        AudioDevice = new(_audioData);
+        Window = new(_windowData);
+#endif
+
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+        // Your Rlealse
+        Release();
+
+                
+
+#if WINDOWS
+
+        AudioImpl.Dispose(_audioData);
+        GraphicImpl.Dispose(_graphicData);
+        WindowImpl.Dispose(_windowData);
+
+        Memory.Memory.Dispose(_windowData);
+        Memory.Memory.Dispose(_graphicData);
+        Memory.Memory.Dispose(_audioData);
+        Memory.Memory.Dispose(_timeData);
+        Memory.Memory.Dispose(_inputData);
+        Memory.Memory.Dispose(_controllers);
+        Memory.Memory.Dispose(_monitorData);
+#endif
+
+        _isDisposed = true;
+
+        Log.Info(" Memory remaining : " + Memory.Memory.RemainingmEMORY);
+
+        GC.SuppressFinalize(this);
+        GC.Collect(GC.MaxGeneration);// source : https://stackoverflow.com/questions/1987251/manually-destroy-c-sharp-objects
+        GC.WaitForPendingFinalizers();
+    }
+
+    public void Run()
+    {
+        Create();
+        //our init
+        Init();
+        while (IsRunning())
+        {
+            InternalUpdate();
+            // our update
+            Update();
+
+
+            TestingDraw(Palette.DarkBlue);
+        }
+
+    }
+
+    protected abstract void Init();
+    protected abstract void Release();
+    protected abstract void Update();
+
 
 
 #if WINDOWS
@@ -80,35 +157,13 @@ public unsafe sealed class Context : IDisposable
     }
 
 
-
-    [SkipLocalsInit]
-    public Context()
-    {
-#if WINDOWS
-        _windowData = Memory.Memory.New<WindowData>(true);
-        _graphicData = Memory.Memory.New<GraphicData>(true);
-        _audioData = Memory.Memory.New<AudioData>(true);
-        _timeData = Memory.Memory.New<TimeData>(true);
-        _inputData = Memory.Memory.New<InputData>(true);
-        _controllers = Memory.Memory.New<ControllerData>(true);
-        _monitorData = Memory.Memory.New<MonitorData>(true);
-
-
-        Mouse = new(_inputData);
-        Keyboard = new(_inputData);
-        AudioDevice = new(_audioData);
-        Window = new(_windowData);
-#endif
-    }
-
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public void Create()
+    private void Create()
     {
 
 #if WINDOWS
-        //Convert  settings to internal window settings 
         Platform.Windows.WindowsSetting* settings = Memory.Memory.New<Platform.Windows.WindowsSetting>();
 
         Platform.Windows.WindowsSetting.Binding(settings, Settings);
@@ -132,23 +187,14 @@ public unsafe sealed class Context : IDisposable
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
         
-
 #endif
 
-    }
-
-
-    private void BindingSettings()
-    {
-#if WINDOWS
-
-#endif
     }
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public bool IsRunning()
+    private bool IsRunning()
 #if WINDOWS 
         => _windowData->IsRunning;
 #else
@@ -171,7 +217,7 @@ public unsafe sealed class Context : IDisposable
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public void TestingDraw(Palette screenColor)
+    private void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
         //Settings plaette to float[]
@@ -183,42 +229,11 @@ public unsafe sealed class Context : IDisposable
         
     }
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-#if WINDOWS
-
-        AudioImpl.Dispose(_audioData);
-        GraphicImpl.Dispose(_graphicData);
-        WindowImpl.Dispose(_windowData);
-
-        Memory.Memory.Dispose(_windowData);
-        Memory.Memory.Dispose(_graphicData);
-        Memory.Memory.Dispose(_audioData);
-        Memory.Memory.Dispose(_timeData);
-        Memory.Memory.Dispose(_inputData);
-        Memory.Memory.Dispose(_controllers);
-        Memory.Memory.Dispose(_monitorData);
-#endif
-
-        _isDisposed = true;
-
-        Log.Info(" Memory remaining : " + Memory.Memory.RemainingmEMORY);
-
-        GC.SuppressFinalize(this);
-
-        GC.Collect(GC.MaxGeneration);
-        GC.WaitForPendingFinalizers();
-    }
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public void Update()
+    private void InternalUpdate()
     {
 #if WINDOWS
         WindowImpl.Update(_windowData);
@@ -249,8 +264,8 @@ public unsafe sealed class Context : IDisposable
 
             case WM_SIZE:
                 // TODO AdjustWindowSize ( Wide Screen => 16/9 )
-                int width = Hemy.Lib.Core.Platform.Windows.Utils.GET_WIDTH(lParam);
-                int height = Hemy.Lib.Core.Platform.Windows.Utils.GET_HEIGHT(lParam);
+                int width =  Hemy.Lib.Core.Platform.Windows.Utils.GET_WIDTH(lParam);
+                int height =  Hemy.Lib.Core.Platform.Windows.Utils.GET_HEIGHT(lParam);
                 _windowData->Width = width; _windowData->Height = height;
 
                 return null;

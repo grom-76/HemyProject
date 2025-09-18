@@ -2,7 +2,7 @@
   "lists": [
     {
       "id": "0a834815-9496-4b83-bc74-4cbaec8e8574",
-      "title": "Features",
+      "title": "Features / BackLogs",
       "cards": [
         {
           "id": "961bbc4c-12c9-4582-8d4e-00ca24d0e408",
@@ -35,15 +35,6 @@
           "comments": []
         },
         {
-          "id": "587b2ed8-fdec-4f17-924f-d3277ebb61d6",
-          "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
-          "title": "Class For programming like monogame",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "6a84e8cb-3821-4ce9-9f27-176f71023116",
           "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
           "title": "NAUDIO : https://github.com/naudio/Vorbis",
@@ -55,15 +46,6 @@
               "color": "#eb5a46"
             }
           ],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "3c7d8e27-7abe-44b6-8f00-ec18b0395797",
-          "listId": "0a834815-9496-4b83-bc74-4cbaec8e8574",
-          "title": "SetCaptureMouse ? savoir si elle rentre ou sors de la fenetre ?",
-          "description": "",
-          "labels": [],
           "checkboxes": [],
           "comments": []
         }
@@ -136,6 +118,15 @@
           "comments": []
         },
         {
+          "id": "7de2f3fe-5648-4d04-b227-cfd5c0318206",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Memory Leak ou garbage apres 10 minute",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
           "id": "15b80837-d620-4325-8333-cdf662259386",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Set / fous . active focus mettre l'app en pause",
@@ -169,9 +160,9 @@
       "title": "Doing",
       "cards": [
         {
-          "id": "7de2f3fe-5648-4d04-b227-cfd5c0318206",
+          "id": "e7be45d4-507d-4e2e-8da2-f70704063cf8",
           "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
-          "title": "Memory Leak ou garbage apres 10 minute",
+          "title": "Ajouter un Setting Context",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -236,6 +227,15 @@
           "id": "6dbd3ded-04e1-4d07-a441-ee1c06a0c7e9",
           "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
           "title": "Test une nouvelle facon pour controller :SAO",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "587b2ed8-fdec-4f17-924f-d3277ebb61d6",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Class For programming like monogame",
           "description": "",
           "labels": [],
           "checkboxes": [],

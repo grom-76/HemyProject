@@ -10,7 +10,7 @@ public static partial class Example
     {
         using Hemy.Lib.Core.Context context = new();
 
-        context.CreateWindow();
+        context.Create();
 
         while (context.IsRunning())
         {
