@@ -18,10 +18,16 @@ public unsafe struct TimeData()
     // internal double ElapsedInSec = 0.0;
     // internal double Cycles = 1.0 / (double)TimeImpl.GetFrequency();
     // internal double TimeCurrent = 0.0;
-    internal bool IsInPause = false;
+
 
     internal ulong DeltaTime = 0UL;
     internal ulong FrameCount = 0;
+    internal uint State = STOPPED; //Stopped, = 0  ;  Running = 1 ;   Paused 2 ;  Reset = remise a zero =stop puis start ;  Resume = unpause
+
+    internal const uint STOPPED = 0;
+    internal const uint RUNNING = 1;
+    internal const uint PAUSED = 2;
+
 }
 
 #endif

@@ -45,11 +45,15 @@ public unsafe struct Time(
     // /// Gets a value indicating whether or not the time is in fixed mode.
     // /// </summary>
     // public bool IsFixedTimeStep { get; private set; }
+
+    /// <summary>
+    /// Delta Time in miliseconde
+    /// </summary>
     [SkipLocalsInit]
     public double DeltaTime
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => timeData->DeltaTime/10000;
+        get => timeData->DeltaTime / 10000;
     }
 
     /// <summary>
@@ -61,8 +65,8 @@ public unsafe struct Time(
         TimeImpl.Pause(timeData);
 #endif        
     }
-    
-     // After an intentional timing discontinuity (for instance a blocking IO operation)
+
+    // After an intentional timing discontinuity (for instance a blocking IO operation)
     // call this to avoid having the fixed timestep logic attempt a set of catch-up
     // Update calls.
     public void Resume()
@@ -71,5 +75,14 @@ public unsafe struct Time(
         TimeImpl.Resume(timeData);
 #endif   
     }
+
+    public enum TimerState : uint
+    {
+        Stopped = 0,
+        Running = 1,
+        Paused = 2
+    }
+
+    public TimerState State => (TimerState)timeData->State;
 }
 

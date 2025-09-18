@@ -48,7 +48,8 @@ public unsafe struct Timer(ulong duration_ms, int loop =1 )
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct TimerTrigger(ulong duration_ms, int loop =1,TimerTrigger.EventTimerDelegate  action =null )
 {
-    public delegate void  EventTimerDelegate();
+    
+    public delegate void EventTimerDelegate();
     private delegate* unmanaged<void> _action = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(action) ; 
     private ulong _start = 0;
     private ulong _duration = duration_ms * (HighResolutionTimer.Frequency / 1000);

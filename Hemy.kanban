@@ -167,7 +167,22 @@
     {
       "id": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
       "title": "Doing",
-      "cards": []
+      "cards": [
+        {
+          "id": "dbf3c43c-d1b1-48a5-997a-aedcdfd61be3",
+          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "title": "Amelioerer les command",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": [
+            {
+              "id": "7923d232-1b60-4ef8-ac43-14931b5a4d54",
+              "comment": "player1.Add(StartTimer, context.Keyboard.IsPressed, Lib.Core.Input.Key.Space);\nReplace by \nTriggers(Context) .AddCommand( player1 , Name , touch, type , action\n"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
