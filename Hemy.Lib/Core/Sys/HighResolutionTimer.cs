@@ -21,6 +21,9 @@ public static class HighResolutionTimer
     => 0;
 #endif
 
+    /// <summary>
+    ///  in counts per second
+    /// </summary>
     [SkipLocalsInit]
     public static ulong Frequency
 #if WINDOWS

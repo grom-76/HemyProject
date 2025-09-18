@@ -1,6 +1,7 @@
 ﻿namespace Hemy.Sample;
 
 using Hemy.Lib.Core;
+using Hemy.Lib.Core.Sys;
 using static Hemy.Sample.Sample.Example;
 
 public class Program
@@ -9,7 +10,9 @@ public class Program
     {
         // Advanced.Main.A001_LikeMonogame();
 
-        Classic.C008_TestSettings.Run();
+        // Classic.C008_TestSettings.Run();
+
+        Classic.C009_TestTimer.Run();
     }
 
 }
