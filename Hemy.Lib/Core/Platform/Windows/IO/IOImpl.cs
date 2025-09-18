@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using HRESULT = System.UInt32;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 
 
 [SkipLocalsInit]

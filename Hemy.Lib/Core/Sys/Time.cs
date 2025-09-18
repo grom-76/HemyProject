@@ -19,22 +19,22 @@ public unsafe struct Time(
     /// <summary>
     /// Get elapsed time since the previous Update call.
     /// </summary>
-    public ulong ElapsedTicks => TimeImpl.GetTick();
+    public ulong Ticks => TimeImpl.GetTick();
 
-    /// <summary>
-    /// Get elapsed time since the previous Update call.
-    /// </summary>
-    public double ElapsedMiliseconds => timeData->ElapsedInMiliSec;
+    // /// <summary>
+    // /// Get elapsed time since the previous Update call.
+    // /// </summary>
+    // public ulong ElapsedSeconds => timeData->ElapsedInSec;
 
-    /// <summary>
-    /// Get total time since the start of the program.
-    /// </summary>
-    public double TotalTime => TimeImpl.GetTotalTime(timeData);
+    // /// <summary>
+    // /// Get total time since the start of the program.
+    // /// </summary>
+    // public double TotalTime => TimeImpl.GetTotalTime(timeData);
 
     // /// <summary>
     // /// Get total number of updates since start of the program.
     // /// </summary>
-    // public ulong FrameCount { get; private set; }
+    public ulong FrameCount => timeData->FrameCount;
 
     // /// <summary>
     // /// Get the current framerate.
@@ -45,7 +45,12 @@ public unsafe struct Time(
     // /// Gets a value indicating whether or not the time is in fixed mode.
     // /// </summary>
     // public bool IsFixedTimeStep { get; private set; }
-
+    [SkipLocalsInit]
+    public double DeltaTime
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get => timeData->DeltaTime/10000;
+    }
 
     /// <summary>
     /// Interrupt elapsed time.

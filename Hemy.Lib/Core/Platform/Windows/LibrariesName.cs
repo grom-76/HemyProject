@@ -1,6 +1,6 @@
 #if WINDOWS
 
-namespace Hemy.Lib.Core.Platform.Windows.Common;
+namespace Hemy.Lib.Core.Platform.Windows;
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

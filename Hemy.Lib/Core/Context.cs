@@ -17,6 +17,7 @@ using Hemy.Lib.Core.Platform.Windows.Monitor;
 using Hemy.Lib.Core.Color;
 using Hemy.Lib.Core.Audio;
 using System.Security.Principal;
+using Hemy.Lib.Core.Sys;
 
 
 #endif
@@ -56,12 +57,19 @@ public unsafe sealed class Context : IDisposable
         get;
     }
 
+    // [SkipLocalsInit]
+    // public double DeltaTime
+    // {
+    //     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    //     get => _timeData->DeltaTime/10000;
+    // }
     [SkipLocalsInit]
-    public double DeltaTime
+    public Time Time
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => _timeData->ElapsedInMiliSec;
+        get;
     }
+
     [SkipLocalsInit]
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
 
@@ -98,6 +106,7 @@ public unsafe sealed class Context : IDisposable
         Keyboard = new(_inputData);
         AudioDevice = new(_audioData);
         Window = new(_windowData);
+        Time = new(_timeData);
 #endif
     }
 

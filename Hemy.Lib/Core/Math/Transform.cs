@@ -11,6 +11,7 @@ using static Hemy.Lib.Core.Platform.Windows.Math.MathFuncs ;
 
 public static class Transform
 {
+    const uint Impl = 768;// MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization; 
     #region Projection
 
     public static Matrix4 CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
@@ -37,12 +38,47 @@ public static class Transform
 
     public static Matrix4 Scaling(float x, float y, float z)
     {
-        Matrix4 result = Matrix4.Identity;
-        result.M11 = Math.Abs(x);
-        result.M22 = Math.Abs(y);
-        result.M33 = Math.Abs(z);
+        Matrix4 result;
+        result.M11 = x;    result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
+        result.M21 = 0.0f; result.M22 = y;    result.M23 = 0.0f; result.M24 = 0.0f;
+        result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = z;    result.M34 = 0.0f;
+        result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
         return result;
     }
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)Impl) ]
+    public unsafe static Matrix4* Scaling(Vector3* vec3)
+    {
+        Matrix4 result;
+        result.M11 = vec3->X; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
+        result.M21 = 0.0f; result.M22 = vec3->Y; result.M23 = 0.0f; result.M24 = 0.0f;
+        result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = vec3->Z; result.M34 = 0.0f;
+        result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
+        return &result;
+    }
+
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)Impl) ]
+    public unsafe static Matrix4* Scaling(Vector3* scales,Vector3* centerPoint )
+    {
+        // Adapt rom : https://github.com/microsoft/referencesource/blob/main/System.Numerics/System/Numerics/Matrix4x4.cs
+        Matrix4 result;
+        result.M11 = scales->X; result.M12 = 0.0f; result.M13 = 0.0f; result.M14 = 0.0f;
+        result.M21 = 0.0f; result.M22 = scales->Y; result.M23 = 0.0f; result.M24 = 0.0f;
+        result.M31 = 0.0f; result.M32 = 0.0f; result.M33 = scales->Z; result.M34 = 0.0f;
+        result.M41 = centerPoint->X * (1 - scales->X);
+        result.M42 = centerPoint->Y * (1 - scales->Y);
+        result.M43 = centerPoint->Z * (1 - scales->Z);
+        result.M44 = 1.0f;
+        return &result;
+    }
+
 
     public static Matrix4 RotationX(float angle)
     {
@@ -87,6 +123,15 @@ public static class Transform
         result.M42 = value.Y;
         result.M43 = value.Z;
         return result;
+    }
+
+      public unsafe static Matrix4* Translation(Vector3* value)
+    {
+        Matrix4 result = Matrix4.Identity;
+        result.M41 = value->X;
+        result.M42 = value->Y;
+        result.M43 = value->Z;
+        return &result;
     }
 
     //TODO : CreateRotation from free axis

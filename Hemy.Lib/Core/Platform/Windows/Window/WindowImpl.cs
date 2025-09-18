@@ -5,7 +5,7 @@ namespace Hemy.Lib.Core.Platform.Windows.Window;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 using static Hemy.Lib.Core.Platform.Windows.Window.WindowConsts;
 
 using WORD = System.UInt16;

@@ -16,7 +16,7 @@ public unsafe struct Matrix4 : IEquatable<Matrix4>
     
     private static readonly Matrix4 identity =  new() {  M11 = 1.0f,  M22 = 1.0f,  M33 = 1.0f, M44 = 1.0f };
 
-    // [SkipLocalsInit]
+    [SkipLocalsInit]
     public static ref readonly Matrix4 Identity => ref identity;
 
     /// <summary> Value at row 1 column 1 of the matrix. </summary>
@@ -265,8 +265,8 @@ public unsafe struct Matrix4 : IEquatable<Matrix4>
     /// </summary>
     /// <returns>A sixteen-element array containing the components of the matrix.</returns>
     public readonly float[] ToArray=> [M11,M12,M13,M14,M21,M22,M23,M24,M31,M32,M33,M34,M41,M42,M43,M44];
-
-    
+  
+    public static unsafe implicit operator float[](Matrix4 matrix) => matrix.ToArray;
 
     #endregion
 
@@ -415,7 +415,7 @@ public unsafe struct Matrix4 : IEquatable<Matrix4>
         };
 
 
-   
+
     // /// <summary>
     // /// Scales a matrix by a given value.
     // /// </summary>
@@ -423,45 +423,49 @@ public unsafe struct Matrix4 : IEquatable<Matrix4>
     // /// <param name="right">The amount by which to scale.</param>
     // /// <returns>The scaled matrix.</returns>
     public static Matrix4 operator *(Matrix4 left, Matrix4 right)
-    => new(){
-            M11 = left.M11 * right.M11 + left.M12 * right.M21 + left.M13 * right.M31 + left.M14 * right.M41,
-            M12 = left.M11 * right.M12 + left.M12 * right.M22 + left.M13 * right.M32 + left.M14 * right.M42,
-            M13 = left.M11 * right.M13 + left.M12 * right.M23 + left.M13 * right.M33 + left.M14 * right.M43,
-            M14 = left.M11 * right.M14 + left.M12 * right.M24 + left.M13 * right.M34 + left.M14 * right.M44,
-            M21 = left.M21 * right.M11 + left.M22 * right.M21 + left.M23 * right.M31 + left.M24 * right.M41,
-            M22 = left.M21 * right.M12 + left.M22 * right.M22 + left.M23 * right.M32 + left.M24 * right.M42,
-            M23 = left.M21 * right.M13 + left.M22 * right.M23 + left.M23 * right.M33 + left.M24 * right.M43,
-            M24 = left.M21 * right.M14 + left.M22 * right.M24 + left.M23 * right.M34 + left.M24 * right.M44,
-            M31 = left.M31 * right.M11 + left.M32 * right.M21 + left.M33 * right.M31 + left.M34 * right.M41,
-            M32 = left.M31 * right.M12 + left.M32 * right.M22 + left.M33 * right.M32 + left.M34 * right.M42,
-            M33 = left.M31 * right.M13 + left.M32 * right.M23 + left.M33 * right.M33 + left.M34 * right.M43,
-            M34 = left.M31 * right.M14 + left.M32 * right.M24 + left.M33 * right.M34 + left.M34 * right.M44,
-            M41 = left.M41 * right.M11 + left.M42 * right.M21 + left.M43 * right.M31 + left.M44 * right.M41,
-            M42 = left.M41 * right.M12 + left.M42 * right.M22 + left.M43 * right.M32 + left.M44 * right.M42,
-            M43 = left.M41 * right.M13 + left.M42 * right.M23 + left.M43 * right.M33 + left.M44 * right.M43,
-            M44 = left.M41 * right.M14 + left.M42 * right.M24 + left.M43 * right.M34 + left.M44 * right.M44
-        };
-
+    {
+        Matrix4 m;
+        m.M11 = left.M11 * right.M11 + left.M12 * right.M21 + left.M13 * right.M31 + left.M14 * right.M41;
+        m.M12 = left.M11 * right.M12 + left.M12 * right.M22 + left.M13 * right.M32 + left.M14 * right.M42;
+        m.M13 = left.M11 * right.M13 + left.M12 * right.M23 + left.M13 * right.M33 + left.M14 * right.M43;
+        m.M14 = left.M11 * right.M14 + left.M12 * right.M24 + left.M13 * right.M34 + left.M14 * right.M44;
+        m.M21 = left.M21 * right.M11 + left.M22 * right.M21 + left.M23 * right.M31 + left.M24 * right.M41;
+        m.M22 = left.M21 * right.M12 + left.M22 * right.M22 + left.M23 * right.M32 + left.M24 * right.M42;
+        m.M23 = left.M21 * right.M13 + left.M22 * right.M23 + left.M23 * right.M33 + left.M24 * right.M43;
+        m.M24 = left.M21 * right.M14 + left.M22 * right.M24 + left.M23 * right.M34 + left.M24 * right.M44;
+        m.M31 = left.M31 * right.M11 + left.M32 * right.M21 + left.M33 * right.M31 + left.M34 * right.M41;
+        m.M32 = left.M31 * right.M12 + left.M32 * right.M22 + left.M33 * right.M32 + left.M34 * right.M42;
+        m.M33 = left.M31 * right.M13 + left.M32 * right.M23 + left.M33 * right.M33 + left.M34 * right.M43;
+        m.M34 = left.M31 * right.M14 + left.M32 * right.M24 + left.M33 * right.M34 + left.M34 * right.M44;
+        m.M41 = left.M41 * right.M11 + left.M42 * right.M21 + left.M43 * right.M31 + left.M44 * right.M41;
+        m.M42 = left.M41 * right.M12 + left.M42 * right.M22 + left.M43 * right.M32 + left.M44 * right.M42;
+        m.M43 = left.M41 * right.M13 + left.M42 * right.M23 + left.M43 * right.M33 + left.M44 * right.M43;
+        m.M44 = left.M41 * right.M14 + left.M42 * right.M24 + left.M43 * right.M34 + left.M44 * right.M44;
+        return m;
+    }
     
+  
+
     public static Matrix4 operator /(Matrix4 left, Matrix4 right)
-    => new()  {
-            M11 = left.M11 / right.M11,
-            M12 = left.M12 / right.M12,
-            M13 = left.M13 / right.M13,
-            M14 = left.M14 / right.M14,
-            M21 = left.M21 / right.M21,
-            M22 = left.M22 / right.M22,
-            M23 = left.M23 / right.M23,
-            M24 = left.M24 / right.M24,
-            M31 = left.M31 / right.M31,
-            M32 = left.M32 / right.M32,
-            M33 = left.M33 / right.M33,
-            M34 = left.M34 / right.M34,
-            M41 = left.M41 / right.M41,
-            M42 = left.M42 / right.M42,
-            M43 = left.M43 / right.M43,
-            M44 = left.M44 / right.M44
-        } ;
+    => new()
+    {
+        M11 = left.M11 / right.M11,
+        M12 = left.M12 / right.M12,
+        M13 = left.M13 / right.M13,
+        M14 = left.M14 / right.M14,
+        M21 = left.M21 / right.M21,
+        M22 = left.M22 / right.M22,
+        M23 = left.M23 / right.M23,
+        M24 = left.M24 / right.M24,
+        M31 = left.M31 / right.M31,
+        M32 = left.M32 / right.M32,
+        M33 = left.M33 / right.M33,
+        M34 = left.M34 / right.M34,
+        M41 = left.M41 / right.M41,
+        M42 = left.M42 / right.M42,
+        M43 = left.M43 / right.M43,
+        M44 = left.M44 / right.M44
+    };
 
 
     #endregion

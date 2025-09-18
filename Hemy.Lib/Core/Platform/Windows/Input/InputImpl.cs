@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Window;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 
 
 [SkipLocalsInit]

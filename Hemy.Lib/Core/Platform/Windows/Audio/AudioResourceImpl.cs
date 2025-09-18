@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using HRESULT = System.UInt32;
 using Hemy.Lib.Core.Sys;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 using Hemy.Lib.Core;
 using Hemy.Lib.Tools.Sound;
 using System;

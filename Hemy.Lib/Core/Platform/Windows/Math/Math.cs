@@ -6,7 +6,7 @@ namespace Hemy.Lib.Core.Platform.Windows.Math;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]

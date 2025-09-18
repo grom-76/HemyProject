@@ -137,7 +137,7 @@ public unsafe abstract class Base : IDisposable
     public double DeltaTime
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => _timeData->ElapsedInMiliSec;
+        get => _timeData->DeltaTime;
     }
     [SkipLocalsInit]
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);

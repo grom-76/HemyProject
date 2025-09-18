@@ -273,7 +273,7 @@ public static class Vector2DExt
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static Vector2 Transform(this Vector2 vec, in Matrix transform)
+    public static Vector2 Transform(this Vector2 vec, in Matrix4 transform)
     {
         return new Vector2(
             (vec.X * transform.M11) + (vec.Y * transform.M21) + transform.M41,

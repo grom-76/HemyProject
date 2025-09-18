@@ -5,7 +5,7 @@ namespace Hemy.Lib.Core.Platform.Windows.Monitor;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using static Hemy.Lib.Core.Platform.Windows.Common.LibrariesName;
+using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 using WORD = System.UInt16;
 using DWORD = System.UInt32; // A 32-bit unsigned integer. The range is 0 through 4294967295 decimal.
 using HRESULT = System.UInt32;

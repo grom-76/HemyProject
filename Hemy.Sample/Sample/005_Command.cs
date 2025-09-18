@@ -36,7 +36,7 @@ public static partial class Example
 
             if (cmd.IsAction(Jump))
             {
-                Log.Info("Jump ....." + window.DeltaTime );
+                Log.Info("Jump ....." + window.Time.DeltaTime );
             }
 
             window.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
