@@ -128,37 +128,47 @@ internal unsafe static partial class MathFuncs
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     internal static partial double asin(double x);
+
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial float fminf(float x, float y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial double fmin(double x, double y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial float fmaxf(float x, float y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial double fmax(double x, double y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial float atan2f(float x, float y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial double atan2(double x, double y);  
     
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial float acosf(float x);
 
     [LibraryImport(Ucrt, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial float fminf(float x,float y);
-
-    [LibraryImport(Ucrt, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial double fmin(double x,double y);
-    
-    [LibraryImport(Ucrt, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial float fmaxf(float x,float y);
-
-    [LibraryImport(Ucrt, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial double fmax(double x,double y);
-
-    [LibraryImport(Ucrt, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial float atan2f(float x,float y);
-
-    [LibraryImport(Ucrt, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static partial double atan2(double x,double y);  
+    internal static partial double acos(double x);  
 }
 
 #endif

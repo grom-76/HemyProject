@@ -10,7 +10,7 @@ using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Window;
 
 
-[SkipLocalsInit] // TODO: pourquoi skiplocaalinit a un fonctionnement eratique dans graphics device
+[SkipLocalsInit] 
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static class RenderImpl

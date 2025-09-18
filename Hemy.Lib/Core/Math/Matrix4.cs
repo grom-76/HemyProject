@@ -8,16 +8,16 @@ using System.Security;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe struct Matrix : IEquatable<Matrix>
+public unsafe struct Matrix4 : IEquatable<Matrix4>
 {
     /// <summary> The size of the <see cref="Matrix" /> type, in bytes. </summary>
     
     public static readonly int SizeInBytes = 16 * sizeof(float);
     
-    private static readonly Matrix identity =  new() {  M11 = 1.0f,  M22 = 1.0f,  M33 = 1.0f, M44 = 1.0f };
+    private static readonly Matrix4 identity =  new() {  M11 = 1.0f,  M22 = 1.0f,  M33 = 1.0f, M44 = 1.0f };
 
     // [SkipLocalsInit]
-    public static ref readonly Matrix Identity => ref identity;
+    public static ref readonly Matrix4 Identity => ref identity;
 
     /// <summary> Value at row 1 column 1 of the matrix. </summary>
     public float M11 = 0.0f;
@@ -275,7 +275,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
     /// Initializes a new instance of the <see cref="Matrix" /> struct.
     /// </summary>
     /// <param name="value">The value that will be assigned to all components.</param>
-    public Matrix(float value)
+    public Matrix4(float value)
     {
         M11 = M12 = M13 = M14 = M21 = M22 = M23 = M24 = M31 = M32 = M33 = M34 = M41 = M42 = M43 = M44 = value;
     }
@@ -299,7 +299,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
     /// <param name="m42">The value to assign at row 4 column 2 of the matrix.</param>
     /// <param name="m43">The value to assign at row 4 column 3 of the matrix.</param>
     /// <param name="m44">The value to assign at row 4 column 4 of the matrix.</param>
-    public Matrix(float m11, float m12, float m13, float m14,
+    public Matrix4(float m11, float m12, float m13, float m14,
                     float m21, float m22, float m23, float m24,
                     float m31, float m32, float m33, float m34,
                     float m41, float m42, float m43, float m44)
@@ -331,7 +331,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
     /// Thrown when <paramref name="values" /> contains more or less than sixteen
     /// elements.
     /// </exception>
-    public Matrix(float[] values)
+    public Matrix4(float[] values)
     {
         // Guard if (values == null) throw new ArgumentNullException(nameof(values));
         // if (values.Length != 16) throw new ArgumentOutOfRangeException(nameof(values), "There must be sixteen and only sixteen input values for Matrix.");
@@ -373,7 +373,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
     // /// <param name="left">The first matrix to add.</param>
     // /// <param name="right">The second matrix to add.</param>
     // /// <returns>The sum of the two matrices.</returns>
-    public static Matrix operator + (Matrix left, Matrix right)
+    public static Matrix4 operator + (Matrix4 left, Matrix4 right)
     => new() {
             M11 = left.M11 + right.M11,
             M12 = left.M12 + right.M12,
@@ -394,7 +394,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
         };
 
    
-    public static Matrix operator - (Matrix left, Matrix right)
+    public static Matrix4 operator - (Matrix4 left, Matrix4 right)
     => new() {
             M11 = left.M11 - right.M11,
             M12 = left.M12 - right.M12,
@@ -422,7 +422,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
     // /// <param name="left">The matrix to scale.</param>
     // /// <param name="right">The amount by which to scale.</param>
     // /// <returns>The scaled matrix.</returns>
-    public static Matrix operator *(Matrix left, Matrix right)
+    public static Matrix4 operator *(Matrix4 left, Matrix4 right)
     => new(){
             M11 = left.M11 * right.M11 + left.M12 * right.M21 + left.M13 * right.M31 + left.M14 * right.M41,
             M12 = left.M11 * right.M12 + left.M12 * right.M22 + left.M13 * right.M32 + left.M14 * right.M42,
@@ -443,7 +443,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
         };
 
     
-    public static Matrix operator /(Matrix left, Matrix right)
+    public static Matrix4 operator /(Matrix4 left, Matrix4 right)
     => new()  {
             M11 = left.M11 / right.M11,
             M12 = left.M12 / right.M12,
@@ -476,7 +476,7 @@ public unsafe struct Matrix : IEquatable<Matrix>
                             M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
     
 
-    public readonly bool EqualWith(ref Matrix other)
+    public readonly bool EqualWith(ref Matrix4 other)
         =>  NearEqual(other.M11, M11) && NearEqual(other.M12, M12) &&  NearEqual(other.M13, M13) && NearEqual(other.M14, M14) &&
             NearEqual(other.M21, M21) && NearEqual(other.M22, M22) && NearEqual(other.M23, M23) && NearEqual(other.M24, M24) &&
             NearEqual(other.M31, M31) && NearEqual(other.M32, M32) && NearEqual(other.M33, M33) && NearEqual(other.M34, M34) &&
@@ -494,11 +494,11 @@ public unsafe struct Matrix : IEquatable<Matrix>
         return BitConverter.UInt32BitsToSingle(raw & mask);
     }
 
-    public readonly bool Equals(Matrix other) => EqualWith(ref other);
-    public override readonly bool Equals(object value)=> value is Matrix mat && EqualWith(ref mat)  ;
-    public static bool operator ==(Matrix left, Matrix right)  =>left.Equals(right);
+    public readonly bool Equals(Matrix4 other) => EqualWith(ref other);
+    public override readonly bool Equals(object value)=> value is Matrix4 mat && EqualWith(ref mat)  ;
+    public static bool operator ==(Matrix4 left, Matrix4 right)  =>left.Equals(right);
    
-    public static bool operator !=(Matrix left, Matrix right) => !left.Equals(right);
+    public static bool operator !=(Matrix4 left, Matrix4 right) => !left.Equals(right);
     public override readonly int GetHashCode() => HashCode.Combine(M11,M12,M13,M14) + HashCode.Combine(M21,M22,M23,M24) + HashCode.Combine(M31,M32,M33,M34) + HashCode.Combine(M41,M42,M43,M44);
     
 }

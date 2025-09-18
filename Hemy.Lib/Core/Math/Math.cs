@@ -29,6 +29,21 @@ public static class Math
     [SkipLocalsInit]
     public static float NearZeroEpsilon2 => 4.7683716E-07f;
 
+    /// <summary> Retourne l' Arc cosinus de l'angle spécifié en radian </summary>
+    /// <param name="x"> angle in rafian format double</param>
+    /// <returns>The cosine of d. If d is equal to double.NaN, double.NegativeInfinity, or double.PositiveInfinity, this method returns double.NaN</returns>
+    public static double ACos(double x)
+#if WINDOWS
+    => acos(x);
+#endif
+
+    /// <summary> Retourne l' Arc cosinus de l'angle spécifié en radian </summary>
+    /// <param name="x"> angle in rafian format float</param>
+    /// <returns>The cosine of d. If d is equal to float.NaN, float.NegativeInfinity, or float.PositiveInfinity, this method returns float.NaN</returns>
+    public static float ACos(float x)
+#if WINDOWS
+    => acosf(x);
+#endif
 
     /// <summary> Retourne le cosinus de l'angle spécifié en radian </summary>
     /// <param name="x"> angle in rafian format double</param>
@@ -96,17 +111,18 @@ public static class Math
     => atan2f(x,y);
 #endif
     /// <summary> Convert radians to degrees  use : angleIndegree =  Math.IntoDegree( angleInRadian ) ;</summary>
+    /// <param name="radians">An angle in radians format float</param>
+    /// <returns>The angle expressed in degrees</returns>
+    public static float IntoDegree(float radians) => radians * RADIAN_TO_DEGREE_FLOAT;
+    /// <summary> Convert radians to degrees  use : angleIndegree =  Math.IntoDegree( angleInRadian ) ;</summary>
     /// <param name="radians">An angle in radians format double</param>
     /// <returns>The angle expressed in degrees</returns>
-    public static double InToDegree(double radians) => radians * RADIAN_TO_DEGREE_DOUBLE;
+    public static double IntoDegree(double radians) => radians * RADIAN_TO_DEGREE_DOUBLE;
     /// <summary> Convert radians to degrees  use : angleIndegree =   angleInRadian.ToDegree() ;</summary>
     /// <param name="radians">An angle in radians format double</param>
     /// <returns>The angle expressed in degrees</returns>
     public static double ToDegree(this double radians) => radians * RADIAN_TO_DEGREE_DOUBLE;
-    /// <summary> Convert radians to degrees  use : angleIndegree =  Math.IntoDegree( angleInRadian ) ;</summary>
-    /// <param name="radians">An angle in radians format float</param>
-    /// <returns>The angle expressed in degrees</returns>
-    public static float IntoDegree(float radians) => radians * RADIAN_TO_DEGREE_FLOAT;
+   
     /// <summary> Convert radians to degrees  use : angleIndegree =   angleInRadian.ToDegree() ;</summary>
     /// <param name="radians">An angle in radians format float</param>
     /// <returns>The angle expressed in degrees</returns>
