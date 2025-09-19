@@ -18,21 +18,15 @@ internal static unsafe partial class TimeImpl
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    internal static void Update(TimeData* timerData)
+    internal static void Update(TimeData* timerData) // Tick 
     {
-        // ulong curTime = GetTick();
-        // timerData->TimeCurrent = curTime * timerData->Cycles;
-        // timerData->ElapsedInSec = timerData->IsInPause ? 0.0 : (curTime - timerData->PreviousTick) * timerData->Cycles;
-        timerData->CurrentTick =  GetTick();
+        if (timerData->State == TimeData.PAUSED) return;
 
-        timerData->DeltaTime =  timerData->State == TimeData.PAUSED ? 0UL : timerData->CurrentTick - timerData->PreviousTick;
-
-        timerData->PreviousTick = timerData->State == TimeData.PAUSED? timerData->PreviousTick : timerData->CurrentTick;
-
-        timerData->FrameCount = timerData->State == TimeData.PAUSED ? timerData->FrameCount : timerData->FrameCount + 1;
+        timerData->CurrentFrameTime =  GetTick();
+        timerData->DeltaTime =  timerData->CurrentFrameTime - timerData->PreviousFrameTime;
+        timerData->PreviousFrameTime =  timerData->CurrentFrameTime;
+        timerData->FrameCount =  timerData->FrameCount + 1;
         //NEW 
-        
-
     }
 
     // internal static double GetTotalTime(TimeData* timerData)
@@ -42,14 +36,13 @@ internal static unsafe partial class TimeImpl
 
     internal static void Resume(TimeData* timerData) //unpause
     {
-
-        timerData->PreviousTick = GetTick();
-        timerData->BaseTime = timerData->PreviousTick;
+        timerData->PreviousFrameTime = GetTick();
+        timerData->BaseTime = timerData->PreviousFrameTime;
         timerData->StopTime = 0;
         timerData->State = TimeData.RUNNING;
     }
 
-    internal static void Start(TimeData* timerData)
+    internal static void Start(TimeData* timerData) // Reset .????
     {
         if (timerData->State == TimeData.PAUSED)
         {
@@ -57,18 +50,14 @@ internal static unsafe partial class TimeImpl
             return;
         }
 
-        ulong startTime = GetTick();
-        timerData->CurrentTick =  startTime;
-
-        timerData->PausedTime += startTime - timerData->StopTime;
-
-        timerData->PreviousTick = timerData->BaseTime = startTime;
-
+        timerData->CurrentFrameTime = GetTick();
+        timerData->PausedTime += timerData->CurrentFrameTime - timerData->StopTime;
+        timerData->PreviousFrameTime = timerData->BaseTime = timerData->CurrentFrameTime;
         timerData->StopTime = 0;
         timerData->State = TimeData.RUNNING;
     }
 
-    internal static void Pause(TimeData* timerData)
+    internal static void Pause(TimeData* timerData) // STOP ???
     {
         if (timerData->State == TimeData.PAUSED) return;
 

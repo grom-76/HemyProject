@@ -184,6 +184,30 @@
               "comment": "float[] ToFloatsARGB(uint color) => [1.0f, 0.3f, 0.2f, 05f]; \nfloat[] ToFloatsBGRA(uint color) => [1.0f, 0.3f, 0.2f, 05f]; \nbyte[] ToBytesARGB(uint color) => [255,128,56,65,5]; \nbyte[] ToByetsBGRA(uint color) => [255,128,56,65,5]; "
             }
           ]
+        },
+        {
+          "id": "d25efcca-d76c-40b4-be76-f9675d861449",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Accessing private members without reflection",
+          "description": "https://www.meziantou.net/accessing-private-members-without-reflection-in-csharp.htm\n",
+          "labels": [
+            {
+              "id": "54a7b89c-69a3-4e0a-9d9f-f5643d506d57",
+              "title": "Code",
+              "color": "#f2d600"
+            }
+          ],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "8cab93a0-532b-40b1-baec-e6a727db1b23",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Observer Pattern",
+          "description": "https://themorningdev.com/observer-pattern/",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },

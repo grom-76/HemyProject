@@ -63,34 +63,94 @@ public unsafe struct ShaderData()
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static class ShadersImpl
 {
-	internal static void TestSHaderCompil()
+
+
+/*
+	string glsl = @"		#version 450
+
+	layout(location = 0) in vec3 fragColor;
+
+	layout(location = 0) out vec4 outColor;
+
+	void main()
 	{
+		outColor = vec4(fragColor, 1.0);
+
+	}
+	";
+*/
+	private static void Add_Glsl_Fragment_Header(string includes = "" )
+	{
+		_ = @"
+		#version 450
+		";
+	}
+	
+	public static void Add_Glsl_Fragment_Layout( int location,bool inout ,uint type /*vec*/ , string name	)
+	{
+		_ = @"layout(location = 0) in vec3 fragColor;
+
+	layout(location = 0) out vec4 outColor;";
 
 	}
 
-	public static void AddSampler2D(string name)
+	public static void Add_Glsl_Fragment_EntryPoint(string content, string name = "main")
 	{
-		//descriptor layout
-		// in fragmentshader add Line texture2d sampler2d
+		_ = @"void main() 
+{
+    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    fragColor = colors[gl_VertexIndex];
+}";
 	}
 
-	public static void AddLayout(int location, uint type, string name)
+
+	private static void Add_Glsl_Vertex_Header(string includes = "")
 	{
+		_ = @"
+		#version 460
+		#extension GL_ARB_separate_shader_objects : enable
+		";
+	}
+
+	public static void Add_Glsl_Vertex_Layout( int location,bool inout ,uint type /*vec*/ , string name	)
+	{
+		_ = "layout(location = 0) out vec3 fragColor;";
 
 	}
 
-
-
-	public static void AddEntryPoint(string content, string name = "main")
+	public static void Add_Glsl_Vertex_EmbedddedValues( string descriptions)
 	{
-
+		_ = @" vec2 positions[3] = vec2[]
+(
+    vec2(0.0, -0.5),
+    vec2(0.5, 0.5),
+    vec2(-0.5, 0.5)
+);";
+		_ = @" vec3 colors[3] = vec3[]
+(
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, 0.0, 1.0)
+);";
 	}
+
+	public static void Add_Glsl_Vertex_EntryPoint(string content, string name = "main")
+	{
+		_ = @"void main() 
+{
+    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    fragColor = colors[gl_VertexIndex];
+}";
+	}
+
 
 	public static void Build()
 	{
 		//Add All string in one stream string 
 		//Use shaderc to compil
 		// create resource file ?
+
+		// Create byteCode SPIRV with shaderc Compiler 
 	}
 
 	public static void AddShader(string vertex, string fragment, string entrypoint = "main")

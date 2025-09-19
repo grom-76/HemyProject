@@ -25,7 +25,6 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
     private static bool EmptyInput(byte b) { _ = b; return false; }
 
 
-
     public void Add(uint id, EventDelegateK inputEvent, Key Key, EventActionExecute actionExecute = null)
     {
         actionExecute ??= Empty;
@@ -99,7 +98,7 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
 
             if (IsValidTimer(&data))
             {
-                Log.Warning( data.ToString() );
+                Log.Warning(data.ToString());
                 _triggerData[i].Loop--;
                 _triggerData[i].StartTime = HighResolutionTimer.TimeStamp;
 
@@ -122,7 +121,22 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
         //     data.ActionExecute();
         // }
 
+
+
     }
+
+    // private readonly object _triggerLock = new object();
+
+    // public async Task NotifyObserversAsync(NotificationData data)
+    // {
+    //     // lock( _triggerLock ){
+    //     var tasks = _observers.Select(observer =>
+    //         Task.Run(() => observer.Update(data))
+    //     );
+
+    //     await Task.WhenAll(tasks);
+    //     //}
+    // }
 
     public void Dispose()
     {

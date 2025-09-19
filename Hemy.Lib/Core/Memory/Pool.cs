@@ -23,7 +23,7 @@ public unsafe struct Pool
         _currentPositionInPool = null;
     }
 
-    public T* New<T>( T newInstance, uint itemCount = 1) where T : unmanaged
+    public T* New<T>(T newInstance, uint itemCount = 1) where T : unmanaged
     {
         uint itemSize = (uint)Memory.Size<T>();
 
@@ -36,4 +36,6 @@ public unsafe struct Pool
 
         return (T*)_currentPositionInPool;
     }
+    
+    
 }

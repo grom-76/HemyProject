@@ -39,12 +39,12 @@ public unsafe sealed class Context : IDisposable
     private InputData* _inputData = null;
     private ControllerData* _controllers = null;
     private MonitorData* _monitorData = null;
-
-
 #else
+
 #endif
-    
+
     private bool _isDisposed = false;
+    private bool _SysPaused = false; 
 
     
     [SkipLocalsInit]
@@ -190,6 +190,7 @@ public unsafe sealed class Context : IDisposable
     public void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
+        if (_SysPaused) return;
         // if  SysPaused  return;
         //Settings plaette to float[]
         RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
@@ -241,10 +242,9 @@ public unsafe sealed class Context : IDisposable
 #if WINDOWS
         WindowImpl.Update(_windowData);
 
+        if (_SysPaused) return;
 
         TimeImpl.Update(_timeData);
-
-        // if (SysPaused) return;
 
         InputImpl.UpdateInput(_inputData);
 
@@ -320,10 +320,14 @@ public unsafe sealed class Context : IDisposable
 
             case WM_KILLFOCUS:
                 Log.Info("App Kill Focus ");
+                _SysPaused = true;
+                TimeImpl.Pause(_timeData);
                 return null;
 
             case WM_SETFOCUS:
                 Log.Info("App Set Focus ");
+                _SysPaused = false;
+                TimeImpl.Resume(_timeData);
                 return null;
 
             case WM_SYSCOMMAND:
