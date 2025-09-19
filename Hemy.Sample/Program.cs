@@ -12,7 +12,9 @@ public class Program
 
         // Classic.C008_TestSettings.Run();
 
-        Classic.C009_TestTimer.Run();
+        // Classic.C009_TestTimer.Run();
+
+        Classic.C009_TestTriggers.Run();
     }
 
 }

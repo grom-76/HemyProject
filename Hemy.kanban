@@ -118,15 +118,6 @@
           "comments": []
         },
         {
-          "id": "7de2f3fe-5648-4d04-b227-cfd5c0318206",
-          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
-          "title": "Memory Leak ou garbage apres 10 minute",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "15b80837-d620-4325-8333-cdf662259386",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Set / fous . active focus mettre l'app en pause",
@@ -154,6 +145,20 @@
           "comments": []
         },
         {
+          "id": "dbf3c43c-d1b1-48a5-997a-aedcdfd61be3",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Amelioerer les command",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": [
+            {
+              "id": "7923d232-1b60-4ef8-ac43-14931b5a4d54",
+              "comment": "player1.Add(StartTimer, context.Keyboard.IsPressed, Lib.Core.Input.Key.Space);\nReplace by \nTriggers(Context) .AddCommand( player1 , Name , touch, type , action\n"
+            }
+          ]
+        },
+        {
           "id": "f891fcf2-8712-472d-844e-274d9273ee49",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Mettre le deltatiME ? cURRENTtIME DIRECT EN MILISECONDE EST ULONG",
@@ -169,18 +174,28 @@
       "title": "Doing",
       "cards": [
         {
-          "id": "dbf3c43c-d1b1-48a5-997a-aedcdfd61be3",
+          "id": "f0d72061-24b3-42a3-b323-4b51b5013405",
           "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
-          "title": "Amelioerer les command",
+          "title": "Set Cursor position ( on center screen )",
           "description": "",
           "labels": [],
           "checkboxes": [],
-          "comments": [
-            {
-              "id": "7923d232-1b60-4ef8-ac43-14931b5a4d54",
-              "comment": "player1.Add(StartTimer, context.Keyboard.IsPressed, Lib.Core.Input.Key.Space);\nReplace by \nTriggers(Context) .AddCommand( player1 , Name , touch, type , action\n"
-            }
-          ]
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "5649505c-463e-4af0-b7d9-ea43c612f575",
+      "title": "BUGS",
+      "cards": [
+        {
+          "id": "7de2f3fe-5648-4d04-b227-cfd5c0318206",
+          "listId": "5649505c-463e-4af0-b7d9-ea43c612f575",
+          "title": "Memory Leak ou garbage apres 10 minute",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -188,6 +203,16 @@
       "id": "d3951d7f-8cd2-4876-afad-238c5a6af495",
       "title": "Done",
       "cards": [
+        {
+          "id": "58453ca8-bc69-4c8b-86cf-45a5bbadb608",
+          "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",
+          "title": "Triggers Timers not work",
+          "description": "",
+          "dueDate": "2025-09-18T23:02:00.000Z",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "cba00568-1bab-4943-add9-1b7f534eee02",
           "listId": "d3951d7f-8cd2-4876-afad-238c5a6af495",

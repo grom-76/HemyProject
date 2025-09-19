@@ -77,10 +77,15 @@ internal unsafe static partial class InputImpl
     internal static void SetMousePos(InputData* inputData, int x, int y)
     {
         POINT p = new(x, y);
+        inputData->Mouse_PreviousFrame_Position_X = x;
+        inputData->Mouse_PreviousFrame_Position_Y = y;
         _ = ClientToScreen(inputData->Handle, &p);
+        SetCursorPos(x, y);
 
         inputData->Mouse_CurrentFrame_Position_X = x;
         inputData->Mouse_CurrentFrame_Position_Y = y;
+
+
     }
 
     [SkipLocalsInit]

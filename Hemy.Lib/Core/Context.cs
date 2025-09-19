@@ -39,8 +39,11 @@ public unsafe sealed class Context : IDisposable
     private InputData* _inputData = null;
     private ControllerData* _controllers = null;
     private MonitorData* _monitorData = null;
+
+
 #else
 #endif
+    
     private bool _isDisposed = false;
 
     
@@ -88,6 +91,11 @@ public unsafe sealed class Context : IDisposable
     }
 
 
+    [SkipLocalsInit]
+    public Triggers Triggers  {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
 
     [SkipLocalsInit]
     public Context()
@@ -101,12 +109,13 @@ public unsafe sealed class Context : IDisposable
         _controllers = Memory.Memory.New<ControllerData>(true);
         _monitorData = Memory.Memory.New<MonitorData>(true);
 
-
+        
         Mouse = new(_inputData);
         Keyboard = new(_inputData);
         AudioDevice = new(_audioData);
         Window = new(_windowData);
         Time = new(_timeData);
+        Triggers = new();
 #endif
     }
 
@@ -146,7 +155,6 @@ public unsafe sealed class Context : IDisposable
 
     }
 
-
     private void BindingSettings()
     {
 #if WINDOWS
@@ -176,13 +184,13 @@ public unsafe sealed class Context : IDisposable
 #endif
     }
 
-
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     public void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
+        // if  SysPaused  return;
         //Settings plaette to float[]
         RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
         RenderImpl.Draw(_graphicData);
@@ -200,6 +208,7 @@ public unsafe sealed class Context : IDisposable
         if (_isDisposed) return;
 
 #if WINDOWS
+        Triggers.Dispose();
 
         AudioImpl.Dispose(_audioData);
         GraphicImpl.Dispose(_graphicData);
@@ -231,13 +240,20 @@ public unsafe sealed class Context : IDisposable
     {
 #if WINDOWS
         WindowImpl.Update(_windowData);
+
+
         TimeImpl.Update(_timeData);
+
+        // if (SysPaused) return;
+
         InputImpl.UpdateInput(_inputData);
 
         ControllerImpl.UpdateController(_controllers, 0);
         ControllerImpl.UpdateController(_controllers, 1);
         ControllerImpl.UpdateController(_controllers, 2);
         ControllerImpl.UpdateController(_controllers, 3);
+
+        Triggers.Update();
 #endif
     }
 
