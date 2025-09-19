@@ -18,6 +18,7 @@ using Hemy.Lib.Core.Color;
 using Hemy.Lib.Core.Audio;
 using System.Security.Principal;
 using Hemy.Lib.Core.Sys;
+using Hemy.Lib.Core.Graphic;
 
 
 #endif
@@ -44,7 +45,7 @@ public unsafe sealed class Context : IDisposable
 #endif
 
     private bool _isDisposed = false;
-    private bool _SysPaused = false; 
+    
 
     
     [SkipLocalsInit]
@@ -97,6 +98,12 @@ public unsafe sealed class Context : IDisposable
         get ;
     }
 
+     [SkipLocalsInit]
+    public GraphicRender GraphicRender  {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
     [SkipLocalsInit]
     public Context()
     {
@@ -109,13 +116,14 @@ public unsafe sealed class Context : IDisposable
         _controllers = Memory.Memory.New<ControllerData>(true);
         _monitorData = Memory.Memory.New<MonitorData>(true);
 
-        
+
         Mouse = new(_inputData);
         Keyboard = new(_inputData);
         AudioDevice = new(_audioData);
         Window = new(_windowData);
         Time = new(_timeData);
         Triggers = new();
+        GraphicRender = new(_graphicData, _windowData);
 #endif
     }
 
@@ -190,7 +198,7 @@ public unsafe sealed class Context : IDisposable
     public void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
-        if (_SysPaused) return;
+        if (_windowData->SysPaused ) return;
         // if  SysPaused  return;
         //Settings plaette to float[]
         RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
@@ -242,7 +250,7 @@ public unsafe sealed class Context : IDisposable
 #if WINDOWS
         WindowImpl.Update(_windowData);
 
-        if (_SysPaused) return;
+        if (_windowData->SysPaused) return;
 
         TimeImpl.Update(_timeData);
 
@@ -320,13 +328,13 @@ public unsafe sealed class Context : IDisposable
 
             case WM_KILLFOCUS:
                 Log.Info("App Kill Focus ");
-                _SysPaused = true;
+                _windowData->SysPaused = true;
                 TimeImpl.Pause(_timeData);
                 return null;
 
             case WM_SETFOCUS:
                 Log.Info("App Set Focus ");
-                _SysPaused = false;
+                _windowData->SysPaused = false;
                 TimeImpl.Resume(_timeData);
                 return null;
 

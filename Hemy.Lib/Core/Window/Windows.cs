@@ -34,4 +34,12 @@ public unsafe sealed class Window(
         WindowImpl.UpdateCaptionTitleBar(data, title);
 #endif    
     }
+
+    public void RequestClose()
+    {
+#if WINDOWS
+        WindowImpl.RequestClose(data);
+#else        
+#endif  
+    }
 }

@@ -17,6 +17,8 @@ public unsafe struct WindowData()
     internal int Width = 1280;
     internal int Height = 720;
     internal bool IsRunning = false;
+
+    internal bool SysPaused = false; 
 }
 
 #endif

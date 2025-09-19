@@ -4,6 +4,7 @@ namespace Hemy.Lib.Core.Platform.Windows.Graphic;
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Hemy.Lib.Core.Graphic;
 using Hemy.Lib.Core.Platform.Vulkan;
 
 [SkipLocalsInit]
@@ -42,6 +43,7 @@ public unsafe struct GraphicData()
     internal VkFence* InFlightFences = null!;
     internal VkCommandPool CommandPool = VkCommandPool.Null;
     internal VkCommandBuffer* CommandBuffers = null!;
+    internal delegate* unmanaged<void> RenderPipeline = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(RenderImpl.EmptyDrawPipeline);
 }
 
 #if TODO

@@ -460,7 +460,8 @@ internal unsafe static class RenderImpl
         Vk.vkCmdBeginRenderPass(contextData->CommandBuffers[currentFrame], &renderPassInfo[i], VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
         // Vk.vkCmdBeginRenderPass2(currentCommandBuffer, &renderPassInfo[i], null);
 
-        DrawPipeline(contextData);
+        // DrawPipeline(contextData);
+        contextData->RenderPipeline();
 
         Vk.vkCmdEndRenderPass(contextData->CommandBuffers[currentFrame]);
         // } // END FOREACH RENDER PASS 
@@ -468,8 +469,14 @@ internal unsafe static class RenderImpl
         result = Vk.vkEndCommandBuffer(contextData->CommandBuffers[currentFrame]);
     }
 
+    public static void EmptyDrawPipeline()
+    {
+        
+    }
+
     static void DrawPipeline(GraphicData* contextData)
     {
+
         // if (renderData->State == 0) return;
 
         // PUSH CONSTANTS ---------- ( do before bin pipeline)
