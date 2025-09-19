@@ -6,11 +6,15 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 namespace Hemy.Lib.Core.Graphic;
 
 
-public unsafe struct Shape
+public unsafe struct Shape2D
 {
+    private Vector4 Position;
+    private Vector4 Color;
+    private uint BorderColor;
+
     public void CreateTriangle(Vector3 position, Vector4 color, uint borderColor = 0)
     {
-        
+
 
     }
 
@@ -30,7 +34,7 @@ public unsafe struct GraphicRender(
 {
     // GraphicRenderData _renderData
 
-    public void Add(Shape shape)
+    public void Add(Shape2D shape)
     {
         // see if shader exist else  create One 
 

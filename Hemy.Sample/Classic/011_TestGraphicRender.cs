@@ -14,7 +14,7 @@ public static class C011_TestGraphicRender
         context.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
         context.Create();
 
-        TestExternalClass testExternalClass = new(context);
+       
         var render = context.GraphicRender;
 
 
@@ -34,16 +34,7 @@ public static class C011_TestGraphicRender
 
     }
 
-    public class TestExternalClass(Hemy.Lib.Core.Context context)
-    {
-     
 
-        public void Close()
-        {
-            context.RequestClose();
-        }
-
-    }
 
    
 }
