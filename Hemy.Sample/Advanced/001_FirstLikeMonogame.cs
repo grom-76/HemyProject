@@ -5,6 +5,7 @@ using Hemy.Lib.Core;
 
 public class A001_LikeMonogame : Base
 {
+
     public A001_LikeMonogame()
     {
 

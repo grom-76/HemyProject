@@ -8,5 +8,9 @@ public static class Main
         game.Run();
     }
 
-
+    public static void A002_SoundAndTriggers()
+    {
+        using A002_SoundAndTriggers game = new();
+        game.Run();
+    }
 }

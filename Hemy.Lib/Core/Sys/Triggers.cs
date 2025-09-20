@@ -58,7 +58,7 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
         trigger.Key = (byte)0;
         trigger.ActionExecute = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(actionExecute);
 
-        trigger.Duration = duration_ms * (HighResolutionTimer.Frequency / 1000);
+        trigger.Duration = duration_ms * ( HighResolutionTimer.Frequency / 1000UL );
         trigger.LoopCount = loop;
 
         _triggerData[Position++] = trigger;

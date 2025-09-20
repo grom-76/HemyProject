@@ -5,7 +5,7 @@ public class Program
 {
     public static void Main()
     {
-        Advanced.Main.A001_LikeMonogame();
+        // Advanced.Main.A001_LikeMonogame();
 
         // Classic.C008_TestSettings.Run();
 
@@ -14,6 +14,8 @@ public class Program
         // Classic.C009_TestTriggers.Run();
 
         // Classic.C011_TestGraphicRender.Run();
+
+        Advanced.Main.A002_SoundAndTriggers();
     }
 
 }
