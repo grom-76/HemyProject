@@ -16,6 +16,8 @@ using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Monitor;
 using Hemy.Lib.Core.Color;
 using Hemy.Lib.Core.Audio;
+using Hemy.Lib.Core.Sys;
+using Hemy.Lib.Core.Graphic;
 
 #endif
 
@@ -27,86 +29,7 @@ using Hemy.Lib.Core.Audio;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe abstract class Base : IDisposable
 {
-    public readonly Settings Settings = new();
-
-    // public readonly GameConfig Config = new();
-
-    [SkipLocalsInit]
-    public Base()
-    {
-#if WINDOWS
-        _windowData = Memory.Memory.New<WindowData>(true);
-        _graphicData = Memory.Memory.New<GraphicData>(true);
-        _audioData = Memory.Memory.New<AudioData>(true);
-        _timeData = Memory.Memory.New<TimeData>(true);
-        _inputData = Memory.Memory.New<InputData>(true);
-        _controllers = Memory.Memory.New<ControllerData>(true);
-        _monitorData = Memory.Memory.New<MonitorData>(true);
-
-
-        Mouse = new(_inputData);
-        Keyboard = new(_inputData);
-        AudioDevice = new(_audioData);
-        Window = new(_windowData);
-#endif
-
-    }
-
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-        // Your Rlealse
-        Release();
-
-                
-
-#if WINDOWS
-
-        AudioImpl.Dispose(_audioData);
-        GraphicImpl.Dispose(_graphicData);
-        WindowImpl.Dispose(_windowData);
-
-        Memory.Memory.Dispose(_windowData);
-        Memory.Memory.Dispose(_graphicData);
-        Memory.Memory.Dispose(_audioData);
-        Memory.Memory.Dispose(_timeData);
-        Memory.Memory.Dispose(_inputData);
-        Memory.Memory.Dispose(_controllers);
-        Memory.Memory.Dispose(_monitorData);
-#endif
-
-        _isDisposed = true;
-
-        Log.Info(" Memory remaining : " + Memory.Memory.RemainingmEMORY);
-
-        GC.SuppressFinalize(this);
-        GC.Collect(GC.MaxGeneration);// source : https://stackoverflow.com/questions/1987251/manually-destroy-c-sharp-objects
-        GC.WaitForPendingFinalizers();
-    }
-
-    public void Run()
-    {
-        Create();
-        //our init
-        Init();
-        while (IsRunning())
-        {
-            InternalUpdate();
-            // our update
-            Update();
-
-
-            TestingDraw(Palette.DarkBlue);
-        }
-
-    }
-
-    protected abstract void Init();
-    protected abstract void Release();
-    protected abstract void Update();
-
-
-
+   
 #if WINDOWS
     private WindowData* _windowData = null;
     private GraphicData* _graphicData = null;
@@ -116,9 +39,10 @@ public unsafe abstract class Base : IDisposable
     private ControllerData* _controllers = null;
     private MonitorData* _monitorData = null;
 #else
-#endif
-    private bool _isDisposed = false;
 
+#endif
+
+    private bool _isDisposed = false;
     
     [SkipLocalsInit]
     public Keyboard Keyboard
@@ -134,11 +58,12 @@ public unsafe abstract class Base : IDisposable
     }
 
     [SkipLocalsInit]
-    public double DeltaTime
+    public Time Time
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => _timeData->DeltaTime;
+        get;
     }
+
     [SkipLocalsInit]
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
 
@@ -158,76 +83,122 @@ public unsafe abstract class Base : IDisposable
 
 
     [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    private void Create()
+    public Triggers Triggers  {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public GraphicDevice GraphicDevice
     {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public Base()
+    {
+#if WINDOWS
+        _windowData = Memory.Memory.New<WindowData>(true);
+        _graphicData = Memory.Memory.New<GraphicData>(true);
+        _audioData = Memory.Memory.New<AudioData>(true);
+        _timeData = Memory.Memory.New<TimeData>(true);
+        _inputData = Memory.Memory.New<InputData>(true);
+        _controllers = Memory.Memory.New<ControllerData>(true);
+        _monitorData = Memory.Memory.New<MonitorData>(true);
+
+        GraphicDevice = new(_graphicData, _windowData);
+        Mouse = new(_inputData);
+        Keyboard = new(_inputData);
+        AudioDevice = new(_audioData);
+        Window = new(_windowData);
+        Time = new(_timeData);
+        Triggers = new();
+#endif
+
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
 
 #if WINDOWS
-        Platform.Windows.WindowsSetting* settings = Memory.Memory.New<Platform.Windows.WindowsSetting>();
+        Triggers.Dispose();
 
-        Platform.Windows.WindowsSetting.Binding(settings, Settings);
+        AudioImpl.Dispose(_audioData);
+        GraphicImpl.Dispose(_graphicData);
+        WindowImpl.Dispose(_windowData);
+
+        Memory.Memory.Dispose(_windowData);
+        Memory.Memory.Dispose(_graphicData);
+        Memory.Memory.Dispose(_audioData);
+        Memory.Memory.Dispose(_timeData);
+        Memory.Memory.Dispose(_inputData);
+        Memory.Memory.Dispose(_controllers);
+        Memory.Memory.Dispose(_monitorData);
+#endif
+
+        _isDisposed = true;
+
+        Log.Info(" Memory remaining : " + Memory.Memory.RemainingmEMORY);
+
+        GC.SuppressFinalize(this);
+
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
+    }
+
+    public void Run()
+    {
+
+        InternalInit();
+        //our init
+        Init();
+        while (Window.IsRunning())
+        {
+            InternalUpdate();
+            // our update
+            Update();
+
+            Draw();
+            GraphicDevice.TestingDraw(Palette.DarkBlue);
+        }
+
+    }
+
+    protected abstract void Init();
+    protected abstract void Release();
+    protected abstract void Update();
+    protected abstract void Draw();
+
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    private void InternalInit()
+    {
+#if WINDOWS
+        //Convert  settings to internal window settings 
+        Platform.Windows.Window.WindowsSettings* settings = Memory.Memory.New<Platform.Windows.Window.WindowsSettings>();
+
+        Platform.Windows.Window.WindowsSettings.Binding(settings, Window.Settings );
 
         WindowImpl.Init(_windowData, _monitorData, settings, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);
 
         RenderImpl.CreateRenderPass(_graphicData);
         RenderImpl.CreateRender(_graphicData);
-
         AudioImpl.Init(_audioData);
         InputImpl.Init(_inputData, _windowData->Handle, 0);
-
-        ControllerImpl.Init(_controllers, 0);
-        ControllerImpl.Init(_controllers, 1);
-        ControllerImpl.Init(_controllers, 2);
-        ControllerImpl.Init(_controllers, 3);
-
+        ControllerImpl.Init(_controllers);
+       
         Memory.Memory.Dispose(settings);
 
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
-        
-#endif
-
-    }
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    private bool IsRunning()
-#if WINDOWS 
-        => _windowData->IsRunning;
-#else
-        => false;
-#endif
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    public void RequestClose()
-    {
-#if WINDOWS
-        WindowImpl.RequestClose(_windowData);
-#else
-        
 #endif
     }
 
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    private void TestingDraw(Palette screenColor)
-    {
-#if WINDOWS
-        //Settings plaette to float[]
-        RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
-        RenderImpl.Draw(_graphicData);
-#else
-        
-#endif
-        
-    }
 
 
     [SkipLocalsInit]
@@ -237,13 +208,16 @@ public unsafe abstract class Base : IDisposable
     {
 #if WINDOWS
         WindowImpl.Update(_windowData);
+
+        if (_windowData->SysPaused) return;
+
         TimeImpl.Update(_timeData);
+
         InputImpl.UpdateInput(_inputData);
 
-        ControllerImpl.UpdateController(_controllers, 0);
-        ControllerImpl.UpdateController(_controllers, 1);
-        ControllerImpl.UpdateController(_controllers, 2);
-        ControllerImpl.UpdateController(_controllers, 3);
+        ControllerImpl.Update(_controllers);
+
+        Triggers.Update();
 #endif
     }
 
@@ -333,4 +307,5 @@ public unsafe abstract class Base : IDisposable
         }
     }
 #endif    
+
 }

@@ -13,7 +13,7 @@ public static class C008_TestSettings
         const string Quit = "QUIT";
         using Hemy.Lib.Core.Context context = new();
 
-        context.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
+        context.Window.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
         
         context.Create();
 
@@ -21,14 +21,14 @@ public static class C008_TestSettings
 
         player1.Add(Quit, context.Keyboard.IsPressed, Lib.Core.Input.Key.Escape);
 
-        while (context.IsRunning())
+        while (context.Window.IsRunning())
         {
             context.Update();
 
-            if (player1.IsAction(Quit)) { context.RequestClose(); }
+            if (player1.IsAction(Quit)) { context.Window.RequestClose(); }
 
 
-            context.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
+            context.GraphicDevice.TestingDraw(Lib.Core.Color.Palette.CornflowerBlue);
         }
 
 

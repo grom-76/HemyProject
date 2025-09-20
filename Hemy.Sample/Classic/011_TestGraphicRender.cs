@@ -11,18 +11,14 @@ public static class C011_TestGraphicRender
     {
         using Hemy.Lib.Core.Context context = new();
 
-        context.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
+        context.Window.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
         context.Create();
 
-       
-        var render = context.GraphicRender;
-
-
+        var render = context.GraphicDevice.GraphicRender;
         render.Add(new());
-
         render.BuildRender();
 
-        while (context.IsRunning())
+        while (context.Window.IsRunning())
         {
             context.Update();
 

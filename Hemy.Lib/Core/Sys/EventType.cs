@@ -1,4 +1,4 @@
-namespace Hemy.Lib.Core.Window;
+namespace Hemy.Lib.Core.Sys;
 
 
 public enum EventType : byte

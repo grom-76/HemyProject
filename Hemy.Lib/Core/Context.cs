@@ -24,13 +24,47 @@ using Hemy.Lib.Core.Graphic;
 #endif
 
 [SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+public unsafe struct ContextDataWindows
+{
+    public WindowData* WindowData = null;
+    public GraphicData* GraphicData = null;
+    public AudioData* AudioData = null;
+    public TimeData* TimeData = null;
+    public InputData* InputData = null;
+    public ControllerData* Controllers = null;
+    public MonitorData* MonitorData = null;
+    
+    public ContextDataWindows()
+    {
+        WindowData = Memory.Memory.New<WindowData>(true);
+        GraphicData = Memory.Memory.New<GraphicData>(true);
+        AudioData = Memory.Memory.New<AudioData>(true);
+        TimeData = Memory.Memory.New<TimeData>(true);
+        InputData = Memory.Memory.New<InputData>(true);
+        Controllers = Memory.Memory.New<ControllerData>(true);
+        MonitorData = Memory.Memory.New<MonitorData>(true);
+    }
+
+    public void Dispose()
+    {
+        Memory.Memory.Dispose(WindowData);
+        Memory.Memory.Dispose(GraphicData);
+        Memory.Memory.Dispose(AudioData);
+        Memory.Memory.Dispose(TimeData);
+        Memory.Memory.Dispose(InputData);
+        Memory.Memory.Dispose(Controllers);
+        Memory.Memory.Dispose(MonitorData);
+    }
+
+}
+
+
+[SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 public unsafe sealed class Context : IDisposable
 {
-
-    public Settings Settings = new();
-
 
 #if WINDOWS
     private WindowData* _windowData = null;
@@ -46,8 +80,6 @@ public unsafe sealed class Context : IDisposable
 
     private bool _isDisposed = false;
     
-
-    
     [SkipLocalsInit]
     public Keyboard Keyboard
     {
@@ -61,12 +93,6 @@ public unsafe sealed class Context : IDisposable
         get;
     }
 
-    // [SkipLocalsInit]
-    // public double DeltaTime
-    // {
-    //     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-    //     get => _timeData->DeltaTime/10000;
-    // }
     [SkipLocalsInit]
     public Time Time
     {
@@ -98,12 +124,14 @@ public unsafe sealed class Context : IDisposable
         get ;
     }
 
-     [SkipLocalsInit]
-    public GraphicRender GraphicRender  {
+    [SkipLocalsInit]
+    public GraphicDevice GraphicDevice
+    {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         get ;
     }
 
+   
     [SkipLocalsInit]
     public Context()
     {
@@ -116,14 +144,14 @@ public unsafe sealed class Context : IDisposable
         _controllers = Memory.Memory.New<ControllerData>(true);
         _monitorData = Memory.Memory.New<MonitorData>(true);
 
-
+        GraphicDevice = new(_graphicData, _windowData);
         Mouse = new(_inputData);
         Keyboard = new(_inputData);
         AudioDevice = new(_audioData);
         Window = new(_windowData);
         Time = new(_timeData);
         Triggers = new();
-        GraphicRender = new(_graphicData, _windowData);
+
 #endif
     }
 
@@ -135,79 +163,65 @@ public unsafe sealed class Context : IDisposable
 
 #if WINDOWS
         //Convert  settings to internal window settings 
-        Platform.Windows.WindowsSetting* settings = Memory.Memory.New<Platform.Windows.WindowsSetting>();
+        Platform.Windows.Window.WindowsSettings* settings = Memory.Memory.New<Platform.Windows.Window.WindowsSettings>();
 
-        Platform.Windows.WindowsSetting.Binding(settings, Settings);
+        Platform.Windows.Window.WindowsSettings.Binding(settings, Window.Settings );
 
         WindowImpl.Init(_windowData, _monitorData, settings, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
         GraphicImpl.Init(_graphicData, _windowData);
 
         RenderImpl.CreateRenderPass(_graphicData);
         RenderImpl.CreateRender(_graphicData);
-
         AudioImpl.Init(_audioData);
         InputImpl.Init(_inputData, _windowData->Handle, 0);
-
-        ControllerImpl.Init(_controllers, 0);
-        ControllerImpl.Init(_controllers, 1);
-        ControllerImpl.Init(_controllers, 2);
-        ControllerImpl.Init(_controllers, 3);
-
+        ControllerImpl.Init(_controllers);
+       
         Memory.Memory.Dispose(settings);
 
         WindowImpl.Show(_windowData);
         TimeImpl.Start(_timeData);
-        
-
 #endif
 
     }
 
-    private void BindingSettings()
-    {
-#if WINDOWS
 
-#endif
-    }
+//     [SkipLocalsInit]
+//     [SuppressGCTransition]
+//     [SuppressUnmanagedCodeSecurity]
+//     public bool IsRunning()
+// #if WINDOWS 
+//         => _windowData->IsRunning;
+// #else
+//         => false;
+// #endif
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    public bool IsRunning()
-#if WINDOWS 
-        => _windowData->IsRunning;
-#else
-        => false;
-#endif
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    public void RequestClose()
-    {
-#if WINDOWS
-        WindowImpl.RequestClose(_windowData);
-#else
+//     [SkipLocalsInit]
+//     [SuppressGCTransition]
+//     [SuppressUnmanagedCodeSecurity]
+//     public void RequestClose()
+//     {
+// #if WINDOWS
+//         WindowImpl.RequestClose(_windowData);
+// #else
         
-#endif
-    }
+// #endif
+//     }
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    public void TestingDraw(Palette screenColor)
-    {
-#if WINDOWS
-        if (_windowData->SysPaused ) return;
-        // if  SysPaused  return;
-        //Settings plaette to float[]
-        RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
-        RenderImpl.Draw(_graphicData);
-#else
+//     [SkipLocalsInit]
+//     [SuppressGCTransition]
+//     [SuppressUnmanagedCodeSecurity]
+//     public void TestingDraw(Palette screenColor)
+//     {
+// #if WINDOWS
+//         if (_windowData->SysPaused ) return;
+
+//         RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
+//         RenderImpl.Draw(_graphicData);
+// #else
         
-#endif
+// #endif
         
-    }
+//     }
 
     [SkipLocalsInit]
     [SuppressGCTransition]
@@ -215,6 +229,8 @@ public unsafe sealed class Context : IDisposable
     public void Dispose()
     {
         if (_isDisposed) return;
+
+
 
 #if WINDOWS
         Triggers.Dispose();
@@ -256,17 +272,14 @@ public unsafe sealed class Context : IDisposable
 
         InputImpl.UpdateInput(_inputData);
 
-        ControllerImpl.UpdateController(_controllers, 0);
-        ControllerImpl.UpdateController(_controllers, 1);
-        ControllerImpl.UpdateController(_controllers, 2);
-        ControllerImpl.UpdateController(_controllers, 3);
+        ControllerImpl.Update(_controllers);
 
         Triggers.Update();
 #endif
     }
 
 
-    const int DBT_DEVICEARRIVAL = 0x8000;
+
 
 #if WINDOWS
     [SkipLocalsInit]

@@ -1,9 +1,10 @@
 /**/
-namespace Hemy.Lib.Core.Input;
+namespace Hemy.Lib.Core.Sys;
 
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Sys;
 
 [SkipLocalsInit]

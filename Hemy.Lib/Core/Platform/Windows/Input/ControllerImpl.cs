@@ -15,7 +15,24 @@ using Hemy.Lib.Core.Input;
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class ControllerImpl
 {
-    internal unsafe static void Init(ControllerData* controllersData, uint player)
+    internal unsafe static void Init(ControllerData* controllersData)
+    {
+        InitController(controllersData, 0);
+        InitController(controllersData, 1);
+        InitController(controllersData, 2);
+        InitController(controllersData, 3);
+    }
+
+    internal unsafe static void Update(ControllerData* controllersData)
+    {
+        UpdateController(controllersData, 0);
+        UpdateController(controllersData, 1);
+        UpdateController(controllersData, 2);
+        UpdateController(controllersData, 3);
+    }
+
+
+    private unsafe static void InitController(ControllerData* controllersData, uint player)
     {
         XINPUT_CAPABILITIES pCapabilities = default;
 
@@ -37,7 +54,7 @@ internal unsafe static partial class ControllerImpl
         //     // controllersData->LeftMotorSpeedMax[player] = vibration.wLeftMotorSpeed;
         //     // controllersData->RightMotorSpeedMax[player] = vibration.wRightMotorSpeed;
         // }
-        
+
         uint ID = player * 32;
         controllersData->Buttons[(int)ControllerButton.A + ID] = ControllerConsts.XINPUT_GAMEPAD_A;
         controllersData->Buttons[(int)ControllerButton.B + ID] = ControllerConsts.XINPUT_GAMEPAD_B;
@@ -51,7 +68,7 @@ internal unsafe static partial class ControllerImpl
         controllersData->Buttons[(int)ControllerButton.LefThumb + ID] = ControllerConsts.XINPUT_GAMEPAD_LEFT_THUMB;
     }
 
-    internal static void UpdateController(ControllerData* controllersData, uint player)
+    private static void UpdateController(ControllerData* controllersData, uint player)
     {
         if (controllersData->IsConntected[player] == false) return;
 

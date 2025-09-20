@@ -1,17 +1,17 @@
 #if WINDOWS
 
-using System;
 
-namespace Hemy.Lib.Core.Platform.Windows;
 
-internal unsafe struct WindowsSetting()
+namespace Hemy.Lib.Core.Platform.Windows.Window;
+
+internal unsafe struct WindowsSettings()
 {
     internal fixed byte GameName[256];
     internal int PreferredWidth = 1280;
     internal int PreferredHeight = 720;
     internal Hemy.Lib.Core.Window.WindowStyle Style = Core.Window.WindowStyle.standard;
 
-    internal static void Binding(WindowsSetting* windowSettings, Hemy.Lib.Core.Settings settings)
+    internal static void Binding(WindowsSettings* windowSettings, Hemy.Lib.Core.Window.WindowSettings settings)
     {
         Memory.Memory.FillBytesWithString(windowSettings->GameName, settings.GameName);
 

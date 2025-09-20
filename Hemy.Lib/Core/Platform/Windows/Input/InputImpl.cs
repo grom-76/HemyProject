@@ -119,10 +119,12 @@ internal unsafe static partial class InputImpl
         ClipCursor(null);
         // _glfw.win32.capturedCursorWindow = NULL;
     }
+    
+    const int DBT_DEVICEARRIVAL = 0x8000;
 
     internal static void RegisterOnInputDeviceChange(InputData* inputData)
     {
-        
+
         // DEV_BROADCAST_DEVICEINTERFACE_W dbi;
         // ZeroMemory(&dbi, sizeof(dbi));
         // dbi.dbcc_size = sizeof(dbi);

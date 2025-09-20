@@ -1,14 +1,11 @@
 ﻿namespace Hemy.Sample;
 
-using Hemy.Lib.Core;
-using Hemy.Lib.Core.Sys;
-using static Hemy.Sample.Sample.Example;
 
 public class Program
 {
     public static void Main()
     {
-        // Advanced.Main.A001_LikeMonogame();
+        Advanced.Main.A001_LikeMonogame();
 
         // Classic.C008_TestSettings.Run();
 
@@ -16,7 +13,7 @@ public class Program
 
         // Classic.C009_TestTriggers.Run();
 
-        Classic.C011_TestGraphicRender.Run();
+        // Classic.C011_TestGraphicRender.Run();
     }
 
 }

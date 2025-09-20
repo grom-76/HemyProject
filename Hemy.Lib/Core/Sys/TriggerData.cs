@@ -1,5 +1,5 @@
 /**/
-namespace Hemy.Lib.Core.Input;
+namespace Hemy.Lib.Core.Sys;
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

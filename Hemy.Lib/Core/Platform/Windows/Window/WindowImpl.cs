@@ -24,7 +24,7 @@ internal unsafe static partial class WindowImpl
 {
  
 
-    internal static uint Init(WindowData* contextData, MonitorData* monitorData, WindowsSetting* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
+    internal static uint Init(WindowData* contextData, MonitorData* monitorData, WindowsSettings* info, delegate* unmanaged<void*, uint, uint*, long*, long*> WinMessageProcedure)
     {
         WindowStyle WinStyle =info->Style;
 

@@ -1,6 +1,6 @@
 namespace Hemy.Lib.Core.Graphic;
 
-enum PreferredDeviceType
+enum DeviceType
 {
     other = 0,
     integrated = 1,

@@ -28,6 +28,9 @@ public unsafe sealed class Window(
 #endif    
     )
 {
+
+    public WindowSettings Settings = new();
+
     public void SetTitle(string title)
     {
 #if WINDOWS
@@ -42,4 +45,21 @@ public unsafe sealed class Window(
 #else        
 #endif  
     }
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public bool IsRunning()
+#if WINDOWS 
+        => data->IsRunning;
+#else
+        => false;
+#endif
+
+    internal void Dispose()
+    {
+        Settings.Dispose();
+    }
+
+
 }

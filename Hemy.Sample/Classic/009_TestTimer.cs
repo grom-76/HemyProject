@@ -13,7 +13,7 @@ public static class C009_TestTimer
         const string StartTimer = "StartT1";
         using Hemy.Lib.Core.Context context = new();
 
-        context.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
+        context.Window.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
         context.Create();
 
         TestExternalClass testExternalClass = new(context);
@@ -24,11 +24,11 @@ public static class C009_TestTimer
       
         var t1 = new Hemy.Lib.Core.Sys.Timer(1000, 5);
 
-        while (context.IsRunning())
+        while (context.Window.IsRunning())
         {
             context.Update();
 
-            if (player1.IsAction(Quit)) { context.RequestClose(); }
+            if (player1.IsAction(Quit)) { context.Window.RequestClose(); }
 
             if (player1.IsAction(StartTimer))
             {

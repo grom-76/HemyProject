@@ -11,7 +11,7 @@ public static class C009_TestTriggers
     {
         using Hemy.Lib.Core.Context context = new();
 
-        context.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
+        context.Window.Settings.Resolution = Lib.Core.Window.WindowResolution.SVGA_800x600;
         
         context.Create();
 
@@ -23,12 +23,12 @@ public static class C009_TestTriggers
         context.Triggers.Add(2, 2000, 3, testExternalClass.Boom);
 
 
-        while (context.IsRunning())
+        while (context.Window.IsRunning())
         {
             context.Update();
 
 
-            context.TestingDraw(Lib.Core.Color.Palette.SeaGreen);
+            context.GraphicDevice.TestingDraw(Lib.Core.Color.Palette.SeaGreen);
         }
 
     }
@@ -42,7 +42,7 @@ public static class C009_TestTriggers
 
         public void Close()
         {
-            context.RequestClose();
+            context.Window.RequestClose();
         }
 
         internal void Start()
