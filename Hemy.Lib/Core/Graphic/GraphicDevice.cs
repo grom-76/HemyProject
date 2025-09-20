@@ -1,5 +1,6 @@
 namespace Hemy.Lib.Core.Graphic;
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -10,11 +11,13 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe struct GraphicDevice
+public readonly unsafe struct GraphicDevice
 {
     private readonly GraphicData* _graphicData = null;
     private readonly WindowData* _windowData = null;
+    private readonly GraphicRender* _render = null;
     
+
     public GraphicDevice(
 #if WINDOWS
         GraphicData* graphicData,
@@ -22,17 +25,21 @@ public unsafe struct GraphicDevice
 #endif
 )
     {
+        Settings = new();
         _graphicData = graphicData;
         _windowData = windowData;
-        GraphicRender = new(_graphicData, _windowData);
-        Settings = new();
+        // GraphicRender = new(_graphicData, _windowData);
+        _render = Memory.Memory.New<GraphicRender>(false);
+        GraphicRender temp = new(graphicData, windowData);
+        Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), _render, (uint) Memory.Memory.Size<GraphicRender>());
+        
     }
 
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
-    public void TestingDraw(Palette screenColor)
+    public readonly void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
         if (_windowData->SysPaused) return;
@@ -45,18 +52,17 @@ public unsafe struct GraphicDevice
 
     }
 
-    internal void Dispose()
+    internal readonly void Dispose()
     {
         // GraphicRender.Dispose();
+        _render->Dispose();
         Settings.Dispose();
+
+        Memory.Memory.Dispose(_render);
     }
 
     [SkipLocalsInit]
-    public GraphicRender GraphicRender
-    {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get;
-    }
+    public readonly GraphicRender GraphicRender => *_render;
     
     [SkipLocalsInit]
     public GraphicDeviceSettings Settings  {
@@ -64,10 +70,10 @@ public unsafe struct GraphicDevice
         get ;
     }
 
-    public uint Width => _graphicData->RenderPassArea->extent.width;
-    public uint Height => _graphicData->RenderPassArea->extent.height;
-    public ClipVolume ClipVolume = ClipVolume.NegativeOneToPlusOne;
-    public Handled Handled = Handled.RightHand;
-    public ScreenOrigin ScreenOrigin = ScreenOrigin.lowerLeft;
+    public readonly uint Width => _graphicData->RenderPassArea->extent.width;
+    public readonly uint Height => _graphicData->RenderPassArea->extent.height;
+    public readonly ClipVolume ClipVolume => ClipVolume.NegativeOneToPlusOne;
+    public readonly Handled Handled => Handled.RightHand;
+    public readonly ScreenOrigin ScreenOrigin => ScreenOrigin.lowerLeft;
 
 }

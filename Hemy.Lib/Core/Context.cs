@@ -136,6 +136,7 @@ public unsafe sealed class Context : IDisposable
     public Context()
     {
 #if WINDOWS
+        GC.AddMemoryPressure(1024 * 1024 * 50);
         _windowData = Memory.Memory.New<WindowData>(true);
         _graphicData = Memory.Memory.New<GraphicData>(true);
         _audioData = Memory.Memory.New<AudioData>(true);
@@ -186,44 +187,6 @@ public unsafe sealed class Context : IDisposable
     }
 
 
-//     [SkipLocalsInit]
-//     [SuppressGCTransition]
-//     [SuppressUnmanagedCodeSecurity]
-//     public bool IsRunning()
-// #if WINDOWS 
-//         => _windowData->IsRunning;
-// #else
-//         => false;
-// #endif
-
-//     [SkipLocalsInit]
-//     [SuppressGCTransition]
-//     [SuppressUnmanagedCodeSecurity]
-//     public void RequestClose()
-//     {
-// #if WINDOWS
-//         WindowImpl.RequestClose(_windowData);
-// #else
-        
-// #endif
-//     }
-
-//     [SkipLocalsInit]
-//     [SuppressGCTransition]
-//     [SuppressUnmanagedCodeSecurity]
-//     public void TestingDraw(Palette screenColor)
-//     {
-// #if WINDOWS
-//         if (_windowData->SysPaused ) return;
-
-//         RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
-//         RenderImpl.Draw(_graphicData);
-// #else
-        
-// #endif
-        
-//     }
-
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
@@ -231,10 +194,11 @@ public unsafe sealed class Context : IDisposable
     {
         if (_isDisposed) return;
 
-
+        GC.RemoveMemoryPressure(1024 * 1024 * 50);
 
 #if WINDOWS
         Triggers.Dispose();
+        GraphicDevice.Dispose();
 
         AudioImpl.Dispose(_audioData);
         GraphicImpl.Dispose(_graphicData);
