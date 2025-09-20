@@ -24,6 +24,51 @@ using Hemy.Lib.Core.Platform.Windows.Input;
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static class Utils
 {
+    
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort GET_KEYSTATE_WPARAM(nuint wParam) => (ushort)((wParam) & 0xFFFF);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort GET_XBUTTON_WPARAM(uint* wParam) => HIWORD(wParam);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_X_LPARAM(long* lParam) => (short)LOWORD((uint*)lParam);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static int GET_Y_LPARAM(long* lParam) => (short)HIWORD((uint*)lParam);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static short GET_WHEEL_DELTA_WPARAM(uint* wPARAM) => (short)HIWORD(wPARAM);
+
+    
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort HIWORD(uint* wParam) => (ushort)((*wParam >> 16) & 0xFFFF);
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions)768)]
+    internal static ushort LOWORD(uint* wParam) => (ushort)(*wParam & 0xFFFF);
+
+
     internal delegate void EventDelegate(uint* wp, long* lp);
 
     internal static void EmptyEvent(uint* wp, long* lp) { _ = wp; _ = lp; }
@@ -51,20 +96,6 @@ internal unsafe static class Utils
     internal static bool TransitionState(nint lParam) => (lParam & (1 << 31)) > 0;
 
     internal const int MK_SHIFT = 0x0004; // Source : https://github.com/FaberSanZ/Xultaik/blob/main/Src/Xultaik.Desktop/Window.cs
-
-    internal static ushort GET_KEYSTATE_WPARAM(nuint wParam) => (ushort)((wParam) & 0xFFFF);
-
-    internal static ushort GET_XBUTTON_WPARAM(uint* wParam) => HIWORD(wParam);
-
-    internal static int GET_X_LPARAM(long* lParam) => (short)LOWORD((uint*)lParam);
-
-    internal static int GET_Y_LPARAM(long* lParam) => (short)HIWORD((uint*)lParam);
-
-    internal static short GET_WHEEL_DELTA_WPARAM(uint* wPARAM) => (short)HIWORD(wPARAM);
-
-    internal static ushort HIWORD(uint* wParam) => (ushort)((*wParam >> 16) & 0xFFFF);
-
-    internal static ushort LOWORD(uint* wParam) => (ushort)(*wParam & 0xFFFF);
 
 
     [SkipLocalsInit]

@@ -1,34 +1,13 @@
-using Hemy.Lib.Core.Color;
-using Hemy.Lib.Core.Math;
-using Hemy.Lib.Core.Platform.Windows.Graphic;
-using Hemy.Lib.Core.Platform.Windows.Window;
-
 namespace Hemy.Lib.Core.Graphic;
 
-
-public unsafe struct Shape2D
-{
-    private Vector4 Position;
-    private Vector4 Color;
-    private uint BorderColor;
-
-    public void CreateTriangle(Vector3 position, Vector4 color, uint borderColor = 0)
-    {
-
-
-    }
-
-    public void Modify()
-    {
-
-    }
-}
-
+using Hemy.Lib.Core.Color;
+using Hemy.Lib.Core.Platform.Windows.Graphic;
+using Hemy.Lib.Core.Platform.Windows.Window;
 
 public unsafe struct GraphicRender(
 #if WINDOWS
         GraphicData* graphicData,
-        WindowData* windowData 
+        WindowData* windowData
 #endif
 )
 {
@@ -49,7 +28,7 @@ public unsafe struct GraphicRender(
     public void Draw(Palette clearColor)
     {
 #if WINDOWS
-        if (windowData->SysPaused ) return;
+        if (windowData->SysPaused) return;
         RenderImpl.ChangeBackGroundColor(graphicData, (uint)clearColor);
         RenderImpl.Draw(graphicData);
 #endif

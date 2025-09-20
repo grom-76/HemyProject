@@ -265,6 +265,9 @@ public unsafe sealed class Context : IDisposable
 #endif
     }
 
+
+    const int DBT_DEVICEARRIVAL = 0x8000;
+
 #if WINDOWS
     [SkipLocalsInit]
     [SuppressGCTransition]
@@ -281,10 +284,10 @@ public unsafe sealed class Context : IDisposable
                 return null;
 
             case WM_SIZE:
-                // TODO AdjustWindowSize ( Wide Screen => 16/9 )
+               { // TODO AdjustWindowSize ( Wide Screen => 16/9 )
                 int width = Hemy.Lib.Core.Platform.Windows.Utils.GET_WIDTH(lParam);
                 int height = Hemy.Lib.Core.Platform.Windows.Utils.GET_HEIGHT(lParam);
-                _windowData->Width = width; _windowData->Height = height;
+                _windowData->Width = width; _windowData->Height = height;}
 
                 return null;
 
@@ -327,15 +330,15 @@ public unsafe sealed class Context : IDisposable
                 return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
 
             case WM_KILLFOCUS:
-                Log.Info("App Kill Focus ");
+               { Log.Info("App Kill Focus ");
                 _windowData->SysPaused = true;
-                TimeImpl.Pause(_timeData);
+                TimeImpl.Pause(_timeData);}
                 return null;
 
             case WM_SETFOCUS:
-                Log.Info("App Set Focus ");
+                {Log.Info("App Set Focus ");
                 _windowData->SysPaused = false;
-                TimeImpl.Resume(_timeData);
+                TimeImpl.Resume(_timeData);}
                 return null;
 
             case WM_SYSCOMMAND:
@@ -347,9 +350,16 @@ public unsafe sealed class Context : IDisposable
 
                 return null;
             case WM_ACTIVATEAPP:
-                // https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputenable 
+                // https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputenable  only Windows 10
 
                 return null; 
+            case WM_DEVICECHANGE:
+                InputImpl.OnInputDeviceChange(_inputData, _controllers);
+                return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
+             case WM_DISPLAYCHANGE:
+                MonitorImpl.OnMonitorChange(_monitorData);
+                return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
+
             default:
                 return Hemy.Lib.Core.Platform.Windows.Window.WindowImpl.DefWindowProcA(hWnd, message, wParam, lParam);
         }

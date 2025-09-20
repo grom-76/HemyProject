@@ -71,9 +71,11 @@ internal unsafe static partial class ControllerImpl
     }
 
     internal const float XboxOneThumbDeadZone = 0.24f;  // Recommended Xbox One controller deadzone 
+
     internal static ushort Clamp(ushort value, ushort min, ushort max) => value < min ? min : value > max ? max : value;
+
     internal static float Deadzone(float x)
-        =>  x > -XboxOneThumbDeadZone && x < XboxOneThumbDeadZone ? 0.0f :  x < -1.0f ? -1.0f : x > 1.0f ? 1.0f : x;
+        => x > -XboxOneThumbDeadZone && x < XboxOneThumbDeadZone ? 0.0f : x < -1.0f ? -1.0f : x > 1.0f ? 1.0f : x;
 
 
     internal static void GetCapabilities( ControllerData* controllersData, uint player )
@@ -100,20 +102,21 @@ internal unsafe static partial class ControllerImpl
         }
 
     }
-    internal static bool SetVibration( ControllerData* controllersData, uint player,float leftMotor, float rightMotor)
+
+    internal static bool SetVibration(ControllerData* controllersData, uint player, float leftMotor, float rightMotor)
     {
         XINPUT_CAPABILITIES pCapabilities = default;
-        
+
         uint error = XInputGetCapabilities((uint)player, ControllerConsts.XINPUT_FLAG_GAMEPAD, &pCapabilities);
         if (error != 0) return false;
 
-        XINPUT_VIBRATION vibration =pCapabilities.Vibration;
+        XINPUT_VIBRATION vibration = pCapabilities.Vibration;
 
         if (vibration.wLeftMotorSpeed <= 0 || vibration.wRightMotorSpeed <= 0) return false;
 
         int left = (int)leftMotor * 65535;
         int right = (int)rightMotor * 65535;
-        vibration.wLeftMotorSpeed = Clamp( (ushort)left, 0,  vibration.wLeftMotorSpeed) ; // use any value between 0-65535 here
+        vibration.wLeftMotorSpeed = Clamp((ushort)left, 0, vibration.wLeftMotorSpeed); // use any value between 0-65535 here
         vibration.wRightMotorSpeed = Clamp((ushort)right, 0, vibration.wRightMotorSpeed); // use any value between 0-65535 here
 
         error = XInputSetState(player, &vibration);
@@ -129,9 +132,10 @@ internal unsafe static partial class ControllerImpl
         */
         return false;
     }
-    internal static bool ResumeVibration( ControllerData* controllersData, uint player, ushort leftMotor, ushort rightMotor)
+
+    internal static bool ResumeVibration(ControllerData* controllersData, uint player, ushort leftMotor, ushort rightMotor)
     {
-        XInputEnable( 1 );
+        XInputEnable(1);
 
         return false;
     }
@@ -154,7 +158,6 @@ internal unsafe static partial class ControllerImpl
         return string.Empty;
     }
 
-    
 
     [SkipLocalsInit]
     [SuppressGCTransition]

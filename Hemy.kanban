@@ -166,6 +166,24 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "89544ae4-5785-48ad-93f2-1860e60d5c6a",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Dans Controllers  faire init update dispose pour max joystick  pas dans Context",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "960d5271-42d0-47d3-8cbd-6c846228853a",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Faire un struct avec toutes les data Context avec  neww pool et dispose pool ?",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },

@@ -13,6 +13,7 @@ using BOOL = System.Int32;
 using LONG = System.Int32;
 using System.Security;
 using System.Collections.Generic;
+using Hemy.Lib.Core.Platform.Windows.Window;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
@@ -163,6 +164,11 @@ internal unsafe static partial class MonitorImpl
         _ = SetProcessDpiAwareness(MonitorConsts.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
         var ptr = GetWindowDpiAwarenessContext(handle);
         _ = SetProcessDpiAwarenessContext(ptr - 4);
+    }
+
+    public static void OnMonitorChange(MonitorData* monitorData)
+    {
+                        //    _glfwPollMonitorsWin32();
     }
 
 
@@ -683,12 +689,7 @@ internal static class MonitorConsts
     public const int SM_SYSTEMDOCKED = 0x2004;
 }
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct POINT(int x, int y)
-{
-    internal int X = x;
-    internal int Y = y;
-}
+
 
 [StructLayout(LayoutKind.Sequential)]
 internal struct MONITORINFOEX
@@ -704,32 +705,7 @@ internal struct MONITORINFOEX
     internal unsafe fixed char DeviceName[32];
 }
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct RECT(int left, int top, int right, int bottom)
-{
-    /// <summary>
-    /// X
-    /// </summary>
-    internal int Left = left;
-    /// <summary>
-    /// Y
-    /// </summary>
-    internal int Top = top;
-    /// <summary>
-    /// Width
-    /// </summary>
-    internal int Right = right;
-    /// <summary>
-    /// Height 
-    /// </summary>
-    internal int Bottom = bottom;
 
-    internal int X { readonly get => Left; set => Left = value; }
-    internal int Y { readonly get => Top; set => Top = value; }
-    internal int Width { readonly get => Right; set => Right = value; }
-    internal int Height { readonly get => Bottom; set => Bottom = value; }
-
-}
 
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct DEVMODEW

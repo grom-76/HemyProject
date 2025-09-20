@@ -8,17 +8,27 @@ using System.Security;
 using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Window;
 using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
-
+using WORD = System.UInt16;
+using DWORD = System.UInt32; // A 32-bit unsigned integer. The range is 0 through 4294967295 decimal.
+using HRESULT = System.UInt32;
+using BOOL = System.Int32;
+using LONG = System.Int32;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class InputImpl
 {
-    internal static void Init(InputData* inputData, void* windowHandle, uint keyboardType )
+    internal static void Init(InputData* inputData, void* windowHandle, uint keyboardType)
     {
         inputData->Handle = windowHandle;
-        MapKeys(inputData, keyboardType);        
+        RegisterOnInputDeviceChange(inputData);
+        MapKeys(inputData, keyboardType);
+    }
+
+    internal static void Dispose(InputData* inputData )
+    {
+        UnRegisterOnInputDeviceChange(inputData); 
     }
 
     [SkipLocalsInit]
@@ -84,52 +94,117 @@ internal unsafe static partial class InputImpl
 
         inputData->Mouse_CurrentFrame_Position_X = x;
         inputData->Mouse_CurrentFrame_Position_Y = y;
-
-
     }
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static ushort GET_KEYSTATE_WPARAM(nuint wParam) => (ushort)((wParam) & 0xFFFF);
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static ushort GET_XBUTTON_WPARAM(uint* wParam) => HIWORD(wParam);
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static int GET_X_LPARAM(long* lParam) => (short)LOWORD((uint*)lParam);
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static int GET_Y_LPARAM(long* lParam) => (short)HIWORD((uint*)lParam);
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static short GET_WHEEL_DELTA_WPARAM(uint* wPARAM) => (short)HIWORD(wPARAM);
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static ushort HIWORD(uint* wParam) => (ushort)((*wParam >> 16) & 0xFFFF);
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [MethodImpl((MethodImplOptions)768)]
-    internal static ushort LOWORD(uint* wParam) => (ushort)(*wParam & 0xFFFF);
+    /// <summary>
+    /// ets the cursor clip rect to the window content area
+    /// </summary>
+    /// <param name="inputData"></param>
+    internal static void CaptureCursor(InputData* inputData)
+    {
+        RECT clipRect;
+        GetClientRect(inputData->Handle, &clipRect);
+        ClientToScreen(inputData->Handle, (POINT*)&clipRect.Left);
+        ClientToScreen(inputData->Handle, (POINT*)&clipRect.Right);
+        ClipCursor(&clipRect);
+        // _glfw.win32.capturedCursorWindow = window;
+    }
 
     
+    /// <summary>
+    /// Disabled clip cursor 
+    /// </summary>
+    internal static void ReleaseCursor()
+    {
+        ClipCursor(null);
+        // _glfw.win32.capturedCursorWindow = NULL;
+    }
+
+    internal static void RegisterOnInputDeviceChange(InputData* inputData)
+    {
+        
+        // DEV_BROADCAST_DEVICEINTERFACE_W dbi;
+        // ZeroMemory(&dbi, sizeof(dbi));
+        // dbi.dbcc_size = sizeof(dbi);
+        // dbi.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+        // dbi.dbcc_classguid = GUID_DEVINTERFACE_HID;
+
+        // _glfw.win32.deviceNotificationHandle =
+        //     RegisterDeviceNotificationW(_glfw.win32.helperWindowHandle,
+        //                                 (DEV_BROADCAST_HDR*) &dbi,
+        //                                 DEVICE_NOTIFY_WINDOW_HANDLE);
+    }
+
+    internal static void UnRegisterOnInputDeviceChange(InputData* inputData)
+    {
+        
+        // DEV_BROADCAST_DEVICEINTERFACE_W dbi;
+        // ZeroMemory(&dbi, sizeof(dbi));
+        // dbi.dbcc_size = sizeof(dbi);
+        // dbi.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+        // dbi.dbcc_classguid = GUID_DEVINTERFACE_HID;
+
+        // _glfw.win32.deviceNotificationHandle =
+        //     RegisterDeviceNotificationW(_glfw.win32.helperWindowHandle,
+        //                                 (DEV_BROADCAST_HDR*) &dbi,
+        //                                 DEVICE_NOTIFY_WINDOW_HANDLE);
+    }
+
+    internal static void OnInputDeviceChange(InputData* inputData, ControllerData* controllers)
+    {
+        // if (!_glfw.joysticksInitialized)
+        //     break;
+        // https://stackoverflow.com/questions/34109014/dbt-devicearrival-get-guid-c-sharp
+        //https://learn.microsoft.com/fr-fr/windows/win32/api/dbt/ns-dbt-dev_broadcast_hdr
+
+        // if (wParam == DBT_DEVICEARRIVAL)
+        // {
+        //     DEV_BROADCAST_HDR* dbh = (DEV_BROADCAST_HDR*) lParam;
+        //     if (dbh && dbh->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+        //         _glfwDetectJoystickConnectionWin32();
+        // }
+        // else if (wParam == DBT_DEVICEREMOVECOMPLETE)
+        // {
+        //     DEV_BROADCAST_HDR* dbh = (DEV_BROADCAST_HDR*) lParam;
+        //     if (dbh && dbh->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+        //         _glfwDetectJoystickDisconnectionWin32();
+        // }
+    }
+
+    // Source : https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
+    // public static Bitmap CaptureScreen(bool CaptureMouse)
+    // {
+    //     Bitmap result = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format24bppRgb);
+
+    //     try
+    //     {
+    //         using (Graphics g = Graphics.FromImage(result))
+    //         {
+    //             g.CopyFromScreen(0, 0, 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
+
+    //             if (CaptureMouse)
+    //             {
+    //                 CURSORINFO pci;
+    //                 pci.cbSize = (int)Memory.Memory.Size<CURSORINFO>();
+
+    //                 if (GetCursorInfo( &pci))
+    //                 {
+    //                     if (pci.flags == CURSOR_SHOWING)
+    //                     {
+    //                         DrawIcon(g.GetHdc(), pci.ptScreenPos.x, pci.ptScreenPos.y, pci.hCursor);
+    //                         g.ReleaseHdc();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     catch
+    //     {
+    //         result = null;
+    //     }
+
+    //     return result;
+    // }
 
     internal static void MapKeys(InputData* inputData, uint keyboardType = 0)
     {
@@ -332,8 +407,6 @@ internal unsafe static partial class InputImpl
     }
 
 
-
-
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
@@ -374,14 +447,66 @@ internal unsafe static partial class InputImpl
     [LibraryImport(User, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial int ClipCursor( /*[[in, optional]*/ RECT* lpRect);
+    private static partial BOOL ClipCursor( /*[[in, optional]*/ RECT* lpRect);// == Zero if failed
 
     [LibraryImport(User, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial int ShowCursor( /*[[in, optional]*/ int bShow);
+    private static partial int ShowCursor( /*[[in, optional]*/ BOOL bShow);
+
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial void* SetCursor( /*[[in, optional]*/void* hCursor);
+
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial void* SetCapture( /*[[in]*/void* hCWnd);// return null if failed
+    
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial BOOL TrackMouseEvent(/*[in, out]*/ TRACKMOUSEEVENT* lpEventTrack);
+
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial BOOL GetClientRect(/*[in]*/  void*   hWnd, /* [out]*/ RECT* lpRect);
+    
+    // [LibraryImport(User, SetLastError = false)]
+    // [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    // [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    // private static partial  BOOL GetCursorInfo( CURSORINFO* pci);
+
+    // [LibraryImport(User, SetLastError = false)]
+    // [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    // [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    // private static partial  BOOL DrawIcon(void* hDC, int X, int Y, void* hIcon);
+
+    const int CURSOR_SHOWING = 0x00000001;
 }
 
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct CURSORINFO
+{
+    public DWORD cbSize;
+    public DWORD flags;
+    public void* hCursor;
+    public POINT* ptScreenPos;
+}
+
+/// <summary>
+/// https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-trackmouseevent
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct TRACKMOUSEEVENT
+{
+    DWORD cbSize;
+    DWORD dwFlags;
+    void* hwndTrack;
+    DWORD dwHoverTime;
+}
 
 /// <summary> Virtual Keys, Standard Set  </summary>
 [SkipLocalsInit]
