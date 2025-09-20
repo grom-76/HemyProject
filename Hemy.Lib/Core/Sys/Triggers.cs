@@ -5,12 +5,28 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Hemy.Lib.Core.Input;
+using Hemy.Lib.Core.Platform.Windows.Sys;
 using Hemy.Lib.Core.Sys;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKillFocus .....)
+public unsafe sealed class Triggers(
+#if WINDOWS    
+    TimeData* timedata
+#endif
+
+) : IDisposable// SystemTriggers ( add onKillFocus .....)
 {
+    private static ulong BytesToULong(string data)
+    => (data.Length >= 1 ? ((ulong)data[0] << 0) : 0 << 0) |
+        (data.Length >= 2 ? ((ulong)data[1] << 8) : 0 << 8) |
+        (data.Length >= 3 ? ((ulong)data[2] << 16) : 0 << 16) |
+        (data.Length >= 4 ? ((ulong)data[3] << 24) : 0 << 24) |
+        (data.Length >= 5 ? ((ulong)data[4] << 32) : 0 << 32) |
+        (data.Length >= 6 ? ((ulong)data[5] << 40) : 0 << 40) |
+        (data.Length >= 7 ? ((ulong)data[6] << 48) : 0 << 48) |
+        (data.Length >= 8 ? ((ulong)data[7] << 56) : 0 << 56);
+
     private TriggerData[] _triggerData = new TriggerData[10];
     // private int[] _activList = new int[10];
     private int Position = 0;
@@ -26,13 +42,13 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
     private static bool EmptyInput(byte b) { _ = b; return false; }
 
 
-    public void Add(uint id, EventDelegateK inputEvent, Key Key, EventActionExecute actionExecute = null)
+    public void Add(string id, EventDelegateK inputEvent, Key Key, EventActionExecute actionExecute = null)
     {
         actionExecute ??= Empty;
 
         TriggerData trigger = new();
 
-        trigger.Id = id;
+        trigger.Id = BytesToULong( id );
         trigger.Type = Input;
 
         trigger.InputAction = (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate(inputEvent);
@@ -45,32 +61,56 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
         _triggerData[Position++] = trigger;
     }
 
-    public void Add(uint id, ulong duration_ms, int loop = 1, EventActionExecute actionExecute = null)
+    public void Add(string id, ulong duration_ms, int loop = 1, EventActionExecute actionExecute = null)
     {
         actionExecute ??= Empty;
 
         TriggerData trigger = new();
 
-        trigger.Id = id;
+        trigger.Id = BytesToULong( id );
         trigger.Type = Timer;
 
         trigger.InputAction = (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate((EventDelegate)EmptyInput);
         trigger.Key = (byte)0;
         trigger.ActionExecute = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(actionExecute);
 
-        trigger.Duration = duration_ms * ( HighResolutionTimer.Frequency / 1000UL );
+        trigger.Duration = duration_ms ;
         trigger.LoopCount = loop;
 
         _triggerData[Position++] = trigger;
     }
 
 
-    public void StartTimer(uint Id)
+    private int Findindex(string name)
+    {
+        ulong id = BytesToULong(name);
+        
+        int pos = 0;
+        while (pos < Position && id == _triggerData[pos++].Id)
+        {
+            
+        }
+        return pos ;
+    }
+
+    public void StartTimer(string Id)
     {
         //find ID 
-        uint i = Id;
-        _triggerData[i].StartTime = HighResolutionTimer.TimeStamp;
-        _triggerData[i].Loop = _triggerData[i].LoopCount;
+        ulong name = BytesToULong(Id);
+        int index = -1;
+        for (int i = 0; i < Position; i++)
+        {
+            if (name == _triggerData[i].Id)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) return;
+
+        _triggerData[index].StartTime = timedata->CurrentFrameTime;
+        _triggerData[index].Loop = _triggerData[index].LoopCount;
     }
 
     public void Remove(uint Id)
@@ -81,7 +121,7 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
 
 
     private bool IsValidTimer(TriggerData* data) => data->Type == Timer
-        && (HighResolutionTimer.TimeStamp - data->StartTime) >= data->Duration
+        && ( timedata->CurrentFrameTime - data->StartTime) >= data->Duration
         && data->Loop != 0;
 
     private bool IsValidCommand(TriggerData* data) =>
@@ -99,9 +139,9 @@ public unsafe sealed class Triggers() : IDisposable// SystemTriggers ( add onKil
 
             if (IsValidTimer(&data))
             {
-                Log.Warning(data.ToString());
+                
                 _triggerData[i].Loop--;
-                _triggerData[i].StartTime = HighResolutionTimer.TimeStamp;
+                _triggerData[i].StartTime = timedata->CurrentFrameTime ;
 
                 _triggerData[i].ActionExecute();
             }

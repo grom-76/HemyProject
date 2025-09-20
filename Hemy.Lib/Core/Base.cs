@@ -113,7 +113,7 @@ public unsafe abstract class Base : IDisposable
         AudioDevice = new(_audioData);
         Window = new(_windowData);
         Time = new(_timeData);
-        Triggers = new();
+        Triggers = new(_timeData);
 #endif
 
     }
@@ -123,7 +123,7 @@ public unsafe abstract class Base : IDisposable
         if (_isDisposed) return;
 
 #if WINDOWS
-        Triggers.Dispose();
+        
 
         AudioImpl.Dispose(_audioData);
         GraphicImpl.Dispose(_graphicData);
@@ -136,6 +136,8 @@ public unsafe abstract class Base : IDisposable
         Memory.Memory.Dispose(_inputData);
         Memory.Memory.Dispose(_controllers);
         Memory.Memory.Dispose(_monitorData);
+
+        Triggers.Dispose();
 #endif
 
         _isDisposed = true;
@@ -161,7 +163,7 @@ public unsafe abstract class Base : IDisposable
             Update();
 
             Draw();
-            GraphicDevice.TestingDraw(Palette.DarkBlue);
+            // GraphicDevice.TestingDraw(Palette.DarkBlue);
         }
 
     }
@@ -195,7 +197,7 @@ public unsafe abstract class Base : IDisposable
         Memory.Memory.Dispose(settings);
 
         WindowImpl.Show(_windowData);
-        TimeImpl.Start(_timeData);
+        TimeImpl.Init(_timeData);
 #endif
     }
 

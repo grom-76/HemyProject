@@ -9,6 +9,11 @@ using System.Runtime.InteropServices;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct TimeData()
 {
+    internal ulong Frequency = 0L;
+    internal bool IsHighPrecision = false;
+    internal ulong Cycles_ms = 0;
+
+    
     internal ulong PreviousFrameTime = 0L;
     internal ulong CurrentFrameTime = 0L;
 

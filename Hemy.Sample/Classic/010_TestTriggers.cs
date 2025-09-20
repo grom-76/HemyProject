@@ -3,6 +3,7 @@ namespace Hemy.Sample.Classic;
 using System;
 using Hemy.Lib.Core;
 using Hemy.Lib.Core.Input;
+using Hemy.Lib.Core.Sys;
 
 public static class C009_TestTriggers
 {
@@ -18,9 +19,9 @@ public static class C009_TestTriggers
         TestExternalClass testExternalClass = new(context);
 
 
-        context.Triggers.Add(0, context.Keyboard.IsPressed, Lib.Core.Input.Key.Escape, testExternalClass.Close );
-        context.Triggers.Add(1, context.Keyboard.IsPressed, Lib.Core.Input.Key.Space, testExternalClass.Start );
-        context.Triggers.Add(2, 2000, 3, testExternalClass.Boom);
+        context.Triggers.Add("Close", context.Keyboard.IsPressed, Lib.Core.Input.Key.Escape, testExternalClass.Close );
+        context.Triggers.Add("Close", context.Keyboard.IsPressed, Lib.Core.Input.Key.Space, testExternalClass.Start );
+        context.Triggers.Add("Bombe", 5000, 3, testExternalClass.Boom);
 
 
         while (context.Window.IsRunning())
@@ -28,7 +29,9 @@ public static class C009_TestTriggers
             context.Update();
 
 
-            context.GraphicDevice.TestingDraw(Lib.Core.Color.Palette.SeaGreen);
+            // context.GraphicDevice.TestingDraw(Lib.Core.Color.Palette.SeaGreen);
+
+            
         }
 
     }
@@ -37,7 +40,7 @@ public static class C009_TestTriggers
     {
         public void Boom()
         {
-            Log.Info("BOOM at : " + context.Time.DeltaTime);
+            Log.Info($" !!!!  BOOOOMMMM !!!! { context.Time.DeltaTime } ms Fram Time {context.Time.CurrentFrameTime}  ms Prvious Time {context.Time.PreviousFrameTime} ms UTc {context.Time.TimeStamp }  sec count {context.Time.FrameCount}" );
         }
 
         public void Close()
@@ -47,7 +50,7 @@ public static class C009_TestTriggers
 
         internal void Start()
         {
-            context.Triggers.StartTimer(2);
+            context.Triggers.StartTimer("Bombe");
         }
     }
 

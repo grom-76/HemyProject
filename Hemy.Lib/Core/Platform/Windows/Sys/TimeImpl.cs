@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
+using Hemy.Lib.Core.Sys;
 using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 
 [SkipLocalsInit]
@@ -14,18 +15,30 @@ using static Hemy.Lib.Core.Platform.Windows.LibrariesName;
 [StructLayout(LayoutKind.Sequential)]
 internal static unsafe partial class TimeImpl
 {
+    internal static ulong cycles_ms = 0;
+    public static void Init(TimeData* timeData)
+    {
+        int isHight = QueryPerformanceFrequency(out ulong count);
+        timeData->IsHighPrecision = isHight != 0;
+        timeData->Frequency  = timeData->IsHighPrecision ? count : 10_000;
+        cycles_ms = timeData->Frequency/1000;
+        timeData->Cycles_ms = cycles_ms;
+
+        Start(timeData);
+    }
+
 
     [SkipLocalsInit]
     [SuppressGCTransition]
     [SuppressUnmanagedCodeSecurity]
     internal static void Update(TimeData* timerData) // Tick 
     {
-        if (timerData->State == TimeData.PAUSED) return;
 
-        timerData->CurrentFrameTime =  GetTick();
-        timerData->DeltaTime =  timerData->CurrentFrameTime - timerData->PreviousFrameTime;
+        timerData->CurrentFrameTime = GetTick() / cycles_ms;
+        timerData->DeltaTime = timerData->CurrentFrameTime - timerData->PreviousFrameTime;
+
+        timerData->FrameCount = timerData->FrameCount + 1;
         timerData->PreviousFrameTime =  timerData->CurrentFrameTime;
-        timerData->FrameCount =  timerData->FrameCount + 1;
         //NEW 
     }
 
@@ -36,7 +49,9 @@ internal static unsafe partial class TimeImpl
 
     internal static void Resume(TimeData* timerData) //unpause
     {
-        timerData->PreviousFrameTime = GetTick();
+        if (timerData->State == TimeData.STOPPED) return;
+
+        timerData->PreviousFrameTime = GetTick() / cycles_ms ;
         timerData->BaseTime = timerData->PreviousFrameTime;
         timerData->StopTime = 0;
         timerData->State = TimeData.RUNNING;
@@ -50,9 +65,9 @@ internal static unsafe partial class TimeImpl
             return;
         }
 
-        timerData->CurrentFrameTime = GetTick();
+        timerData->CurrentFrameTime = GetTick()  / cycles_ms ;
         timerData->PausedTime += timerData->CurrentFrameTime - timerData->StopTime;
-        timerData->PreviousFrameTime = timerData->BaseTime = timerData->CurrentFrameTime;
+        timerData->PreviousFrameTime = timerData->CurrentFrameTime; //timerData->BaseTime = timerData->CurrentFrameTime;
         timerData->StopTime = 0;
         timerData->State = TimeData.RUNNING;
     }
@@ -61,7 +76,7 @@ internal static unsafe partial class TimeImpl
     {
         if (timerData->State == TimeData.PAUSED) return;
 
-        timerData->StopTime = GetTick();
+        timerData->StopTime = GetTick() / cycles_ms ;
         timerData->State = TimeData.PAUSED;
     }
 
@@ -71,26 +86,7 @@ internal static unsafe partial class TimeImpl
     internal static ulong GetTick()
     {
         _ = QueryPerformanceCounter(out ulong count);
-        return count;
-    }
-
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static ulong GetFrequency()
-    {
-        _ = QueryPerformanceFrequency(out ulong count);
-        return count;
-    }
-
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static bool IsHighTimer()
-    {
-        int isHight = QueryPerformanceFrequency(out ulong count);
-        return isHight != 0;
+        return count ;
     }
 
     [SkipLocalsInit]

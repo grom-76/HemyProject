@@ -150,7 +150,7 @@ public unsafe sealed class Context : IDisposable
         AudioDevice = new(_audioData);
         Window = new(_windowData);
         Time = new(_timeData);
-        Triggers = new();
+        Triggers = new(_timeData);
 
 #endif
     }
@@ -175,11 +175,12 @@ public unsafe sealed class Context : IDisposable
         AudioImpl.Init(_audioData);
         InputImpl.Init(_inputData, _windowData->Handle, 0);
         ControllerImpl.Init(_controllers);
+        
        
         Memory.Memory.Dispose(settings);
 
         WindowImpl.Show(_windowData);
-        TimeImpl.Start(_timeData);
+        TimeImpl.Init(_timeData);
 #endif
 
     }
