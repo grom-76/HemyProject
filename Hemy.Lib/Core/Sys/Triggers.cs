@@ -2,8 +2,10 @@
 namespace Hemy.Lib.Core.Sys;
 
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using Hemy.Lib.Core.Input;
 using Hemy.Lib.Core.Platform.Windows.Sys;
 using Hemy.Lib.Core.Sys;
@@ -14,10 +16,10 @@ public unsafe sealed class Triggers(
 #if WINDOWS    
     TimeData* timedata
 #endif
-
 ) : IDisposable// SystemTriggers ( add onKillFocus .....)
 {
-    private static ulong BytesToULong(string data)
+    #region Util
+    public static ulong BytesToULong(string data)
     => (data.Length >= 1 ? ((ulong)data[0] << 0) : 0 << 0) |
         (data.Length >= 2 ? ((ulong)data[1] << 8) : 0 << 8) |
         (data.Length >= 3 ? ((ulong)data[2] << 16) : 0 << 16) |
@@ -27,98 +29,90 @@ public unsafe sealed class Triggers(
         (data.Length >= 7 ? ((ulong)data[6] << 48) : 0 << 48) |
         (data.Length >= 8 ? ((ulong)data[7] << 56) : 0 << 56);
 
-    private TriggerData[] _triggerData = new TriggerData[10];
-    // private int[] _activList = new int[10];
-    private int Position = 0;
-    const int Input = 0;
-    const int Timer = 1;
+    public const int Input = 0;
+    public const int Timer = 1;
     public delegate bool EventDelegate(byte value);
     public delegate bool EventDelegateK(Key value);
     public delegate bool EventDelegateM(MouseButton value);
     public delegate bool EventDelegateG(ControllerButton value);
     public delegate void EventActionExecute();
+    public static void VoidAction() { }
+    public static bool VoidInput(byte b) { _ = b; return false; }
 
-    private static void Empty() { }
-    private static bool EmptyInput(byte b) { _ = b; return false; }
+    #endregion
 
+    // public void* actions = null;     
+    // actions = (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate(inputEvent);
+    //    _ = ((delegate* unmanaged<byte, bool>) actions)(2);
+    // private int[] _activList = new int[10];
+    // private Memory.Array<TriggerData>* _trig = null;
+    // (*_trig)[Position++] = trigger;
+    // _trig->AddAt(Position++, trigger);
 
-    public void Add(string id, EventDelegateK inputEvent, Key Key, EventActionExecute actionExecute = null)
+    private TriggerData[] _triggerData = new TriggerData[10];
+    private int Position = 0;
+
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public void Add(string id, EventDelegateK inputEvent, Key key, EventActionExecute actionExecute = null)
     {
-        actionExecute ??= Empty;
+        actionExecute ??= VoidAction;
 
-        TriggerData trigger = new();
-
-        trigger.Id = BytesToULong( id );
-        trigger.Type = Input;
-
-        trigger.InputAction = (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate(inputEvent);
-        trigger.Key = (byte)Key;
-        trigger.ActionExecute = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(actionExecute);
-
-        trigger.Duration = 0;
-        trigger.LoopCount = 0;
+        TriggerData trigger = new(id, Input, (byte)key, 0, 0,
+            (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate((EventDelegateK)inputEvent),
+            (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate((EventActionExecute)actionExecute));
 
         _triggerData[Position++] = trigger;
     }
 
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     public void Add(string id, ulong duration_ms, int loop = 1, EventActionExecute actionExecute = null)
     {
-        actionExecute ??= Empty;
-
-        TriggerData trigger = new();
-
-        trigger.Id = BytesToULong( id );
-        trigger.Type = Timer;
-
-        trigger.InputAction = (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate((EventDelegate)EmptyInput);
-        trigger.Key = (byte)0;
-        trigger.ActionExecute = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate(actionExecute);
-
-        trigger.Duration = duration_ms ;
-        trigger.LoopCount = loop;
+        actionExecute ??= VoidAction;
+        TriggerData trigger = new(id, Timer, (byte)0, duration_ms, loop,
+            (delegate* unmanaged<byte, bool>)Marshal.GetFunctionPointerForDelegate((EventDelegate)VoidInput),
+            (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate((EventActionExecute)actionExecute));
 
         _triggerData[Position++] = trigger;
     }
 
-
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     private int Findindex(string name)
     {
         ulong id = BytesToULong(name);
-        
         int pos = 0;
-        while (pos < Position && id == _triggerData[pos++].Id)
-        {
-            
-        }
-        return pos ;
+        while (pos <= Position && id != _triggerData[pos].Id) { pos++; }
+        return pos;
     }
 
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     public void StartTimer(string Id)
     {
-        //find ID 
-        ulong name = BytesToULong(Id);
-        int index = -1;
-        for (int i = 0; i < Position; i++)
-        {
-            if (name == _triggerData[i].Id)
-            {
-                index = i;
-                break;
-            }
-        }
+        int index = Findindex(Id);
 
-        if (index == -1) return;
+        if (index >= Position) return;
 
         _triggerData[index].StartTime = timedata->CurrentFrameTime;
+        _triggerData[index].Loop = _triggerData[index].LoopCount;
+
+        int index2 = Findindex(Id);
+
+        if (index2 >= Position) return;
+
         _triggerData[index].Loop = _triggerData[index].LoopCount;
     }
 
     public void Remove(uint Id)
     {
         //find ID 
-
     }
-
 
     private bool IsValidTimer(TriggerData* data) => data->Type == Timer
         && ( timedata->CurrentFrameTime - data->StartTime) >= data->Duration
@@ -139,13 +133,13 @@ public unsafe sealed class Triggers(
 
             if (IsValidTimer(&data))
             {
-                
                 _triggerData[i].Loop--;
-                _triggerData[i].StartTime = timedata->CurrentFrameTime ;
+                _triggerData[i].StartTime = timedata->CurrentFrameTime;
 
                 _triggerData[i].ActionExecute();
             }
         }
+        
         // int activPosition = 0;
         // for (int i = 0; i < Position; i++)
         // {
@@ -161,9 +155,6 @@ public unsafe sealed class Triggers(
         //     data.StartTime = HighResolutionTimer.TimeStamp;
         //     data.ActionExecute();
         // }
-
-
-
     }
 
     // private readonly object _triggerLock = new object();

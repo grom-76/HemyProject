@@ -55,10 +55,13 @@ public unsafe readonly struct Time(
     /// </summary>
     [SkipLocalsInit]
     public readonly double PreviousFrameTime => timeData->PreviousFrameTime ;
- 
+
     /// <summary>
     /// Interrupt elapsed time.
     /// </summary>
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     public readonly void Pause()
     {
 #if WINDOWS
@@ -69,6 +72,9 @@ public unsafe readonly struct Time(
     // After an intentional timing discontinuity (for instance a blocking IO operation)
     // call this to avoid having the fixed timestep logic attempt a set of catch-up
     // Update calls.
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
     public readonly void Resume()
     {
 #if WINDOWS
@@ -83,6 +89,7 @@ public unsafe readonly struct Time(
         Paused = 2
     }
 
+    [SkipLocalsInit]
     public readonly TimerState State => (TimerState)timeData->State;
 }
 

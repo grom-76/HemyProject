@@ -30,8 +30,6 @@ public static class C009_TestTriggers
 
 
             // context.GraphicDevice.TestingDraw(Lib.Core.Color.Palette.SeaGreen);
-
-            
         }
 
     }
@@ -51,6 +49,7 @@ public static class C009_TestTriggers
         internal void Start()
         {
             context.Triggers.StartTimer("Bombe");
+
         }
     }
 
