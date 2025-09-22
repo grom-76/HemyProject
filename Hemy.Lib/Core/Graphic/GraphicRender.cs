@@ -17,7 +17,7 @@ public unsafe struct GraphicRender(
 #endif
 )
 {
-    // GraphicRenderData _renderData
+    // GraphicRenderSettings  => change RenderPass Values 
 
     public void Add(Shape2D shape)
     {

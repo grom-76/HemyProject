@@ -19,8 +19,6 @@ using Hemy.Lib.Core.Audio;
 using System.Security.Principal;
 using Hemy.Lib.Core.Sys;
 using Hemy.Lib.Core.Graphic;
-
-
 #endif
 
 [SkipLocalsInit]
@@ -165,7 +163,6 @@ public unsafe sealed class Context : IDisposable
 #if WINDOWS
         //Convert  settings to internal window settings 
         Platform.Windows.Window.WindowsSettings* settings = Memory.Memory.New<Platform.Windows.Window.WindowsSettings>();
-
         Platform.Windows.Window.WindowsSettings.Binding(settings, Window.Settings );
 
         WindowImpl.Init(_windowData, _monitorData, settings, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
@@ -176,8 +173,7 @@ public unsafe sealed class Context : IDisposable
         AudioImpl.Init(_audioData);
         InputImpl.Init(_inputData, _windowData->Handle, 0);
         ControllerImpl.Init(_controllers);
-        
-       
+              
         Memory.Memory.Dispose(settings);
 
         WindowImpl.Show(_windowData);
@@ -242,9 +238,6 @@ public unsafe sealed class Context : IDisposable
         Triggers.Update();
 #endif
     }
-
-
-
 
 #if WINDOWS
     [SkipLocalsInit]

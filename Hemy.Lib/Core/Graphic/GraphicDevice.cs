@@ -16,7 +16,7 @@ public readonly unsafe struct GraphicDevice
     private readonly GraphicData* _graphicData = null;
     private readonly WindowData* _windowData = null;
     private readonly GraphicRender* _render = null;
-    
+
 
     public GraphicDevice(
 #if WINDOWS
@@ -28,11 +28,11 @@ public readonly unsafe struct GraphicDevice
         Settings = new();
         _graphicData = graphicData;
         _windowData = windowData;
-        // GraphicRender = new(_graphicData, _windowData);
+
         _render = Memory.Memory.New<GraphicRender>(false);
         GraphicRender temp = new(graphicData, windowData);
-        Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), _render, (uint) Memory.Memory.Size<GraphicRender>());
-        
+        Memory.Memory.Copy(Memory.Memory.ToPtr(ref temp), _render, (uint)Memory.Memory.Size<GraphicRender>());
+        temp.Dispose();
     }
 
 
@@ -54,7 +54,6 @@ public readonly unsafe struct GraphicDevice
 
     internal readonly void Dispose()
     {
-        // GraphicRender.Dispose();
         _render->Dispose();
         Settings.Dispose();
 
@@ -63,11 +62,12 @@ public readonly unsafe struct GraphicDevice
 
     [SkipLocalsInit]
     public readonly GraphicRender GraphicRender => *_render;
-    
+
     [SkipLocalsInit]
-    public GraphicDeviceSettings Settings  {
+    public GraphicDeviceSettings Settings
+    {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get ;
+        get;
     }
 
     public readonly uint Width => _graphicData->RenderPassArea->extent.width;
@@ -75,5 +75,8 @@ public readonly unsafe struct GraphicDevice
     public readonly ClipVolume ClipVolume => ClipVolume.NegativeOneToPlusOne;
     public readonly Handled Handled => Handled.RightHand;
     public readonly ScreenOrigin ScreenOrigin => ScreenOrigin.lowerLeft;
+
+    public readonly int WindowWidth => _windowData->Width;
+    public readonly int WindowHeight => _windowData->Height;
 
 }

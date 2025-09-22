@@ -21,7 +21,7 @@ public unsafe struct BinaryFileReader()
 	int* BufferPosition = null;
 	uint BufferSize = 0;
 
-	public enum Mode : uint
+	public enum SeekMode : uint
 	{
 		Begin = IoFileRWImpl.SEEK_BEGIN,
 		End= IoFileRWImpl.SEEK_END,
@@ -72,7 +72,7 @@ public unsafe struct BinaryFileReader()
 
 	}
 
-	public void Seek(long offset, Mode mode)
+	public void Seek(long offset, SeekMode mode)
 	{
 #if WINDOWS
 		IoFileRWImpl.Seek(_data, offset, (uint)mode);
