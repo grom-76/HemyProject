@@ -32,6 +32,11 @@ internal unsafe static partial class MathFuncs
     [LibraryImport(Ucrt, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial double pow(double x, double y);
+
+    [LibraryImport(Ucrt, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     internal static partial double sin(double x);
 
     [LibraryImport(Ucrt, SetLastError = false)]

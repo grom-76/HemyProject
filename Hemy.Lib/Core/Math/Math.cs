@@ -155,6 +155,46 @@ public static class Math
      => powf(x, y);
 #endif
 
+    public static double PowerOf(this double x, double y)
+#if WINDOWS    
+     => pow(x, y);
+#endif
+
+    /// <summary>
+    /// Returns the natural (base e) logarithm of a specified number.
+    /// Retourne :One of the values in the following table.
+    /// d parameter – Return value
+    /// Positive – The natural logarithm of d; that is, ln d, or log e d
+    /// Zero –double.NegativeInfinity
+    /// Negative –double.NaN
+    /// Equal to double.NaN –double.NaN
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    [Pure]
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public static double Log(double x) => clog(x);
+
+    /// <summary>
+    /// Returns the natural (base e) logarithm of a specified number.
+    /// Retourne :One of the values in the following table.
+    /// d parameter – Return value
+    /// Positive – The natural logarithm of d; that is, ln d, or log e d
+    /// Zero –double.NegativeInfinity
+    /// Negative –double.NaN
+    /// Equal to double.NaN –double.NaN
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    [Pure]
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    public static float Log(float x) => clogf(x);
+
+
     /// <summary>
     ///  Approximation de 1 sur racine carré de, Utilisé dans quake 
     /// </summary>
@@ -188,6 +228,27 @@ public static class Math
     => sqrt(scalar);
 #endif
 
+    #region ARRONDIE
+    /// <summary>
+    /// Rounds a floating-point value to the nearest integer value.
+    /// </summary>
+    /// <param name="n">A single-precision floating-point number</param>
+    /// <returns>Returns the largest integral value less than or equal to the specified decimal number.</returns>
+    [Pure]
+    public static float Round(float n)
+#if WINDOWS
+    => roundf(n);
+#endif
+    /// <summary>
+    /// Rounds a floating-point value to the nearest integer value.
+    /// </summary>
+    /// <param name="n">A double-precision floating-point number.</param>
+    /// <returns>Returns the largest integral value less than or equal to the specified double-precision floating-point number.</returns>
+    [Pure]
+    public static double Round(double n)
+#if WINDOWS
+    => round(n);
+#endif
     /// <summary>
     /// Returns the largest integral value less than or equal to the specified number.
     /// </summary>
@@ -240,9 +301,7 @@ public static class Math
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Ceiling2(double f)
-    {
-        return (int)(L_OFFSET_MAX - (long)(L_OFFSET_MAX - f));
-    }
+    => (int)(L_OFFSET_MAX - (long)(L_OFFSET_MAX - f));
 
     /// <summary>
     ///     Returns the largest integer less than or equal to the specified floating-point number.
@@ -257,6 +316,9 @@ public static class Math
         return (int)((long)(f + L_OFFSET_MAX) - L_OFFSET_MAX);
     }
 
+    #endregion
+
+    #region  ABSOLUE
     /// <summary>  Retourne la valeur absolue d'un float   </summary>
     /// <param name="scalar">float valeur comprise entre 0 et float.MaxValue </param>
     /// <returns></returns>
@@ -290,7 +352,9 @@ public static class Math
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Abs(int x) => (x + (x >> 31)) ^ (x >> 31);
 
-#region LIMIT => MIN MAX
+    #endregion
+
+    #region LIMIT => MIN MAX
     private const int CH_BIT = 8;
 
     /// <summary>
