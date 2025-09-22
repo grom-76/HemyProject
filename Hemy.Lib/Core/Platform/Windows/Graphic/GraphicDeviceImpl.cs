@@ -47,7 +47,7 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 [SkipLocalsInit] 
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe static class GraphicImpl
+internal unsafe static class GraphicDeviceImpl
 {
 // TODO: Placer le code GraphicImpl dans Vulkan ?? ne garder que le Init Dispose et draw ...
 
@@ -64,7 +64,7 @@ internal unsafe static class GraphicImpl
 
         DisposeSwapChain(contextData);
 
-        RenderImpl.DisposeRender(contextData);
+        GraphicRenderImpl.DisposeRender(contextData);
 
         DisposeDevice(contextData);
         

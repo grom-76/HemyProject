@@ -126,7 +126,7 @@ public unsafe abstract class Base : IDisposable
         
 
         AudioImpl.Dispose(_audioData);
-        GraphicImpl.Dispose(_graphicData);
+        GraphicDeviceImpl.Dispose(_graphicData);
         WindowImpl.Dispose(_windowData);
 
         Memory.Memory.Dispose(_windowData);
@@ -186,10 +186,10 @@ public unsafe abstract class Base : IDisposable
         Platform.Windows.Window.WindowsSettings.Binding(settings, Window.Settings );
 
         WindowImpl.Init(_windowData, _monitorData, settings, (delegate* unmanaged<void*, uint, uint*, long*, long*>)Marshal.GetFunctionPointerForDelegate(WindowProcMessages));
-        GraphicImpl.Init(_graphicData, _windowData);
+        GraphicDeviceImpl.Init(_graphicData, _windowData);
 
-        RenderImpl.CreateRenderPass(_graphicData);
-        RenderImpl.CreateRender(_graphicData);
+        GraphicRenderImpl.CreateRenderPass(_graphicData);
+        GraphicRenderImpl.CreateRender(_graphicData);
         AudioImpl.Init(_audioData);
         InputImpl.Init(_inputData, _windowData->Handle, 0);
         ControllerImpl.Init(_controllers);

@@ -11,51 +11,32 @@ using Hemy.Lib.Core.Platform.Windows.Window;
 
 public unsafe struct ShaderData()
 {
-    internal byte* Shader_FragmentEntryPoint = null;
-    internal byte* Shader_VertexEntryPoint = null;
-    internal uint* Shader_FragmentCode = null;
-    internal uint* Shader_VertexCode = null;
-    internal uint Shader_FragmentCodeLength = 0;
-    internal uint Shader_VertexCodeLength = 0;
-    internal uint Shader_ShaderStageCount = 2;
+	internal byte* FragmentEntryPoint = null;
+	internal byte* VertexEntryPoint = null;
 
-    //attributeDescriptions for Vertex 
-    internal uint Vertex_Stride = 0;
-    internal uint Vertex_Offset = 0;
-    //
-    internal VkDescriptorSetLayout ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
-    internal uint DescriptorSetLayoutCount = 0;
-    internal VkDescriptorPool ShaderDescribe_DescriptorPool = VkDescriptorPool.Null;
-    internal VkDescriptorSet* ShaderDescribe_DescriptorSets = null;
+	internal uint* FragmentBytesCode = null;
+	internal uint* VertexBytesCode = null;
 
-    internal bool HasUniform = false; // USE CAMERA ...
-    internal bool HasPushConstant = false; // USE PUSH CONSTANT ....
+	internal uint FragmentBytesCodeLength = 0;
+	internal uint VertexBytesCodeLength = 0;
 
+	internal uint ShaderStageCount = 2;
 
-    internal VkPipelineLayout PipelineLayout = VkPipelineLayout.Null;
+	//attributeDescriptions for Vertex  if Vertex has Embedded in shader
+	internal bool HasVerticesEmbbeded = true;
+	// internal uint Vertex_Stride = 0;
+	// internal uint Vertex_Offset = 0;
+	internal uint VertexCount = 3;
+	internal uint InstanceCount = 1;
+	//
+	internal VkDescriptorSetLayout ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
+	internal uint DescriptorSetLayoutCount = 0;
+	// internal VkDescriptorPool ShaderDescribe_DescriptorPool = VkDescriptorPool.Null;
+	// internal VkDescriptorSet* ShaderDescribe_DescriptorSets = null;
 
-    
-
-    internal unsafe struct VertexData()
-    {
-        //attributeDescriptions for Vertex 
-        internal bool HasMesh = false;
-        internal uint Vertex_Stride = 0;
-        internal uint Vertex_Offset = 0;
-        //STATE
-        internal uint VertexCount = 3;
-        internal uint InstanceCount = 1;
-        internal VkPrimitiveTopology PrimitiveTopology = VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-
-    }
-
-    internal unsafe struct DynamicStateData()
-    {
-        internal uint DynamicStates_Count = 2;
-        internal VkViewport DynamicStates_Viewport = new();
-        internal VkRect2D DynamicStates_Scissor = new();
-        // 
-}
+	// internal bool HasUniform = false; // USE CAMERA ...
+	internal bool HasPushConstant = false; // USE PUSH CONSTANT ....
+	
 }
 
 [SkipLocalsInit]
@@ -64,22 +45,63 @@ public unsafe struct ShaderData()
 internal unsafe static class ShadersImpl
 {
 
-
-/*
-	string glsl = @"		#version 450
-
-	layout(location = 0) in vec3 fragColor;
-
-	layout(location = 0) out vec4 outColor;
-
-	void main()
+	internal static string VertexBaseShader()
 	{
-		outColor = vec4(fragColor, 1.0);
+		return @"#version 460
 
+layout(location = 0) out vec3 fragColor;
+
+vec2 positions[3] = vec2[]
+(
+    vec2(0.0, -0.5),
+    vec2(0.5, 0.5),
+    vec2(-0.5, 0.5)
+);
+
+vec3 colors[3] = vec3[]
+(
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, 0.0, 1.0)
+);
+
+void main() 
+{
+    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    fragColor = colors[gl_VertexIndex];
+}";
 	}
-	";
-*/
-	private static void Add_Glsl_Fragment_Header(string includes = "" )
+
+	internal static string FragmentBaseShader()
+	{
+		return @"#version 450
+
+layout(location = 0) in vec3 fragColor;
+
+layout(location = 0) out vec4 outColor;
+
+void main()
+{
+    outColor = vec4(fragColor, 1.0);
+}
+";
+	}
+
+	/*
+		string glsl = @"		#version 450
+
+		layout(location = 0) in vec3 fragColor;
+
+		layout(location = 0) out vec4 outColor;
+
+		void main()
+		{
+			outColor = vec4(fragColor, 1.0);
+
+		}
+		";
+	*/
+	private static void Add_Glsl_Fragment_Header(string includes = "")
 	{
 		_ = @"
 		#version 450
@@ -152,6 +174,50 @@ internal unsafe static class ShadersImpl
 
 		// Create byteCode SPIRV with shaderc Compiler 
 	}
+
+	 // internal static void CreateShader(GraphicData* contextData)
+    // {
+    //     string vertexfilename = @"C:\Users\Admin\Documents\ProjectHE2\Assets\Shader_Base.vert";
+
+    //     string vertexSource = File.ReadAllText(vertexfilename);
+
+    //     using var compiler = new Compiler();
+
+    //     compiler.Options.ShaderStage = ShaderKind.VertexShader;
+    //     compiler.Options.EntryPoint = "main";
+    //     compiler.Options.SourceLanguage = SourceLanguage.GLSL;
+    //     compiler.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_0;
+    //     compiler.Options.TargetSpv = SpirVVersion.Version_1_0;
+
+    //     CompileResult result = compiler.Compile(vertexSource, vertexfilename);
+
+    //     VkShaderModuleCreateInfo* createInfoFrag = stackalloc VkShaderModuleCreateInfo[1];
+    //     createInfoFrag[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    //     createInfoFrag[0].codeSize = result.BytesSize;
+    //     createInfoFrag[0].pNext = null;
+    //     createInfoFrag[0].flags = 0;
+    //     createInfoFrag[0].pCode = (uint*)result.Bytes;
+
+    //     VkShaderModule ShaderModule = VkShaderModule.Null;
+
+    //     var error = Vk.vkCreateShaderModule(contextData->Device, &createInfoFrag[0], null, &ShaderModule);
+
+    //     _ = Log.Check(error != VkResult.VK_SUCCESS, $"could not create vertex shader module : {error} ");
+
+    //     byte* entryPt = WindowsMemory.New("main");
+
+    //     VkPipelineShaderStageCreateInfo* shaderStages = stackalloc VkPipelineShaderStageCreateInfo[1];
+
+    //     shaderStages[0].sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    //     shaderStages[0].stage = VkShaderStageFlagBits.VK_SHADER_STAGE_FRAGMENT_BIT;
+    //     shaderStages[0].module = ShaderModule;
+    //     shaderStages[0].pName = entryPt;
+    //     shaderStages[0].flags = 0;
+    //     shaderStages[0].pNext = null;
+    //     shaderStages[0].pSpecializationInfo = null;
+
+    //     WindowsMemory.Dispose(entryPt);
+    // }
 
 	public static void AddShader(string vertex, string fragment, string entrypoint = "main")
 	{

@@ -1036,7 +1036,7 @@ public unsafe struct VkShaderModuleCreateInfo
 	public VkStructureType sType;
 	public void* pNext;
 	public uint flags;
-	public ulong codeSize;
+	public nuint codeSize;
 	public uint32_t* pCode;
 }
 

@@ -2470,10 +2470,10 @@ public /* readonly */  unsafe struct VkImageView : IEquatable<VkImageView> {
 }
 
   [SkipLocalsInit] [StructLayout(LayoutKind.Sequential, Pack = VK.DATA_ALIGNEMENT_SIZE ) ]
-public /* readonly */  unsafe struct VkShaderModule : IEquatable<VkShaderModule> {
+public /* readonly */  unsafe struct VkShaderModule() : IEquatable<VkShaderModule> {
 	public static /* readonly */  VkShaderModule Null = (VkShaderModule)null;
 	public bool IsNull => _ptr ==0;	public bool IsNotNull => _ptr !=0;
-	private /* readonly */  ulong _ptr;
+	private /* readonly */  ulong _ptr=0;
 
 	public override int GetHashCode() => ((IntPtr)_ptr).GetHashCode();
 

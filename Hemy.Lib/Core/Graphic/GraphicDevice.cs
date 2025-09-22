@@ -44,8 +44,8 @@ public readonly unsafe struct GraphicDevice
 #if WINDOWS
         if (_windowData->SysPaused) return;
 
-        RenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
-        RenderImpl.Draw(_graphicData);
+        GraphicRenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
+        GraphicRenderImpl.Draw(_graphicData);
 #else
         
 #endif

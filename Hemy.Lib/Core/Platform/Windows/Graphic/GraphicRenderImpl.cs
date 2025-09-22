@@ -10,10 +10,10 @@ using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Window;
 
 
-[SkipLocalsInit] 
+[SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe static class RenderImpl
+internal unsafe static class GraphicRenderImpl
 {
 
     internal static void GetMemoryPropeties(GraphicData* graphicData)
@@ -34,50 +34,6 @@ internal unsafe static class RenderImpl
         // Vk.vkGetPhysicalDeviceMemoryProperties(graphicData->DevicePhysical, &graphicData->DeviceMemoryProperties);
     }
 
-    // internal static void CreateShader(GraphicData* contextData)
-    // {
-    //     string vertexfilename = @"C:\Users\Admin\Documents\ProjectHE2\Assets\Shader_Base.vert";
-
-    //     string vertexSource = File.ReadAllText(vertexfilename);
-
-    //     using var compiler = new Compiler();
-
-    //     compiler.Options.ShaderStage = ShaderKind.VertexShader;
-    //     compiler.Options.EntryPoint = "main";
-    //     compiler.Options.SourceLanguage = SourceLanguage.GLSL;
-    //     compiler.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_0;
-    //     compiler.Options.TargetSpv = SpirVVersion.Version_1_0;
-
-    //     CompileResult result = compiler.Compile(vertexSource, vertexfilename);
-
-    //     VkShaderModuleCreateInfo* createInfoFrag = stackalloc VkShaderModuleCreateInfo[1];
-    //     createInfoFrag[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    //     createInfoFrag[0].codeSize = result.BytesSize;
-    //     createInfoFrag[0].pNext = null;
-    //     createInfoFrag[0].flags = 0;
-    //     createInfoFrag[0].pCode = (uint*)result.Bytes;
-
-    //     VkShaderModule ShaderModule = VkShaderModule.Null;
-
-    //     var error = Vk.vkCreateShaderModule(contextData->Device, &createInfoFrag[0], null, &ShaderModule);
-
-    //     _ = Log.Check(error != VkResult.VK_SUCCESS, $"could not create vertex shader module : {error} ");
-
-    //     byte* entryPt = WindowsMemory.New("main");
-
-    //     VkPipelineShaderStageCreateInfo* shaderStages = stackalloc VkPipelineShaderStageCreateInfo[1];
-
-    //     shaderStages[0].sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    //     shaderStages[0].stage = VkShaderStageFlagBits.VK_SHADER_STAGE_FRAGMENT_BIT;
-    //     shaderStages[0].module = ShaderModule;
-    //     shaderStages[0].pName = entryPt;
-    //     shaderStages[0].flags = 0;
-    //     shaderStages[0].pNext = null;
-    //     shaderStages[0].pSpecializationInfo = null;
-
-    //     WindowsMemory.Dispose(entryPt);
-    // }
-
     internal static float[] PaletteToFloatRGBA(uint color)
     {
         // TODO Attention color Format SI ARGB Ou RGBA ??????
@@ -95,7 +51,7 @@ internal unsafe static class RenderImpl
     static byte Get_g(uint argbcolor) => (byte)(argbcolor >> 8);
     static byte Get_b(uint argbcolor) => (byte)(argbcolor & 0x000000FF);
 
-    internal static void ChangeBackGroundColor(GraphicData* contextData, uint color )
+    internal static void ChangeBackGroundColor(GraphicData* contextData, uint color)
     {
         var cl = PaletteToFloatRGBA(color); // TODO : be careful with color RGBA ARGBA ( 16 or 32bit ) see ColorFormat in GraphicDevice
         // contextData->RenderPassClearValues[0].color = new(cl);
@@ -120,9 +76,9 @@ internal unsafe static class RenderImpl
         // if 2 joeur split screen 
         if (contextData->RenderPassClearValues == null)
             contextData->RenderPassClearValues = Memory.Memory.NewArray<VkClearValue>(/*depth buffer =2*/ 1);
-            // contextData->RenderPassClearValues = (VkClearValue*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkClearValue>());
+        // contextData->RenderPassClearValues = (VkClearValue*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkClearValue>());
 
-        ChangeBackGroundColor(contextData,4284782061u);
+        ChangeBackGroundColor(contextData, 4284782061u);
 
         // COLOR 
         VkAttachmentDescription* colorAttachment = stackalloc VkAttachmentDescription[1];
@@ -193,7 +149,7 @@ internal unsafe static class RenderImpl
 
         if (contextData->Framebuffers == null)
             contextData->Framebuffers = Memory.Memory.NewArray<VkFramebuffer>(contextData->SwapChainImageViewsCount);
-            // contextData->Framebuffers = (VkFramebuffer*)NativeMemory.Alloc(contextData->SwapChainImageViewsCount * (uint)Unsafe.SizeOf<VkFramebuffer>());
+        // contextData->Framebuffers = (VkFramebuffer*)NativeMemory.Alloc(contextData->SwapChainImageViewsCount * (uint)Unsafe.SizeOf<VkFramebuffer>());
 
         // VkImageView* attachments2 = (VkImageView*)NativeMemory.Alloc(1 * (uint)Unsafe.SizeOf<VkImageView>());
         // TODO : replace attachements alloc par stackalloc 
@@ -216,8 +172,10 @@ internal unsafe static class RenderImpl
 
             result = Vk.vkCreateFramebuffer(contextData->Device, &framebufferInfo[0], null, &contextData->Framebuffers[i]);//;//.Check("failed to create framebuffer!"); 
 
-            if (VkResult.VK_SUCCESS != result) {
-                Log.Error($"-{i} Create FrameBuffer {contextData->Framebuffers[i]}"); }
+            if (VkResult.VK_SUCCESS != result)
+            {
+                Log.Error($"-{i} Create FrameBuffer {contextData->Framebuffers[i]}");
+            }
         }
     }
 
@@ -240,13 +198,13 @@ internal unsafe static class RenderImpl
         VkResult result;
 
         if (contextData->ImageAvailableSemaphores == null)
-        // contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
-            contextData->ImageAvailableSemaphores = Memory.Memory.NewArray<VkSemaphore> (contextData->MaxFrameInFlight );
+            // contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+            contextData->ImageAvailableSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
         //TODO : change NAtiveMEmor
 
         if (contextData->RenderFinishedSemaphores == null)
-        // contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
-            contextData->RenderFinishedSemaphores = Memory.Memory.NewArray<VkSemaphore> (contextData->MaxFrameInFlight );
+            // contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+            contextData->RenderFinishedSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
 
         VkSemaphoreCreateInfo* semaphoreInfo = stackalloc VkSemaphoreCreateInfo[1];
         semaphoreInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -267,7 +225,7 @@ internal unsafe static class RenderImpl
 
         if (contextData->InFlightFences == null)
             // contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
-            contextData->InFlightFences =  Memory.Memory.NewArray<VkFence>(contextData->MaxFrameInFlight );
+            contextData->InFlightFences = Memory.Memory.NewArray<VkFence>(contextData->MaxFrameInFlight);
 
         VkFenceCreateInfo* fenceInfo = stackalloc VkFenceCreateInfo[1];
         fenceInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -372,12 +330,12 @@ internal unsafe static class RenderImpl
         VkSemaphore* signalSemaphores = stackalloc VkSemaphore[1] { CurrentRenderFinishedSemaphore };
         VkSwapchainKHR* swapChains = stackalloc VkSwapchainKHR[1] { contextData->SwapChain };
         uint CurrentImageIndex = 0;
-        // VkCommandBuffer* currentCommandBuffer = stackalloc VkCommandBuffer[1] { contextData->CommandBuffers[currentFrame] };
+        contextData->CurrentCommandBuffer =  contextData->CommandBuffers[currentFrame] ;
 
         VkResult result = Vk.vkWaitForFences(contextData->Device, 1, &CurrentinFlightFence, /*VK_TRUE*/1, contextData->Ticktimeout);//;//.Check("Acquire Image");
         result = Vk.vkResetFences(contextData->Device, 1, &CurrentinFlightFence);
         //now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
-        result = Vk.vkResetCommandBuffer( contextData->CommandBuffers[currentFrame], (uint)VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+        result = Vk.vkResetCommandBuffer(contextData->CommandBuffers[currentFrame], (uint)VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
         //request image from the swapchain =>  // Acquire an index of drawing image for this frame.
         result = Vk.vkAcquireNextImageKHR(contextData->Device, contextData->SwapChain, contextData->Ticktimeout, CurrentImageAvailableSemaphore, VkFence.Null, &CurrentImageIndex);
 
@@ -392,7 +350,7 @@ internal unsafe static class RenderImpl
             return;
         }
 
-        RecordCommandBuffer(contextData,  CurrentImageIndex);
+        RecordCommandBuffer(contextData, CurrentImageIndex);
 
         VkSubmitInfo* submitInfo = stackalloc VkSubmitInfo[1];
         submitInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -400,7 +358,7 @@ internal unsafe static class RenderImpl
         submitInfo[0].pWaitSemaphores = waitSemaphores;
         submitInfo[0].pWaitDstStageMask = waitStages;
         submitInfo[0].commandBufferCount = 1;
-        submitInfo[0].pCommandBuffers = & contextData->CommandBuffers[currentFrame];
+        submitInfo[0].pCommandBuffers = &contextData->CommandBuffers[currentFrame];
         submitInfo[0].signalSemaphoreCount = 1;
         submitInfo[0].pSignalSemaphores = signalSemaphores;
         submitInfo[0].pNext = null;
@@ -435,7 +393,7 @@ internal unsafe static class RenderImpl
     static void RecordCommandBuffer(GraphicData* contextData, uint currentImageIndex)
     {
         int renderPasses = 1;
-        
+
         VkCommandBufferBeginInfo* beginInfo = stackalloc VkCommandBufferBeginInfo[1];
         beginInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo[0].pNext = null;
@@ -444,81 +402,38 @@ internal unsafe static class RenderImpl
 
         var result = Vk.vkBeginCommandBuffer(contextData->CommandBuffers[currentFrame], &beginInfo[0]);
 
-        //     // FOREACH RENDER PASS 
+        // FOREACH RENDER PASS 
         VkRenderPassBeginInfo* renderPassInfo = stackalloc VkRenderPassBeginInfo[renderPasses];
-        int i = 0;
-        // for (int i = 0; i < renderPasses; i++)
-        // {
-        renderPassInfo[i].sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo[i].pNext = null;
-        renderPassInfo[i].renderArea = *contextData->RenderPassArea;
-        renderPassInfo[i].renderPass = contextData->RenderPass;
-        renderPassInfo[i].framebuffer = contextData->Framebuffers[currentImageIndex];
-        renderPassInfo[i].clearValueCount = 1;/* contextData->IsUseDepthBuffer ? (uint)2 : (uint)1;*/
-        renderPassInfo[i].pClearValues = contextData->RenderPassClearValues;
 
-        Vk.vkCmdBeginRenderPass(contextData->CommandBuffers[currentFrame], &renderPassInfo[i], VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
-        // Vk.vkCmdBeginRenderPass2(currentCommandBuffer, &renderPassInfo[i], null);
+        for (int i = 0; i < renderPasses; i++)
+        {
+            renderPassInfo[i].sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo[i].pNext = null;
+            renderPassInfo[i].renderArea = *contextData->RenderPassArea;
+            renderPassInfo[i].renderPass = contextData->RenderPass;
+            renderPassInfo[i].framebuffer = contextData->Framebuffers[currentImageIndex];
+            renderPassInfo[i].clearValueCount = 1;/* contextData->IsUseDepthBuffer ? (uint)2 : (uint)1;*/
+            renderPassInfo[i].pClearValues = contextData->RenderPassClearValues;
 
-        // DrawPipeline(contextData);
-        contextData->RenderPipeline();
+            Vk.vkCmdBeginRenderPass(contextData->CommandBuffers[currentFrame], &renderPassInfo[i], VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
+            // Vk.vkCmdBeginRenderPass2(currentCommandBuffer, &renderPassInfo[i], null);
 
-        Vk.vkCmdEndRenderPass(contextData->CommandBuffers[currentFrame]);
-        // } // END FOREACH RENDER PASS 
+            contextData->RenderPipeline();
+
+            Vk.vkCmdEndRenderPass(contextData->CommandBuffers[currentFrame]);
+        } // END FOREACH RENDER PASS 
 
         result = Vk.vkEndCommandBuffer(contextData->CommandBuffers[currentFrame]);
     }
 
+  
+
     public static void EmptyDrawPipeline()
     {
-        
+       
     }
+    
 
-    static void DrawPipeline(GraphicData* contextData)
-    {
-
-        // if (renderData->State == 0) return;
-
-        // PUSH CONSTANTS ---------- ( do before bin pipeline)
-        // fixed(void* ptr = &data->Selected ) 
-        // {
-        //     Vk.vkCmdPushConstants(data->CurrentCommandBuffer, data->PipelineLayout, 
-        //         (uint) VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT, 0,PushConstantsBool.SizeInBytes, ptr );
-        // }
-
-        // SEND DATA To SHADER UNIFORM
-        // fixed ( VkDescriptorSet* desc = &data->ShaderDescribe_DescriptorSets[data->CurrentFrame])
-        // {
-        //     Vk.vkCmdBindDescriptorSets(data->CurrentCommandBuffer, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,data->PipelineLayout, 0, 1, desc, 0, null);
-        // }
-
-        // USE SHADER  ENABLE
-        // Vk.vkCmdBindPipeline(graphicData->CurrentCommandBuffer, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS, renderData-> Pipeline);
-
-        // SET DYNAMIC STATES
-        // renderData->DynamicState-> DynamicStates_Viewport.x = 0.0f;
-        // renderData->DynamicState-> DynamicStates_Viewport.y = 0.0f;
-        // renderData->DynamicState-> DynamicStates_Viewport.width =  graphicData->SwapChainSurfaceSize.width;
-        // renderData->DynamicState-> DynamicStates_Viewport.height =  graphicData->SwapChainSurfaceSize.height;
-        // renderData->DynamicState-> DynamicStates_Viewport.minDepth = 0.0f;
-        // renderData->DynamicState-> DynamicStates_Viewport.maxDepth = 1.0f;
-        // Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, &renderData->DynamicState->DynamicStates_Viewport );
-
-        // renderData->DynamicState-> DynamicStates_Scissor.offset = new() {x=0, y=0};
-        // renderData->DynamicState-> DynamicStates_Scissor.extent = graphicData->SwapChainSurfaceSize;
-        // Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, &renderData->DynamicState->DynamicStates_Scissor);
-
-        // Vk.vkCmdSetLineWidth( _perFrame.CurrentCommandBuffer,data.Handles.DynamicStatee_LineWidth);
-
-        // BIND VERTEX AND INDICES
-        // VkDeviceSize* offsets = stackalloc VkDeviceSize[]{0};
-        // VkBuffer* vertexBuffers = stackalloc VkBuffer[] { settings.VertexBuffer};
-        // Vk.vkCmdBindVertexBuffers(graphicData->CurrentCommandBuffer, 0, 1, vertexBuffers, offsets);
-        // Vk.vkCmdBindIndexBuffer(graphicData->CurrentCommandBuffer, settings.IndicesBuffer, 0, VkIndexType.VK_INDEX_TYPE_UINT16);
-        // Vk.vkCmdDrawIndaexed(graphicData->CurrentCommandBuffer, renderData.IndicesSize, 1, 0, 0, 0);
-
-        // Vk.vkCmdDraw(graphicData->CurrentCommandBuffer, renderData->VertexData->VertexCount, renderData->VertexData->InstanceCount, 0, 0);
-    }
 
 }
 
