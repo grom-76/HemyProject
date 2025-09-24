@@ -320,6 +320,10 @@ internal unsafe static class GraphicRenderImpl
 
     static volatile uint currentFrame = 0;
 
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [UnmanagedCallConv]
     internal static void Draw(GraphicData* contextData)
     {
         uint* waitStages = stackalloc uint[1] { (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT };
@@ -330,7 +334,7 @@ internal unsafe static class GraphicRenderImpl
         VkSemaphore* signalSemaphores = stackalloc VkSemaphore[1] { CurrentRenderFinishedSemaphore };
         VkSwapchainKHR* swapChains = stackalloc VkSwapchainKHR[1] { contextData->SwapChain };
         uint CurrentImageIndex = 0;
-        contextData->CurrentCommandBuffer =  contextData->CommandBuffers[currentFrame] ;
+        contextData->CurrentCommandBuffer = contextData->CommandBuffers[currentFrame];
 
         VkResult result = Vk.vkWaitForFences(contextData->Device, 1, &CurrentinFlightFence, /*VK_TRUE*/1, contextData->Ticktimeout);//;//.Check("Acquire Image");
         result = Vk.vkResetFences(contextData->Device, 1, &CurrentinFlightFence);
@@ -389,6 +393,8 @@ internal unsafe static class GraphicRenderImpl
 
         currentFrame = (currentFrame + 1) % contextData->MaxFrameInFlight;
     }
+
+    [UnmanagedCallConv]
 
     static void RecordCommandBuffer(GraphicData* contextData, uint currentImageIndex)
     {

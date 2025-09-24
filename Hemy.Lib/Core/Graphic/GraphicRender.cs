@@ -46,8 +46,9 @@ public unsafe struct GraphicRender
         _descriptor->Entrypoint = Memory.Memory.NewStr("main");
         _descriptor->DynamicStatesCount = 2;
         _descriptor->PrimitiveTopology = VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-
-
+#if DEBUG        
+        System.GC.KeepAlive(this);
+#endif
         Tools.Shaders.ShaderCompiler.ShadercImpl.CompilVertx(_graphic, _descriptor);
         Tools.Shaders.ShaderCompiler.ShadercImpl.CompilFrag(_graphic, _descriptor);
 
@@ -114,7 +115,7 @@ public unsafe struct GraphicRender
     public void Draw(Palette clearColor)
     {
 #if WINDOWS
-        if (_window->SysPaused) return;
+        if (_window->IsInPaused) return;
 
         GraphicRenderImpl.Draw(_graphic);
 #endif

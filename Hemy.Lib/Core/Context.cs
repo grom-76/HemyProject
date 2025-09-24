@@ -98,8 +98,37 @@ public unsafe sealed class Context : IDisposable
         get;
     }
 
-    [SkipLocalsInit]
+    [SkipLocalsInit][MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public GamePad GetGamePad(ControlerPlayer player) => new(_controllers, (uint)player);
+
+
+    [SkipLocalsInit]
+    public GamePad GamepadPlayer1
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public GamePad GamepadPlayer2
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public GamePad GamepadPlayer3
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
+
+    [SkipLocalsInit]
+    public GamePad GamepadPlayer4
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get ;
+    }
 
     [SkipLocalsInit]
     public AudioDevice AudioDevice
@@ -227,7 +256,7 @@ public unsafe sealed class Context : IDisposable
 #if WINDOWS
         WindowImpl.Update(_windowData);
 
-        if (_windowData->SysPaused) return;
+        if (_windowData->IsInPaused) return;
 
         TimeImpl.Update(_timeData);
 
@@ -302,13 +331,13 @@ public unsafe sealed class Context : IDisposable
 
             case WM_KILLFOCUS:
                { Log.Info("App Kill Focus ");
-                _windowData->SysPaused = true;
+                _windowData->IsInPaused = true;
                 TimeImpl.Pause(_timeData);}
                 return null;
 
             case WM_SETFOCUS:
                 {Log.Info("App Set Focus ");
-                _windowData->SysPaused = false;
+                _windowData->IsInPaused = false;
                 TimeImpl.Resume(_timeData);}
                 return null;
 
