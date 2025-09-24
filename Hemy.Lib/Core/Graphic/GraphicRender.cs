@@ -38,7 +38,26 @@ public unsafe struct GraphicRender
 
     public void BuildShader()
     {
-        Tools.Shaders.ShaderCompiler.ShadercImpl.Compil(_graphic);
+        
+        _graphic->RenderPipeline = (delegate* unmanaged<void>)Marshal.GetFunctionPointerForDelegate((YourDraw)SpeficiDataToDraw);
+        _descriptor->ShaderStageCount = 2;
+        _descriptor->InstanceCount = 1;
+        _descriptor->VertexCount = 3;
+        _descriptor->Entrypoint = Memory.Memory.NewStr("main");
+        _descriptor->DynamicStatesCount = 2;
+        _descriptor->PrimitiveTopology = VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+
+        Tools.Shaders.ShaderCompiler.ShadercImpl.CompilVertx(_graphic, _descriptor);
+        Tools.Shaders.ShaderCompiler.ShadercImpl.CompilFrag(_graphic, _descriptor);
+
+        GraphicDescriptor.CreateShaderStage(_graphic, _descriptor);
+        GraphicDescriptor.CreatePipelineLayout(_graphic, _descriptor);
+        GraphicDescriptor.CreateDynamicStates(_graphic, _descriptor);
+
+        GraphicDescriptor.CreatePipeline(_graphic, _descriptor);
+        
+        Memory.Memory.DisposeStr(_descriptor->Entrypoint);
     }
 
     public void BuildRender(YourDraw yourDraw = null)
@@ -51,28 +70,28 @@ public unsafe struct GraphicRender
 #if WINDOWS
         ShaderData* shader = Memory.Memory.New<ShaderData>();
 
-        shader->DescriptorSetLayoutCount = 0;
-        shader->FragmentBytesCode = null;
-        shader->FragmentBytesCodeLength = 0;
-        shader->FragmentEntryPoint = null;
-        shader->HasPushConstant = false;
-        shader->HasVerticesEmbbeded = true;
-        shader->InstanceCount = 1;
-        shader->VertexCount = 3;
-        shader->ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
-        shader->ShaderStageCount = 2;
-        shader->VertexBytesCode = null;
-        shader->VertexBytesCodeLength = 0;
-        shader->VertexEntryPoint = null;
+        // shader->DescriptorSetLayoutCount = 0;
+        // shader->FragmentBytesCode = null;
+        // shader->FragmentBytesCodeLength = 0;
+        // shader->FragmentEntryPoint = null;
+        // shader->HasPushConstant = false;
+        // shader->HasVerticesEmbbeded = true;
+        // shader->InstanceCount = 1;
+        // shader->VertexCount = 3;
+        // shader->ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
+        // shader->ShaderStageCount = 2;
+        // shader->VertexBytesCode = null;
+        // shader->VertexBytesCodeLength = 0;
+        // shader->VertexEntryPoint = null;
 
-        _descriptor->ShaderStageCount = 2;
+        
 
 
-        GraphicDescriptor.CreateShaderStage(_graphic, _descriptor, shader);
-        GraphicDescriptor.CreatePipelineLayout(_graphic, _descriptor, shader);
-        GraphicDescriptor.CreateDynamicStates(_graphic, _descriptor);
+        // GraphicDescriptor.CreateShaderStage(_graphic, _descriptor, shader);
+        // GraphicDescriptor.CreatePipelineLayout(_graphic, _descriptor, shader);
+        // GraphicDescriptor.CreateDynamicStates(_graphic, _descriptor);
 
-        GraphicDescriptor.CreatePipeline(_graphic, _descriptor);
+        // GraphicDescriptor.CreatePipeline(_graphic, _descriptor);
 
 
         Memory.Memory.Dispose(shader);
@@ -105,7 +124,8 @@ public unsafe struct GraphicRender
     {
 #if WINDOWS
         GraphicDescriptor.Dispose(_graphic, _descriptor);
-#endif        
+#endif
+        
         Memory.Memory.Dispose(_descriptor);
     }
 }

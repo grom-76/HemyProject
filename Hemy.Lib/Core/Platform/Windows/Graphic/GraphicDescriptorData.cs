@@ -25,6 +25,7 @@ public unsafe struct GraphicDescriptorData()
     internal VkViewport* DynamicStateViewport = null;
     internal VkRect2D* DynamicStateScissor = null;
 
+    internal byte* Entrypoint = null;
     //
     // internal VkDescriptorSetLayout ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
     // internal uint DescriptorSetLayoutCount = 0;

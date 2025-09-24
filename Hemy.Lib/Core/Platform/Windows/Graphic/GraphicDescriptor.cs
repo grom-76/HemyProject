@@ -93,14 +93,14 @@ internal unsafe static class GraphicDescriptor
 		// descriptorData->ShaderModulesFragment = shaderModule ;
 	}
 
-	internal static void CreateShaderStage(GraphicData* graphicData, GraphicDescriptorData* descriptorData, ShaderData* shaderData)
+	internal static void CreateShaderStage(GraphicData* graphicData, GraphicDescriptorData* descriptorData)
 	{
-		byte* entryPt = Memory.Memory.NewStr("main");
+		
 
-		CreateShaderModuleVertex(graphicData, descriptorData, shaderData);
+		// CreateShaderModuleVertex(graphicData, descriptorData, shaderData);
 
-		CreateShaderModuleFragment(graphicData, descriptorData, shaderData);
-
+		// CreateShaderModuleFragment(graphicData, descriptorData, shaderData);
+		
 
 		descriptorData->shaderStages = Memory.Memory.NewArray<VkPipelineShaderStageCreateInfo>(descriptorData->ShaderStageCount);
 
@@ -109,7 +109,7 @@ internal unsafe static class GraphicDescriptor
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			stage = VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT,
 			module = descriptorData->ShaderModulesVertex,
-			pName = entryPt,
+			pName = descriptorData->Entrypoint,
 			flags = 0,
 			pNext = null,
 			pSpecializationInfo = null
@@ -120,19 +120,15 @@ internal unsafe static class GraphicDescriptor
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
 			stage = VkShaderStageFlagBits.VK_SHADER_STAGE_FRAGMENT_BIT,
 			module = descriptorData->ShaderModulesFragment,
-			pName = entryPt,
+			pName = descriptorData->Entrypoint,
 			flags = 0,
 			pNext = null,
 			pSpecializationInfo = null
 		};
 
-		if (shaderData->HasVerticesEmbbeded)
-		{
-			descriptorData->VertexCount = shaderData->VertexCount;
-			descriptorData->InstanceCount = shaderData->InstanceCount;
-		}
+		
 
-		Memory.Memory.DisposeStr(entryPt);
+		
 	}
 
 	internal static void DisposeShaderModules(GraphicData* graphicData, GraphicDescriptorData* descriptorData)
@@ -360,11 +356,11 @@ internal unsafe static class GraphicDescriptor
         descriptorData-> DynamicStateViewport->height =  graphicData->RenderPassArea->extent.height;
         descriptorData-> DynamicStateViewport->minDepth = 0.0f;
         descriptorData-> DynamicStateViewport->maxDepth = 1.0f;
-        Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateViewport );
+        // Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateViewport );
 
         descriptorData-> DynamicStateScissor->offset = new() {x=0, y=0};
         descriptorData-> DynamicStateScissor->extent =graphicData->RenderPassArea->extent ;
-        Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateScissor);
+        // Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateScissor);
 
 
 		VkPipelineViewportStateCreateInfo viewportState = new()
@@ -494,20 +490,20 @@ internal unsafe static class GraphicDescriptor
         Vk.vkCmdDraw(graphicData->CurrentCommandBuffer, descriptorData->VertexCount, descriptorData->InstanceCount, 0, 0);
     }
 
-	internal static void CreatePipelineLayout(GraphicData* graphicData, GraphicDescriptorData* descriptorData, ShaderData* shaderData)
+	internal static void CreatePipelineLayout(GraphicData* graphicData, GraphicDescriptorData* descriptorData)
 	//  ref VkDescriptorSetLayout descriptorSetLayout,ref VkPushConstantRange[] push_constants )
 	{
-		VkPushConstantRange push_constant;
-		if (shaderData->HasPushConstant)
-		{
-			// PUSH CONSTANT
-			//this push constant range starts at the beginning
-			push_constant.offset = 0;
-			//this push constant range takes up the size of a MeshPushConstants struct
-			// push_constant.size =  Rita.Lib.Math.Geometry.PushConstantsBool.SizeInBytes ;
-			//this push constant range is accessible only in the vertex shader
-			push_constant.stageFlags = (uint)VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT;
-		}
+		// VkPushConstantRange push_constant;
+		// if (shaderData->HasPushConstant)
+		// {
+		// 	// PUSH CONSTANT
+		// 	//this push constant range starts at the beginning
+		// 	push_constant.offset = 0;
+		// 	//this push constant range takes up the size of a MeshPushConstants struct
+		// 	// push_constant.size =  Rita.Lib.Math.Geometry.PushConstantsBool.SizeInBytes ;
+		// 	//this push constant range is accessible only in the vertex shader
+		// 	push_constant.stageFlags = (uint)VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT;
+		// }
 
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = new()
@@ -515,9 +511,9 @@ internal unsafe static class GraphicDescriptor
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 			flags = 0,
 			pNext = null,
-			pSetLayouts = &shaderData->ShaderDescribe_DescriptorSetLayout,
-			setLayoutCount = shaderData->DescriptorSetLayoutCount,
-			pushConstantRangeCount = shaderData->HasPushConstant ? 1 : (uint)0,    // Optionnel
+			pSetLayouts =null,// &shaderData->ShaderDescribe_DescriptorSetLayout,
+			setLayoutCount =0, //shaderData->DescriptorSetLayoutCount,
+			pushConstantRangeCount =0, //shaderData->HasPushConstant ? 1 : (uint)0,    // Optionnel
 			pPushConstantRanges = /*shaderData->HasPushConstant ? &push_constant :*/ null
 		};
 

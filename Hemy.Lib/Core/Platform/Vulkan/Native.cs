@@ -56,7 +56,7 @@ using VkPipelineInfoEXT = VkPipelineInfoKHR;
 
 // [SkipLocalsInit]
 // [SuppressUnmanagedCodeSecurity]
-[StructLayout(LayoutKind.Sequential, Pack = VK.DATA_ALIGNEMENT_SIZE)]
+[StructLayout(LayoutKind.Sequential)]
 public unsafe static partial class Vk
 {
 	const string Vulkan =
@@ -359,7 +359,10 @@ public unsafe static partial class Vk
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial void vkDestroyImageView(VkDevice device, VkImageView imageView, VkAllocationCallbacks* pAllocator);
 
-	[LibraryImport(Vulkan, SetLastError = false)]
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [LibraryImport(Vulkan, SetLastError = false)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkCreateShaderModule(VkDevice device, VkShaderModuleCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule);

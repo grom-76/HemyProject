@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
 using System;
@@ -17,29 +16,24 @@ using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
 
 public unsafe static class ShadercImpl
 {
-    public static void Compil(GraphicData* graphicData )
+    public static void CompilVertx(GraphicData* graphicData, GraphicDescriptorData* descriptor)
     {
         // code : https://github.com/google/shaderc/blob/main/examples/online-compile/main.cc
 
-        //         shaderc_compiler_t compiler =  shaderc_compiler_initialize();
         var compiler = Native.CompilerInitialize();
 
         byte* shaderSource = Memory.NewStr(VertexBaseShader());
         uint shaderSourceLength = Str.Length(shaderSource);
 
-        byte* entrypoint = Memory.NewStr("main");
+       
         byte* filename = Memory.NewStr("shaderSourceVert");
-        //  shaderc_compilation_result_t result = shaderc_compile_into_spv(
-        //           compiler, source[i], std::strlen(source[i]), shaderc_glsl_vertex_shader,
-        //           "main.vert", "main", nullptr);
-        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength , ShaderKind.VertexShader, filename, entrypoint, null);
-        //       auto status = shaderc_result_get_compilation_status(result);
+
+        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength, ShaderKind.VertexShader, filename, descriptor->Entrypoint , null);
 
         var status = Native.ResultGetCompilationStatus(result);
 
         if (status != CompilationStatus.Success)
         {
-            // std::cout << "error: " << shaderc_result_get_error_message(result)
             var error = Native.ResultGetErrorMessage(result);
         }
         else
@@ -50,26 +44,71 @@ public unsafe static class ShadercImpl
             VkShaderModuleCreateInfo* createInfoVert = stackalloc VkShaderModuleCreateInfo[1];
 
             createInfoVert[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-            createInfoVert[0].codeSize = length ;  
+            createInfoVert[0].codeSize = length;
             createInfoVert[0].pCode = (uint*)bytecode;
             createInfoVert[0].pNext = null;
             createInfoVert[0].flags = 0;
-            
 
             VkShaderModule shaderModule = VkShaderModule.Null;
             var Vertresult = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert[0], null, &shaderModule);
             if (Vertresult != VkResult.VK_SUCCESS) Log.Error("Vertex ShaderModule ");
 
+            descriptor->ShaderModulesVertex = shaderModule;
         }
 
+        Memory.DisposeStr(shaderSource);
+       
+        Memory.DisposeStr(filename);
 
+        Native.ResultRelease(result);
+        Native.CompilerRelease(compiler);
+    }
+
+    public static void CompilFrag(GraphicData* graphicData, GraphicDescriptorData* descriptor)
+    {
+        // code : https://github.com/google/shaderc/blob/main/examples/online-compile/main.cc
+
+        var compiler = Native.CompilerInitialize();
+
+        byte* shaderSource = Memory.NewStr(FragmentBaseShader());
+        uint shaderSourceLength = Str.Length(shaderSource);
+
+        
+        byte* filename = Memory.NewStr("shaderSourceFrag");
+
+        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength, ShaderKind.FragmentShader, filename, descriptor->Entrypoint, null);
+
+        var status = Native.ResultGetCompilationStatus(result);
+
+        if (status != CompilationStatus.Success)
+        {
+            var error = Native.ResultGetErrorMessage(result);
+        }
+        else
+        {
+            var length = Native.ResultGetLength(result);
+            var bytecode = Native.ResultGetBytes(result); // use in shader compil ?????? ( )
+
+            VkShaderModuleCreateInfo* createInfoVert = stackalloc VkShaderModuleCreateInfo[1];
+
+            createInfoVert[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+            createInfoVert[0].codeSize = length;
+            createInfoVert[0].pCode = (uint*)bytecode;
+            createInfoVert[0].pNext = null;
+            createInfoVert[0].flags = 0;
+
+            VkShaderModule shaderModule = VkShaderModule.Null;
+            var Fragresult = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert[0], null, &shaderModule);
+            if (Fragresult != VkResult.VK_SUCCESS) Log.Error("Frag ShaderModule ");
+
+            descriptor->ShaderModulesFragment = shaderModule;
+        }
 
         Memory.DisposeStr(shaderSource);
-        Memory.DisposeStr(entrypoint);
+     
         Memory.DisposeStr(filename);
-        //         shaderc_result_release(result);
+
         Native.ResultRelease(result);
-        //          shaderc_compiler_release(compiler);
         Native.CompilerRelease(compiler);
     }
 
@@ -102,19 +141,23 @@ void main()
 ";
 
     }
+
+    internal static string FragmentBaseShader()
+    {
+        return @"#version 450
+
+layout(location = 0) in vec3 fragColor;
+
+layout(location = 0) out vec4 outColor;
+
+void main()
+{
+    outColor = vec4(fragColor, 1.0);
 }
-=======
-// namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
+";
+    }
+}
 
-// using System;
-// using System.Collections.Generic;
-// using System.IO;
-// using System.Runtime.InteropServices;
-// using System.Text;
-// using System.Text.RegularExpressions;
-// using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
-
->>>>>>> 967f3b556f834c6fd256466ef90406598ab60b35
 // /// <summary>
 // /// Defines a shader macro.
 // /// </summary>
