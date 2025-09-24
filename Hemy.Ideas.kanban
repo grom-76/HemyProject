@@ -208,6 +208,33 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "144d5c3c-a328-496b-aed5-2bb0b7497460",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Ajouter CDecl , SupressGCTransition pour tous unmanaged",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "bee8dfaa-2420-416b-9030-16a1bad09c83",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Mettre MemoryFree pour tous unmanaged",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "9a650f17-82bb-40f2-b1d6-d4fd24b4fec4",
+          "listId": "e2e58c03-4fd4-4eed-8795-7da30b2b91bf",
+          "title": "Ajouter StdCall unamnaged de WinAPI",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },

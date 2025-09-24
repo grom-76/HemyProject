@@ -13,9 +13,11 @@ public class Program
 
         // Classic.C009_TestTriggers.Run();
 
-        Classic.C011_TestGraphicRender.Run();
+        // Classic.C011_TestGraphicRender.Run();
 
         // Advanced.Main.A002_SoundAndTriggers();
+
+        Classic.C012_TestShaderC.Run();
     }
 
 }

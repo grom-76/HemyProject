@@ -1,13 +1,107 @@
-// namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
+namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
-// using System;
-// using System.Collections.Generic;
-// using System.IO;
-// using System.Runtime.InteropServices;
-// using System.Text;
-// using System.Text.RegularExpressions;
-// using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using Hemy.Lib.Core;
+using Hemy.Lib.Core.Memory;
+using Hemy.Lib.Core.Platform.Vulkan;
+using Hemy.Lib.Core.Platform.Windows.Graphic;
+using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
 
+
+public unsafe static class ShadercImpl
+{
+    public static void Compil(GraphicData* graphicData )
+    {
+        // code : https://github.com/google/shaderc/blob/main/examples/online-compile/main.cc
+
+        //         shaderc_compiler_t compiler =  shaderc_compiler_initialize();
+        var compiler = Native.CompilerInitialize();
+
+        byte* shaderSource = Memory.NewStr(VertexBaseShader());
+        uint shaderSourceLength = Str.Length(shaderSource);
+
+        byte* entrypoint = Memory.NewStr("main");
+        byte* filename = Memory.NewStr("shaderSourceVert");
+        //  shaderc_compilation_result_t result = shaderc_compile_into_spv(
+        //           compiler, source[i], std::strlen(source[i]), shaderc_glsl_vertex_shader,
+        //           "main.vert", "main", nullptr);
+        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength , ShaderKind.VertexShader, filename, entrypoint, null);
+        //       auto status = shaderc_result_get_compilation_status(result);
+
+        var status = Native.ResultGetCompilationStatus(result);
+
+        if (status != CompilationStatus.Success)
+        {
+            // std::cout << "error: " << shaderc_result_get_error_message(result)
+            var error = Native.ResultGetErrorMessage(result);
+        }
+        else
+        {
+            var length = Native.ResultGetLength(result);
+            var bytecode = Native.ResultGetBytes(result); // use in shader compil ?????? ( )
+
+            VkShaderModuleCreateInfo* createInfoVert = stackalloc VkShaderModuleCreateInfo[1];
+
+            createInfoVert[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+            createInfoVert[0].codeSize = length ;  
+            createInfoVert[0].pCode = (uint*)bytecode;
+            createInfoVert[0].pNext = null;
+            createInfoVert[0].flags = 0;
+            
+
+            VkShaderModule shaderModule = VkShaderModule.Null;
+            var Vertresult = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert[0], null, &shaderModule);
+            if (Vertresult != VkResult.VK_SUCCESS) Log.Error("Vertex ShaderModule ");
+
+        }
+
+
+
+        Memory.DisposeStr(shaderSource);
+        Memory.DisposeStr(entrypoint);
+        Memory.DisposeStr(filename);
+        //         shaderc_result_release(result);
+        Native.ResultRelease(result);
+        //          shaderc_compiler_release(compiler);
+        Native.CompilerRelease(compiler);
+    }
+
+    internal static string VertexBaseShader()
+    {
+        return @"
+#version 450
+
+layout(location = 0) out vec3 fragColor;
+
+vec2 positions[3] = vec2[]
+(
+    vec2(0.0, -0.5),
+    vec2(0.5, 0.5),
+    vec2(-0.5, 0.5)
+);
+
+vec3 colors[3] = vec3[]
+(
+    vec3(1.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    vec3(0.0, 0.0, 1.0)
+);
+
+void main() 
+{
+    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    fragColor = colors[gl_VertexIndex];
+}
+";
+
+    }
+}
 // /// <summary>
 // /// Defines a shader macro.
 // /// </summary>

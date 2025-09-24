@@ -36,6 +36,10 @@ public unsafe struct GraphicRender
 
     }
 
+    public void BuildShader()
+    {
+        Tools.Shaders.ShaderCompiler.ShadercImpl.Compil(_graphic);
+    }
 
     public void BuildRender(YourDraw yourDraw = null)
     {
@@ -55,7 +59,7 @@ public unsafe struct GraphicRender
         shader->HasVerticesEmbbeded = true;
         shader->InstanceCount = 1;
         shader->VertexCount = 3;
-        shader->ShaderDescribe_DescriptorSetLayout =  VkDescriptorSetLayout.Null;
+        shader->ShaderDescribe_DescriptorSetLayout = VkDescriptorSetLayout.Null;
         shader->ShaderStageCount = 2;
         shader->VertexBytesCode = null;
         shader->VertexBytesCodeLength = 0;
@@ -63,12 +67,12 @@ public unsafe struct GraphicRender
 
         _descriptor->ShaderStageCount = 2;
 
-        
-        GraphicDescriptor.CreateShaderStage(_graphic,_descriptor,shader);
-        GraphicDescriptor.CreatePipelineLayout(_graphic,_descriptor,shader);
-        GraphicDescriptor.CreateDynamicStates(_graphic,_descriptor);
 
-        GraphicDescriptor.CreatePipeline(_graphic,_descriptor);
+        GraphicDescriptor.CreateShaderStage(_graphic, _descriptor, shader);
+        GraphicDescriptor.CreatePipelineLayout(_graphic, _descriptor, shader);
+        GraphicDescriptor.CreateDynamicStates(_graphic, _descriptor);
+
+        GraphicDescriptor.CreatePipeline(_graphic, _descriptor);
 
 
         Memory.Memory.Dispose(shader);
