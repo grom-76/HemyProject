@@ -7,7 +7,6 @@ using Hemy.Lib.Core.Color;
 using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Graphic;
 using Hemy.Lib.Core.Platform.Windows.Window;
-using Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
@@ -60,43 +59,13 @@ public unsafe struct GraphicRender
         shader->ShaderStageCount = 2;
         shader->VertexBytesCode = null;
         shader->VertexBytesCodeLength = 0;
-        shader->VertexEntryPoint = null; 
+        shader->VertexEntryPoint = null;
 
-        //USE TOOLS SHADERCOMPILER 
-        // string vertexfilename = @"Shader_Base.vert";
-        string fragmentfilename = @"Shader_Base.vert";
+        _descriptor->ShaderStageCount = 2;
 
-        // string vertexSource =  ShadersImpl.VertexBaseShader();
-        string FragmentSource = ShadersImpl.FragmentBaseShader();
-
-        // using var compilerVertex = new Compiler();
-
-        // compilerVertex.Options.ShaderStage = ShaderKind.VertexShader;
-        // compilerVertex.Options.EntryPoint = "main";
-        // compilerVertex.Options.SourceLanguage = SourceLanguage.GLSL;
-        // // compilerVertex.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_0;
-        // // compilerVertex.Options.TargetSpv = SpirVVersion.Version_1_0;
-
-        // CompileResult resultVertex = compilerVertex.Compile(vertexSource, vertexfilename );
-
-        // shader->VertexBytesCodeLength = resultVertex.BytesSize;
-        // shader->VertexBytesCode = (uint*)resultVertex.Bytes;
-
-        using var compilerFragment = new Compiler();
-
-        compilerFragment.Options.ShaderStage = ShaderKind.FragmentShader;
-        compilerFragment.Options.EntryPoint = "main";
-        compilerFragment.Options.SourceLanguage = SourceLanguage.GLSL;
-        compilerFragment.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_0;
-        compilerFragment.Options.TargetSpv = SpirVVersion.Version_1_0;
-
-        CompileResult resultFragment = compilerFragment.Compile(FragmentSource, fragmentfilename);
-
-        shader->FragmentBytesCodeLength = resultFragment.BytesSize;
-        shader->FragmentBytesCode = (uint*)resultFragment.Bytes;
-
-        GraphicDescriptor.CreatePipelineLayout(_graphic,_descriptor,shader);
+        
         GraphicDescriptor.CreateShaderStage(_graphic,_descriptor,shader);
+        GraphicDescriptor.CreatePipelineLayout(_graphic,_descriptor,shader);
         GraphicDescriptor.CreateDynamicStates(_graphic,_descriptor);
 
         GraphicDescriptor.CreatePipeline(_graphic,_descriptor);

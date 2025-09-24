@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Window;
-using Hemy.Lib.Tools.Shaders.ShaderCompiler;
+
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
@@ -24,61 +24,86 @@ internal unsafe static class GraphicDescriptor
 		DispsoseDynamicStates(graphicData, descriptorData);
 	}
 
-
 	#region  SHADERS
+
+
+	internal static void CreateShaderModuleVertex(GraphicData* graphicData, GraphicDescriptorData* descriptorData, ShaderData* shaderData)
+	{
+		// string vertexfilename = @"Shader_Base.vert";
+		// // string fragmentfilename = @"Shader_Base.vert";
+
+		// string vertexSource = ShadersImpl.VertexBaseShader();
+		// // string FragmentSource = ShadersImpl.FragmentBaseShader();
+
+		// using var compilerVertex = new Compiler();
+
+		// compilerVertex.Options.ShaderStage = ShaderKind.GLSL_DefaultVertexShader;
+		// compilerVertex.Options.EntryPoint = "main";
+		// // compilerVertex.Options.SourceLanguage = SourceLanguage.GLSL;
+		// // compilerVertex.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_3;
+		// // compilerVertex.Options.TargetSpv = SpirVVersion.Version_1_0;
+
+		// CompileResult resultVertex = compilerVertex.Compile(vertexSource, vertexfilename);
+
+		// byte* entryPt = Memory.Memory.NewStr("main");
+
+		// VkShaderModuleCreateInfo* createInfoVert = stackalloc VkShaderModuleCreateInfo[1];
+
+		// createInfoVert[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		// createInfoVert[0].codeSize = resultVertex.BytesSize;  
+		// createInfoVert[0].pCode = (uint*)resultVertex.Bytes;
+		// createInfoVert[0].pNext = null;
+		// createInfoVert[0].flags = 0;
+		
+
+		// VkShaderModule shaderModule = VkShaderModule.Null;
+		// var result = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert[0], null, &shaderModule);
+		// if (result != VkResult.VK_SUCCESS) Log.Error("Vertex ShaderModule ");
+
+		// descriptorData->ShaderModulesVertex = shaderModule ;
+	}
+
+	internal static void CreateShaderModuleFragment(GraphicData* graphicData, GraphicDescriptorData* descriptorData, ShaderData* shaderData)
+	{
+		// string fragmentfilename = @"Shader_Base.frag";
+
+		// string FragmentSource = ShadersImpl.FragmentBaseShader();
+
+		// using var compilerVertex = new Compiler();
+
+		// compilerVertex.Options.ShaderStage = ShaderKind.GLSL_DefaultFragmentShader;
+		// compilerVertex.Options.EntryPoint = "main";
+		// compilerVertex.Options.SourceLanguage = SourceLanguage.GLSL;
+		// // compilerVertex.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_0;
+		// // compilerVertex.Options.TargetSpv = SpirVVersion.Version_1_0;
+
+		// CompileResult resultFrag = compilerVertex.Compile(FragmentSource, fragmentfilename);
+
+		// VkShaderModuleCreateInfo* createInfoFrag = stackalloc VkShaderModuleCreateInfo[1];
+		// createInfoFrag[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		// createInfoFrag[0].codeSize = resultFrag.BytesSize;  
+		// createInfoFrag[0].pCode = (uint*)resultFrag.Bytes;
+		// createInfoFrag[0].pNext = null;
+		// createInfoFrag[0].flags = 0;
+
+		// VkShaderModule shaderModule = VkShaderModule.Null;
+		// var result = Vk.vkCreateShaderModule(graphicData->Device, &createInfoFrag[0], null, &shaderModule);
+		// if (result != VkResult.VK_SUCCESS) Log.Error("Fragment ShaderModule ");
+
+		// descriptorData->ShaderModulesFragment = shaderModule ;
+	}
+
 	internal static void CreateShaderStage(GraphicData* graphicData, GraphicDescriptorData* descriptorData, ShaderData* shaderData)
 	{
-		string vertexfilename = @"Shader_Base.vert.hlsl";
-        // string fragmentfilename = @"Shader_Base.vert";
-
-        string vertexSource =  ShadersImpl.VertexBaseShader();
-        // string FragmentSource = ShadersImpl.FragmentBaseShader();
-
-        using var compilerVertex = new Compiler();
-
-        compilerVertex.Options.ShaderStage = ShaderKind.GLSL_VertexShader;
-        compilerVertex.Options.EntryPoint = "main";
-        compilerVertex.Options.SourceLanguage = SourceLanguage.GLSL;
-        compilerVertex.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_3;
-        compilerVertex.Options.TargetSpv = SpirVVersion.Version_1_0;
-
-        CompileResult resultVertex = compilerVertex.Compile(vertexSource, vertexfilename );
-
-        // shader->VertexBytesCodeLength = resultVertex.BytesSize;
-        // shader->VertexBytesCode = (uint*)resultVertex.Bytes;
 		byte* entryPt = Memory.Memory.NewStr("main");
 
-		VkShaderModuleCreateInfo createInfoVert = new()
-		{
-			sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-			codeSize =resultVertex.BytesSize,  //shaderData->VertexBytesCodeLength,
-			pCode = (uint*)resultVertex.Bytes ,//shaderData->VertexBytesCode,
-			pNext = null,
-			flags = 0
-		};
-		VkShaderModule shaderModule = VkShaderModule.Null;
-		var result = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert, null, &shaderModule );
-		if (result != VkResult.VK_SUCCESS) Log.Error("Vertex ShaderModule "); 
+		CreateShaderModuleVertex(graphicData, descriptorData, shaderData);
 
-		VkShaderModuleCreateInfo createInfoFrag = new()
-		{
-			sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-			codeSize = shaderData->FragmentBytesCodeLength,
-			pCode = shaderData->FragmentBytesCode,
-			pNext = null,
-			flags = 0
-		};
+		CreateShaderModuleFragment(graphicData, descriptorData, shaderData);
 
-		result = Vk.vkCreateShaderModule(graphicData->Device, &createInfoFrag, null, &descriptorData->ShaderModulesFragment);
-		if (result != VkResult.VK_SUCCESS) Log.Error("Frgment ShaderModule "); 
-		//.Check($"Create  Shader Module Failed");  _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create shader module : {result} ");
-
-
-		//.Check($"Create  Shader Module Failed");  _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create shader module : {result} ");
 
 		descriptorData->shaderStages = Memory.Memory.NewArray<VkPipelineShaderStageCreateInfo>(descriptorData->ShaderStageCount);
 
-		
 		descriptorData->shaderStages[0] = new()
 		{
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -89,6 +114,7 @@ internal unsafe static class GraphicDescriptor
 			pNext = null,
 			pSpecializationInfo = null
 		};
+
 		descriptorData->shaderStages[1] = new()
 		{
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -99,7 +125,6 @@ internal unsafe static class GraphicDescriptor
 			pNext = null,
 			pSpecializationInfo = null
 		};
-
 
 		if (shaderData->HasVerticesEmbbeded)
 		{
@@ -314,7 +339,7 @@ internal unsafe static class GraphicDescriptor
 		#region FIXED FUNCTION DYNAMIC STATE
 
 		// CreateDynamicStates(descriptorData);
-
+		
 		VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = new()
 		{
 			sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
@@ -328,6 +353,19 @@ internal unsafe static class GraphicDescriptor
 		#endregion
 
 		#region FIXED FUNCTION VIEWPORT SCISSOR
+
+		descriptorData-> DynamicStateViewport->x = 0.0f;
+        descriptorData-> DynamicStateViewport->y = 0.0f;
+        descriptorData-> DynamicStateViewport->width =  graphicData->RenderPassArea->extent.width;
+        descriptorData-> DynamicStateViewport->height =  graphicData->RenderPassArea->extent.height;
+        descriptorData-> DynamicStateViewport->minDepth = 0.0f;
+        descriptorData-> DynamicStateViewport->maxDepth = 1.0f;
+        Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateViewport );
+
+        descriptorData-> DynamicStateScissor->offset = new() {x=0, y=0};
+        descriptorData-> DynamicStateScissor->extent =graphicData->RenderPassArea->extent ;
+        Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateScissor);
+
 
 		VkPipelineViewportStateCreateInfo viewportState = new()
 		{
@@ -389,7 +427,9 @@ internal unsafe static class GraphicDescriptor
 			pStages = descriptorData->shaderStages,
 		};
 
-		Vk.vkCreateGraphicsPipelines(graphicData->Device, VkPipelineCache.Null, 1, &pipelineInfo, null, &descriptorData->Pipeline);//.Check("failed to create graphics pipeline!");
+		var err = Vk.vkCreateGraphicsPipelines(graphicData->Device, VkPipelineCache.Null, 1, &pipelineInfo, null, &descriptorData->Pipeline);
+
+		if (err != VkResult.VK_SUCCESS) Log.Error("Create Pipeline");
 
 		DisposeShaderModules(graphicData, descriptorData);
 	}

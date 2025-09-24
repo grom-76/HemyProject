@@ -56,6 +56,15 @@
       "title": "To Do",
       "cards": [
         {
+          "id": "f0d72061-24b3-42a3-b323-4b51b5013405",
+          "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
+          "title": "Set Cursor position ( on center screen )",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
           "id": "1f9de537-7567-4885-8d81-af19e8c1ef39",
           "listId": "ef59f0a7-d52f-485a-b5fd-983f9158291f",
           "title": "Souris sort de l'écran on la desactive / OnMouseLeave OnMouseEnter",
@@ -192,9 +201,36 @@
       "title": "Doing",
       "cards": [
         {
-          "id": "f0d72061-24b3-42a3-b323-4b51b5013405",
+          "id": "4af138bb-6085-45ad-a40e-4247ffb957bd",
           "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
-          "title": "Set Cursor position ( on center screen )",
+          "title": "Ajouter des Logs a chaque parie importantes windowing, graphicDevice ( avec options )",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "292af630-1621-499d-8d9d-b64721017129",
+          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "title": "Refaire les attributs, arranger le code",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "9539692b-bc58-42fd-a0bd-5588c08d54b4",
+          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "title": "Mettre des commentaires en francais dans les struct publics",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "61b2a050-49e7-4739-99ba-f060d1bda9e4",
+          "listId": "08fd2dff-33a8-4322-9fd4-df5f4b5dff1d",
+          "title": "Supprimer Reference Shaderc et remplacer par SpirvCross",
           "description": "",
           "labels": [],
           "checkboxes": [],
