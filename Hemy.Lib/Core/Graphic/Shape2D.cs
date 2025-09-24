@@ -11,7 +11,9 @@ public unsafe struct Shape2D
     public void CreateTriangle(Vector3 position, Vector4 color, uint borderColor = 0)
     {
         // embedded in shader ? 
-
+        _ = borderColor;
+        _ = position;
+        _ = color;
     }
 
     public void Modify()

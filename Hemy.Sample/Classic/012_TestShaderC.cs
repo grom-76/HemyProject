@@ -20,7 +20,7 @@ public static class C012_TestShaderC
 
             if (context.Keyboard.IsPressed(Key.Escape)) context.Window.RequestClose();
 
-            context.GraphicDevice.GraphicRender.Draw(Lib.Core.Color.Palette.CornflowerBlue);
+            // context.GraphicDevice.GraphicRender.Draw(Lib.Core.Color.Palette.CornflowerBlue);
         }
     }
 

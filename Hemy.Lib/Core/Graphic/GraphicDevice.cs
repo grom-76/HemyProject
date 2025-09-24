@@ -42,7 +42,7 @@ public readonly unsafe struct GraphicDevice
     public readonly void TestingDraw(Palette screenColor)
     {
 #if WINDOWS
-        if (_windowData->SysPaused) return;
+        if (_windowData->IsInPaused) return;
 
         GraphicRenderImpl.ChangeBackGroundColor(_graphicData, (uint)screenColor);
         GraphicRenderImpl.Draw(_graphicData);

@@ -211,7 +211,7 @@ public unsafe abstract class Base : IDisposable
 #if WINDOWS
         WindowImpl.Update(_windowData);
 
-        if (_windowData->SysPaused) return;
+        if (_windowData->IsInPaused) return;
 
         TimeImpl.Update(_timeData);
 

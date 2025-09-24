@@ -59,7 +59,55 @@ public unsafe sealed class Window(
     internal void Dispose()
     {
         Settings.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}
+
+
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+public readonly unsafe struct Window2(
+#if WINDOWS
+WindowData* data
+#endif    
+    )
+{
+    
+    private readonly WindowData* _windata = data;
+    public readonly WindowSettings Settings { get; } = new();
+
+    public readonly void SetTitle(string title)
+    {
+#if WINDOWS
+        WindowImpl.UpdateCaptionTitleBar(_windata, title);
+#endif    
     }
 
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions) 768 )]
+    public readonly void RequestClose()
+    {
+#if WINDOWS
+        WindowImpl.RequestClose(_windata);
+#else        
+#endif  
+    }
 
+    [SkipLocalsInit]
+    [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [MethodImpl((MethodImplOptions) 768 )]
+    public readonly bool IsRunning()
+#if WINDOWS 
+        => _windata->IsRunning;
+#else
+        => false;
+#endif
+
+    internal readonly void Dispose()
+    {
+        Settings.Dispose();
+    }
 }

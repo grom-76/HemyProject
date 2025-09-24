@@ -441,9 +441,9 @@ internal unsafe static class GraphicDeviceImpl
             Vk.vkDestroyDebugUtilsMessengerEXT(contextData->Instance, contextData->DebugMessenger, null);
         }
 
-        if (contextData->Instance.IsNotNull)        {
-            Vk.vkDestroyInstance(contextData->Instance, null);
-        }
+        // if (contextData->Instance.IsNotNull)        {
+        //     Vk.vkDestroyInstance(contextData->Instance, null);
+        // }
 
     }
 

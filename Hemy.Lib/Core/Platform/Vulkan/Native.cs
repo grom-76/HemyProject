@@ -70,7 +70,7 @@ public unsafe static partial class Vk
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkCreateInstance(VkInstanceCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
 
-	[LibraryImport(Vulkan, SetLastError = false)]
+	[LibraryImport(Vulkan, SetLastError = true)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial void vkDestroyInstance(VkInstance instance, VkAllocationCallbacks* pAllocator);
