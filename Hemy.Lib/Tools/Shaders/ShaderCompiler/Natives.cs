@@ -1,9 +1,10 @@
-namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
+// namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
+// using System;
+// using System.Runtime.InteropServices;
+// using System.Text;
 
+<<<<<<< HEAD
 using Bool32 = System.Int32; 
 
 internal static unsafe partial class Native
@@ -1664,6 +1665,63 @@ public enum UniformKind : int
 //     [LibraryImport(LibraryName)]
 //     public static partial nint shaderc_compile_into_spv_assembly(nint compiler, byte* source_text, nuint source_text_size, uint shader_kind, byte* input_file_name, byte* entry_point_name, nint additional_options);
 
+=======
+// internal static unsafe partial class Native
+// {
+//     private const string LibraryName =
+// #if WINDOWS
+//     "shaderc_shared";
+// #endif
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compiler_initialize();
+
+//     [LibraryImport(LibraryName)]
+//     public static partial void shaderc_compiler_release(nint handle);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compile_options_initialize();
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compile_options_clone(nint handle);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial void shaderc_compile_options_release(nint handle);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compile_options_add_macro_definition(nint options, byte* name, nuint name_length, byte* value, nuint value_length);
+
+//     public static void shaderc_compile_options_add_macro_definition(nint options, string name, string value)
+//     {
+//         fixed (byte* namePtr = name.GetUtf8Span())
+//         fixed (byte* valuePtr = value.GetUtf8Span())
+//             shaderc_compile_options_add_macro_definition(options, namePtr, (nuint)name.Length, valuePtr, string.IsNullOrEmpty(value) ? 0 : (nuint)value!.Length);
+//     }
+
+//     [LibraryImport(LibraryName)]
+//     public static partial void shaderc_compile_options_set_source_language(nint options, SourceLanguage lang);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial void shaderc_compile_options_set_generate_debug_info(nint options);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial void shaderc_compile_options_set_optimization_level(nint options, OptimizationLevel level);
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compile_into_spv(nint compiler, byte* source, nuint source_size, uint shader_kind, byte* input_file, byte* entry_point, nint additional_options);
+
+//     public static nint shaderc_compile_into_spv(nint compiler, string source, ShaderKind shaderKind, string inputFile, string entryPoint, nint additional_options)
+//     {
+//         fixed (byte* sourcePtr = source.GetUtf8Span())
+//         fixed (byte* inputFilePtr = inputFile.GetUtf8Span())
+//         fixed (byte* entryPointPtr = entryPoint.GetUtf8Span())
+//             return shaderc_compile_into_spv(compiler, sourcePtr, (nuint)source.Length, (uint)shaderKind, inputFilePtr, entryPointPtr, additional_options);
+//     }
+
+//     [LibraryImport(LibraryName)]
+//     public static partial nint shaderc_compile_into_spv_assembly(nint compiler, byte* source_text, nuint source_text_size, uint shader_kind, byte* input_file_name, byte* entry_point_name, nint additional_options);
+
+>>>>>>> 967f3b556f834c6fd256466ef90406598ab60b35
 //     // public static nint shaderc_compile_into_spv_assembly(nint compiler, string source, ShaderKind shaderKind, string inputFile, string entryPoint, nint additional_options)
 //     // {
 //     //     fixed (byte* sourcePtr = source.GetUtf8Span())

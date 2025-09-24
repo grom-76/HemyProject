@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
 
 using System;
@@ -102,6 +103,18 @@ void main()
 
     }
 }
+=======
+// namespace Hemy.Lib.Tools.Shaders.ShaderCompiler;
+
+// using System;
+// using System.Collections.Generic;
+// using System.IO;
+// using System.Runtime.InteropServices;
+// using System.Text;
+// using System.Text.RegularExpressions;
+// using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
+
+>>>>>>> 967f3b556f834c6fd256466ef90406598ab60b35
 // /// <summary>
 // /// Defines a shader macro.
 // /// </summary>
