@@ -10,39 +10,6 @@ using Hemy.Lib.Core.Platform.Vulkan;
 using Hemy.Lib.Core.Platform.Windows.Window;
 
 
-// 
-// 		"INSTANCE",
-// 		"PHYSICAL_DEVICE",
-// 		"DEVICE",
-// 		"QUEUE",
-// 		"SEMAPHORE",
-// 		"COMMAND_BUFFER",
-// 		"FENCE",
-// 		"DEVICE_MEMORY",
-// 		"BUFFER",
-// 		"IMAGE",
-// 		"EVENT",
-// 		"QUERY_POOL",
-// 		"BUFFER_VIEW",
-// 		"IMAGE_VIEW",
-// 		"SHADER_MODULE",
-// 		"PIPELINE_CACHE",
-// 		"PIPELINE_LAYOUT",
-// 		"RENDER_PASS",
-// 		"PIPELINE",
-// 		"DESCRIPTOR_SET_LAYOUT",
-// 		"SAMPLER",
-// 		"DESCRIPTOR_POOL",
-// 		"DESCRIPTOR_SET",
-// 		"FRAMEBUFFER",
-// 		"COMMAND_POOL",
-// 		"DESCRIPTOR_UPDATE_TEMPLATE_KHR",
-// 		"SURFACE_KHR",
-// 		"SWAPCHAIN_KHR",
-// 		"DEBUG_UTILS_MESSENGER_EXT",
-// 		"DEBUG_REPORT_CALLBACK_EXT",
-// 		"ACCELERATION_STRUCTURE",
-// 		"VMA_BUFFER_OR_IMAGE" };
 
 [SkipLocalsInit] 
 [SuppressUnmanagedCodeSecurity]

@@ -6803,18 +6803,18 @@ public unsafe  struct VkDebugUtilsObjectNameInfoEXT {
 [ SkipLocalsInit ]
 [StructLayout(LayoutKind.Sequential)]  
 public unsafe  struct VkDebugUtilsMessengerCallbackDataEXT {
-	public     VkStructureType                              sType; 
-	public      void*                                  pNext; 
+	public     VkStructureType   sType; 
+	public     void*  pNext; 
 	public     VkDebugUtilsMessengerCallbackDataFlagsEXT    flags; 
-	public      ConstChar*                                  pMessageIdName; 
-	public     int32_t                                      messageIdNumber; 
-	public      ConstChar*                                  pMessage; 
-	public     uint32_t                                     queueLabelCount; 
-	public      VkDebugUtilsLabelEXT*                  pQueueLabels; 
-	public     uint32_t                                     cmdBufLabelCount; 
-	public      VkDebugUtilsLabelEXT*                  pCmdBufLabels; 
-	public     uint32_t                                     @objectCount; 
-	public      VkDebugUtilsObjectNameInfoEXT*         pObjects; 
+	public     ConstChar*   pMessageIdName; 
+	public     int32_t    messageIdNumber; 
+	public     ConstChar*  pMessage; 
+	public     uint32_t  queueLabelCount; 
+	public     VkDebugUtilsLabelEXT*  pQueueLabels; 
+	public     uint32_t  cmdBufLabelCount; 
+	public     VkDebugUtilsLabelEXT*  pCmdBufLabels; 
+	public     uint32_t  @objectCount; 
+	public     VkDebugUtilsObjectNameInfoEXT*  pObjects; 
 }
 // VK_EXT_debug_utils
 [ SkipLocalsInit ]

@@ -18,6 +18,8 @@ public unsafe struct WindowData()
     internal int Height = 720;
     internal bool IsRunning = false;
     internal bool IsInPaused = false; 
+
+    /*Replace bool by one uint  State : 0  Disposed , 2 Init Stopped 3 Running 4 Paused  0xFFFFFFFF Error   */
 }
 
 #endif

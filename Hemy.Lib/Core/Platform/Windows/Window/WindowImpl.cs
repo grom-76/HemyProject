@@ -127,15 +127,15 @@ internal unsafe static partial class WindowImpl
         if (0 == UnregisterClassA(contextData->EngineName, contextData->HInstance))
             Log.Warning("Unregister Window   ");
 
-        try
-        {
-            NativeMemory.Free(contextData->Handle);
-            Log.Info("Free Window HAndle  with memory free ( void* ) ");
-        }
-        catch (System.Exception)
-        {
-            Log.Error("Error NativeMemoryDispose direct to an void* ");
-        }   
+        // try
+        // {
+        //     NativeMemory.Free(contextData->Handle);
+        //     Log.Info("Free Window HAndle  with memory free ( void* ) ");
+        // }
+        // catch (System.Exception)
+        // {
+        //     Log.Error("Error NativeMemoryDispose direct to an void* ");
+        // }   
     }
 
     [SkipLocalsInit]

@@ -54,23 +54,6 @@ internal static unsafe partial class Memory
     [SuppressUnmanagedCodeSecurity]
     internal static byte* NewStr(string text)
     {
-        // //Equivalent a NewArray<byte> 
-        // byte* bytes = (byte*)calloc((uint)text.Length + 1, Size<byte>());
-        // // byte* bytes = (byte*)NativeMemory.AllocZeroed( (uint)text.Length + 1, sizeof(byte) );
-        // if (bytes == null)
-        // {
-        //     Log.Error("Alloc Str Failed  ");
-        //     return null;
-        // }
-
-        // int i = 0;
-        // while (i < text.Length)
-        // {
-        //     *(bytes + i) = unchecked((byte)(text[i++] & 0x7f));
-        // }
-        // *(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
-
-        // Increment();
         byte* bytes = NewArray<byte>((uint)text.Length + 1);
         FillBytesWithString(bytes, text);
         return bytes;
