@@ -23,10 +23,18 @@ using VkDeviceAddress = System.UInt64;
 using VkDeviceSize = System.UInt64;
 using static Hemy.Lib.Core.Platform.V2.WindowsContextGraphicDevice;
 
+using Flag = System.Int32;
+public sealed class WindowSettings
+{
+	public uint Resolution = 0;
+}
+
+
 internal unsafe struct WindowsContextDataPerFrame()
 {
 	internal uint State = 0;
 	internal uint Error = 0;
+	internal Hwnd* WindowHandle = null;
 
 }
 
@@ -35,8 +43,10 @@ internal unsafe struct WindowsContextDataInfos() // = Settings
 {
 	internal fixed byte GameName[256];
 	internal fixed byte EngineName[16];
-	// internal void* Handle = null;
-	// internal void* HInstance = null;
+	internal fixed byte LogoIcon[32];
+	internal void* Handle = null;
+	internal Hwnd* HInstance = null;
+	internal uint Style = 0;
 	internal VkInstance* VkInstance = null;
 	internal VkDebugUtilsMessengerEXT* VkDebugUtilsMessenger = null;
 	internal int Width = 1280;
@@ -48,6 +58,8 @@ internal unsafe struct WindowsContextDataInfos() // = Settings
 #endif
 	internal WindowsContextStrArray* ValidationLayers = null;
 	internal WindowsContextStrArray* InstanceExtensions = null;
+
+
 }
 
 internal unsafe struct WindowsContextDataGraphicPipeline()
@@ -161,9 +173,31 @@ internal unsafe static partial class WindowsContextEvents
 			contextData->State = msg.message != WM_QUIT ? 0U : 1U;
 		}
 	}
+
+	internal static void RequestClose(WindowsContextDataPerFrame* contextData)
+    {
+        if (contextData->State == 0) return;
+        
+        contextData->State = 1;
+        PostQuitMessage(0);
+    }
+
 	private const uint PM_REMOVE = 0x0001;
 	internal const uint WM_QUIT = 0x0012;
 	private const string User = "user32";
+
+	[SkipLocalsInit]
+    // [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial long* DefWindowProcA(void* hWnd, uint Msg, uint* wParam, long* lParam);
+
+	[LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    internal static partial void PostQuitMessage(int wRemoveMsg);
 
 	[SkipLocalsInit]
 	[SuppressGCTransition]
@@ -554,8 +588,206 @@ internal unsafe static class WindowsContextGraphicMonitors
 
 }
 
-internal unsafe static class WindowsContextGraphicWindow
+internal unsafe static partial class WindowsContextGraphicWindow
 {
+	internal const string Kernel = "kernel32";// https://www.geoffchappell.com/studies/windows/win32/kernel32/api/index.htm
+	internal const string User = "user32";// https://learn.microsoft.com/en-us/windows/win32/api/winuser/
+
+	internal static int CreateWindowSettings(WindowsContextDataInfos* infos, WindowSettings settingsWindow )
+	{
+		// WindowStyle WinStyle =infos->Style;
+
+		// Str.StringToBytes(contextData->GameName, Str.BytesToString(info->GameName));
+		// Str.StringToBytes(contextData->EngineName, "Hemy Engine");
+		// byte* LogoIcon = Str.New("Logo.ico");
+		// contextData->HInstance = GetModuleHandleA(null);
+		WindowsContextUtils.FillBytesWithString(infos->LogoIcon, "LogoIcon");
+
+		// WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
+		// int Left = CW_USEDEFAULT;
+		// int Top = CW_USEDEFAULT;
+		// uint Style = Utils.StyleToValue(WinStyle);  // WS_CAPTION | WS_DLGFRAME | WS_BORDER | WS_SYSMENU | WS_THICKFRAME | WS_SIZEFRAME;
+		// contextData->IsRunning = true;
+		// contextData->Width = info->PreferredWidth;
+		// contextData->Height = info->PreferredHeight;
+
+		// MonitorImpl.MonitorsInfo(monitorData);
+
+		// if (WinStyle == WindowStyle.None)
+		// {
+		//     styleEx &= ~(uint)WS_EX_WINDOWEDGE;
+		// }
+
+		// if (WinStyle == WindowStyle.Fullscreen)
+		// {
+		//     contextData->Width = monitorData->ScreenWidth;
+		//     contextData->Height = monitorData->ScreenHeight;
+		//     Left = monitorData->ScreenLeft;
+		//     Top = monitorData->ScreenTop;
+		//     // contextData->WindowState = Consts.SW_SHOWMAXIMIZED;
+		// }
+		// else
+		// {
+		//     AdjustAreaSize(contextData, Left, Top, Style, WinStyle != WindowStyle.Fullscreen || WinStyle != WindowStyle.Fixed);
+		//     CenterWindow(contextData, &Left, &Top);
+		//     // data->WindowState = Consts.SW_SHOWNORMAL;
+		// }
+		return 0;	
+	}
+
+	internal static int CreateWindow(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, delegate* unmanaged[Stdcall, SuppressGCTransition]<void*, uint, uint*, long*, long*> WinMessageProcedure)
+	{
+		var styleEx = 23589U; 
+
+		WndClassExA* wndClassExA = stackalloc WndClassExA[1];
+		wndClassExA->cbSize = (uint)Unsafe.SizeOf<WndClassExA>();
+		wndClassExA->style = /* CS_HREDRAW */0x0001 | /* CS_VREDRAW */0x0002 | /* CS_DBLCLKS */ 0x0008 | /* CS_OWNDC */ 0x0020;
+		wndClassExA->WindowPrecedureMessage = WinMessageProcedure;
+		wndClassExA->cbClsExtra = 0;
+		wndClassExA->cbWndExtra = 0;
+		wndClassExA->hIcon = LoadImageA(infos->HInstance, infos->LogoIcon, /* IMAGE_ICON */ 1, 0, 0, /* LR_DEFAULTSIZE */0x0040 | /* LR_LOADFROMFILE */  0x0010);//WIN.LoadIcon(data->HInstance, data->LogoIcon );
+		wndClassExA->hCursor = LoadCursorA(null, 32512/* IDC_ARROW */ );
+		wndClassExA->hIconSm = null;
+		wndClassExA->hbrBackground = ((nint)6 /*COLOR_WINDOW*/).ToPointer();
+		wndClassExA->lpszMenuName = null;
+		wndClassExA->hInstance = infos->HInstance;
+		wndClassExA->lpszClassName = infos->EngineName;
+
+		if (RegisterClassExA(wndClassExA) == 0)
+		{
+			// Log.Error("Failed to Register Wnd class");
+			return 1;
+		}
+
+		perframe->WindowHandle = CreateWindowExA(
+			styleEx,
+			infos->EngineName,
+			infos->GameName,
+			infos->Style,
+			unchecked((int)(0x80000000)),
+			unchecked((int)(0x80000000)),//Top,
+			infos->Width, infos->Height,// <= VIEWPORT
+			null, null,
+			infos->HInstance, null);
+
+		// Str.Dispose(LogoIcon);
+
+		// if (contextData->Handle == null)
+		// {
+		//     Log.Error("Failed to create Handle");
+		//     return 1;
+		// }
+		return perframe->WindowHandle == null ? 1:0;
+	}
+	
+	internal static int DisposeWindow(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+    {
+        
+        if (perframe->WindowHandle != null)
+        {
+			if (0 == DestroyWindow(perframe->WindowHandle))
+				return 1;
+        }
+
+		if (0 == UnregisterClassA(infos->EngineName, infos->HInstance))
+			return 1;
+		return 0;
+    }
+
+
+	internal static void Show(WindowsContextDataInfos* infos)
+	{
+		if (infos->Handle == null) return;// Debug if hancle  null
+
+		_ = ShowWindow(infos->Handle, 5);
+		// if ( UpdateWindow(contextData->Handle) == 0 ) Log.Warning( "Update Window  ");// Send WM_PAINT ?
+		// if ( SetForegroundWindow(contextData->Handle) == 0) Log.Warning( "Set Foreground  ");
+	}
+
+
+	[SkipLocalsInit]
+	// [SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(Kernel, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial void* GetModuleHandleA( /*LPCSTR*/ byte* lpModuleName);
+
+	[SkipLocalsInit]
+	// [SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial ushort RegisterClassExA(WndClassExA* unnamedParam1);
+
+	[SkipLocalsInit]
+	// [SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial int DestroyWindow(Hwnd* hWnd);
+
+	[SkipLocalsInit]
+	// [SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial int UnregisterClassA(byte* lpszClassName, Hwnd* hWnd);
+
+	[SkipLocalsInit]
+	// [SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial Hwnd* CreateWindowExA(uint dwExStyle, byte* lpClassName, byte* lpWindowName, uint dwStyle, int X, int Y, int nWidth, int nHeight, void* hWndParent, void* hMenu, void* hInstance, void* lpParam);
+
+	    [SkipLocalsInit]
+    // [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial int ShowWindow(void* hWnd, int nCmdShow);
+
+
+	    [SkipLocalsInit]
+    // [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial void* LoadCursorA(void* hInstance, int lpCursorName);
+
+    [SkipLocalsInit]
+    // [SuppressGCTransition]
+    [SuppressUnmanagedCodeSecurity]
+    [LibraryImport(User, SetLastError = false)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial void* LoadImageA(void* hInstance, byte* lpIconName, uint type, int cx, int cy, uint fuLoad);
+
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct WndClassExA
+	{
+		internal uint cbSize;
+		internal uint style;
+		internal unsafe delegate* unmanaged[Stdcall,SuppressGCTransition ]<Hwnd* /*hWnd*/, uint /*msg*/, uint* /*wParam*/, long* /*lpParam*/, long* /*LRESULT*/> WindowPrecedureMessage;
+    internal int cbClsExtra;
+    internal int cbWndExtra;
+    internal unsafe void* hInstance;
+    internal unsafe void* hIcon;
+    internal unsafe void* hCursor;
+    internal unsafe void* hbrBackground;
+    internal unsafe byte* lpszMenuName;
+    internal unsafe byte* lpszClassName;  // internal fixed char lpszClassName[256];
+    internal unsafe void* hIconSm;
+}
 
 
 }
@@ -684,13 +916,12 @@ internal enum VkDebugUtilsMessageTypeFlagBitsEXT   {
     VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF 
 };
 
-internal enum VkStructureType 
-{
-	VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT = 1000128004, 
-	VK_STRUCTURE_TYPE_APPLICATION_INFO = 0, 
-    VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1, 
-
-}
+	internal enum VkStructureType
+	{
+		VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT = 1000128004,
+		VK_STRUCTURE_TYPE_APPLICATION_INFO = 0,
+		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1,
+	}
 
 public enum VkInstanceCreateFlagBits    {
     VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = 0x00000001, 
@@ -869,6 +1100,7 @@ public unsafe struct WindowsContextStrArray(uint count, uint itemMaxSize)
 }
 
 
+
 internal unsafe static partial class WindowsContextGraphicDeviceInstance
 {
 
@@ -885,8 +1117,9 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		if (result != VkResult.VK_SUCCESS || layerCount == 0) { return 1; }
 
 		// infos->ValidationLayers = new(layerCount, VK_MAX_DESCRIPTION_SIZE);
-		
-		for (uint i = 0; i < layerCount; i++) {
+
+		for (uint i = 0; i < layerCount; i++)
+		{
 			infos->ValidationLayers->Add(layerProperties[i].layerName, i);
 		}
 
@@ -958,62 +1191,61 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		return 0;
 	}
 
-	internal static int CreateDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos ,VkDebugUtilsMessengerCreateInfoEXT* debugCreateInfo)
+	internal static int CreateDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, VkDebugUtilsMessengerCreateInfoEXT* debugCreateInfo)
 	{
-		if (infos->EnableDebugMode)
-        {
-            VkResult result = vkCreateDebugUtilsMessengerEXT(*infos->VkInstance, &debugCreateInfo[0], null, infos->VkDebugUtilsMessenger);
-			if (result != VkResult.VK_SUCCESS) return 1;
-        }
+		if (infos->EnableDebugMode == false) return 0;
+
+		VkResult result = vkCreateDebugUtilsMessengerEXT(*infos->VkInstance, &debugCreateInfo[0], null, infos->VkDebugUtilsMessenger);
+		if (result != VkResult.VK_SUCCESS) return 1;
 
 		return 0;
 	}
-	
+
 	internal static int DisposeDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
 	{
-		if (infos->VkInstance == null && infos->VkDebugUtilsMessenger == null) return 1;       
-        
-		vkDestroyDebugUtilsMessengerEXT(infos->VkInstance, infos->VkDebugUtilsMessenger , null);
-        
+		if (infos->VkInstance == null || infos->VkDebugUtilsMessenger == null) return 1;
+
+		vkDestroyDebugUtilsMessengerEXT(*infos->VkInstance, *infos->VkDebugUtilsMessenger, null);
 
 		return 0;
 	}
-	 
-	internal static delegate* unmanaged<VkInstance, VkDebugUtilsMessengerCreateInfoEXT*, VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*, VkResult> vkCreateDebugUtilsMessengerEXT = null;
 
-	internal static delegate* unmanaged<VkInstance, VkDebugUtilsMessengerEXT, VkAllocationCallbacks*, void> vkDestroyDebugUtilsMessengerEXT = null;
+	internal static delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerCreateInfoEXT*, VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*, VkResult> vkCreateDebugUtilsMessengerEXT = null;
+
+	internal static delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerEXT, VkAllocationCallbacks*, void> vkDestroyDebugUtilsMessengerEXT = null;
 
 
 	[UnmanagedCallersOnly]
-    static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        VkDebugUtilsMessageTypeFlagBitsEXT messageTypes,
-        VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
-    {
-        string Header = messageSeverity == VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT ?
-            "ERROR" : messageSeverity == VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT ?
-            	"WARNING" :  "INFO";
+	static uint DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagBitsEXT messageTypes,
+		VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
+	{
+		string Header = messageSeverity == VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT ?
+			"ERROR" : messageSeverity == VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT ?
+				"WARNING" : "INFO";
 
-		Log.Display( Header, pCallbackData->pMessage );
-        return VK_FALSE;
-    }
+		Log.Display(Header, pCallbackData->pMessage);
+		return VK_FALSE;
+	}
+
 
 	[LibraryImport(WindowsContextGraphicDevice.Vulkan, SetLastError = false)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition) ])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties* pProperties);
 
 	[LibraryImport(Vulkan, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition) ])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkEnumerateInstanceExtensionProperties(const_char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
 
 	[LibraryImport(Vulkan, SetLastError = true)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition) ])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkCreateInstance(VkInstanceCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
 
 	[LibraryImport(Vulkan, SetLastError = true)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial void vkDestroyInstance(VkInstance instance, VkAllocationCallbacks* pAllocator);
 
@@ -1026,98 +1258,104 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		internal uint32_t implementationVersion;
 		internal fixed byte description[(int)VK_MAX_DESCRIPTION_SIZE];
 	}
-	
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	internal struct VkExtensionProperties {
-		internal fixed byte        extensionName[(int)VK_MAX_EXTENSION_NAME_SIZE]; 
-		internal     uint32_t    specVersion; 
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkExtensionProperties
+	{
+		internal fixed byte extensionName[(int)VK_MAX_EXTENSION_NAME_SIZE];
+		internal uint32_t specVersion;
 	}
 
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	internal struct VkDebugUtilsMessengerCreateInfoEXT 
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkDebugUtilsMessengerCreateInfoEXT
 	{
-		internal  VkStructureType  sType;
-		internal  void*  pNext;
-		internal  uint  flags;
-		internal  uint  messageSeverity;
-		internal  uint  messageType;
-		internal  delegate* unmanaged< VkDebugUtilsMessageSeverityFlagBitsEXT,VkDebugUtilsMessageTypeFlagBitsEXT,VkDebugUtilsMessengerCallbackDataEXT*,void*,uint >  pfnUserCallback;
-		internal  void*  pUserData;
+		internal VkStructureType sType;
+		internal void* pNext;
+		internal uint flags;
+		internal uint messageSeverity;
+		internal uint messageType;
+		internal delegate* unmanaged<VkDebugUtilsMessageSeverityFlagBitsEXT, VkDebugUtilsMessageTypeFlagBitsEXT, VkDebugUtilsMessengerCallbackDataEXT*, void*, uint> pfnUserCallback;
+		internal void* pUserData;
 	}
 
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	internal unsafe  struct VkDebugUtilsMessengerCallbackDataEXT
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal unsafe struct VkDebugUtilsMessengerCallbackDataEXT
 	{
-		internal VkStructureType  sType;
-		internal const_char*  pMessageIdName;
+		internal VkStructureType sType;
+		internal const_char* pMessageIdName;
 		internal int/* VkDebugUtilsMessengerCallbackDataFlagsEXT */    flags;// alwways 0 
-		internal int32_t  messageIdNumber;
-		internal void*   pNext;
-		internal const_char* pMessage; 
-		internal uint32_t queueLabelCount; 
-		internal VkDebugUtilsLabelEXT* pQueueLabels; 
-		internal uint32_t cmdBufLabelCount; 
-		internal VkDebugUtilsLabelEXT* pCmdBufLabels; 
-		internal uint32_t @objectCount; 
-		internal VkDebugUtilsObjectNameInfoEXT* pObjects; 
+		internal int32_t messageIdNumber;
+		internal void* pNext;
+		internal const_char* pMessage;
+		internal uint32_t queueLabelCount;
+		internal VkDebugUtilsLabelEXT* pQueueLabels;
+		internal uint32_t cmdBufLabelCount;
+		internal VkDebugUtilsLabelEXT* pCmdBufLabels;
+		internal uint32_t @objectCount;
+		internal VkDebugUtilsObjectNameInfoEXT* pObjects;
 	}
 
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	public unsafe  struct VkDebugUtilsLabelEXT {
-		public     VkStructureType    sType; 
-		public      void*        pNext; 
-		public      const_char*        pLabelName; 
-		public fixed     float              color[4]; 
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct VkDebugUtilsLabelEXT
+	{
+		public VkStructureType sType;
+		public void* pNext;
+		public const_char* pLabelName;
+		public fixed float color[4];
 	}
 
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	public unsafe  struct VkDebugUtilsObjectNameInfoEXT {
-		public     VkStructureType    sType; 
-		public      void*        pNext; 
-		public     VkObjectType       @objectType; 
-		public     uint64_t           @objectHandle; 
-		public      const_char*        pObjectName; 
-	}
-	
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	internal unsafe  struct VkApplicationInfo {
-		internal     VkStructureType    sType; 
-		internal      void*        pNext; 
-		internal      const_char*        pApplicationName; 
-		internal     uint32_t           applicationVersion; 
-		internal      const_char*        pEngineName; 
-		internal     uint32_t           engineVersion; 
-		internal     uint32_t           apiVersion; 
-	}
-	
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	internal unsafe  struct VkInstanceCreateInfo {
-		internal     VkStructureType             sType; 
-		internal     void*                 pNext; 
-		internal     VkInstanceCreateFlagBits       flags; 
-		internal     VkApplicationInfo*    pApplicationInfo; 
-		internal     uint32_t                    enabledLayerCount; 
-		internal     const_char**          ppEnabledLayerNames; 
-		internal     uint32_t                    enabledExtensionCount; 
-		internal     const_char**          ppEnabledExtensionNames; 
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct VkDebugUtilsObjectNameInfoEXT
+	{
+		public VkStructureType sType;
+		public void* pNext;
+		public VkObjectType @objectType;
+		public uint64_t @objectHandle;
+		public const_char* pObjectName;
 	}
 
-	[ SkipLocalsInit ]
-	[StructLayout(LayoutKind.Sequential)]  
-	public unsafe  struct VkAllocationCallbacks {
-		public  void*  pUserData;
-		public  delegate* unmanaged[Cdecl,SuppressGCTransition]< void*,nuint,nuint,VkSystemAllocationScope,void* >  pfnAllocation;
-		public  delegate* unmanaged[Cdecl,SuppressGCTransition]< void*,void*,nuint,nuint,VkSystemAllocationScope,void* >  pfnReallocation;
-		public  delegate* unmanaged[Cdecl,SuppressGCTransition]< void*,void*,void >  pfnFree;
-		public  delegate* unmanaged[Cdecl,SuppressGCTransition]< void*,nuint,VkInternalAllocationType,VkSystemAllocationScope,void >  pfnInternalAllocation;
-		public  delegate* unmanaged[Cdecl,SuppressGCTransition]< void*,nuint,VkInternalAllocationType,VkSystemAllocationScope,void >  pfnInternalFree;
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal unsafe struct VkApplicationInfo
+	{
+		internal VkStructureType sType;
+		internal void* pNext;
+		internal const_char* pApplicationName;
+		internal uint32_t applicationVersion;
+		internal const_char* pEngineName;
+		internal uint32_t engineVersion;
+		internal uint32_t apiVersion;
+	}
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal unsafe struct VkInstanceCreateInfo
+	{
+		internal VkStructureType sType;
+		internal void* pNext;
+		internal VkInstanceCreateFlagBits flags;
+		internal VkApplicationInfo* pApplicationInfo;
+		internal uint32_t enabledLayerCount;
+		internal const_char** ppEnabledLayerNames;
+		internal uint32_t enabledExtensionCount;
+		internal const_char** ppEnabledExtensionNames;
+	}
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct VkAllocationCallbacks
+	{
+		public void* pUserData;
+		public delegate* unmanaged[Cdecl, SuppressGCTransition]<void*, nuint, nuint, VkSystemAllocationScope, void*> pfnAllocation;
+		public delegate* unmanaged[Cdecl, SuppressGCTransition]<void*, void*, nuint, nuint, VkSystemAllocationScope, void*> pfnReallocation;
+		public delegate* unmanaged[Cdecl, SuppressGCTransition]<void*, void*, void> pfnFree;
+		public delegate* unmanaged[Cdecl, SuppressGCTransition]<void*, nuint, VkInternalAllocationType, VkSystemAllocationScope, void> pfnInternalAllocation;
+		public delegate* unmanaged[Cdecl, SuppressGCTransition]<void*, nuint, VkInternalAllocationType, VkSystemAllocationScope, void> pfnInternalFree;
 	}
 
 	internal const uint VK_MAX_EXTENSION_NAME_SIZE = 256U;
@@ -1125,12 +1363,6 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 
 }
 
-
-internal unsafe static partial class WindowsContextGraphicDeviceSurface
-{
-
-
-}
 
 
 	internal unsafe static class WindowsContextGraphicRender

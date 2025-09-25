@@ -763,6 +763,7 @@ internal unsafe struct MSG
 	internal ulong lPrivate;
 }
 
+
 [StructLayout(LayoutKind.Sequential)]
 internal struct WndClassExA
 {

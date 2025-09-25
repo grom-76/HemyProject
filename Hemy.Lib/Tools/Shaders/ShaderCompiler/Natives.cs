@@ -1137,38 +1137,18 @@ public unsafe  partial struct IncludeResult
         }
     }
 
-
-    // [NativeName     ("Type", "const char *")]
-    // [NativeName     ("Type.Name", "const char *")]
-    // [NativeName     ("Name", "source_name")]
     public byte* SourceName;
-
-    // [NativeName     ("Type", "size_t")]
-    // [NativeName     ("Type.Name", "size_t")]
-    // [NativeName     ("Name", "source_name_length")]
     public nuint SourceNameLength;
-
-    // [NativeName     ("Type", "const char *")]
-    // [NativeName     ("Type.Name", "const char *")]
-    // [NativeName     ("Name", "content")]
     public byte* Content;
-
-    // [NativeName     ("Type", "size_t")]
-    // [NativeName     ("Type.Name", "size_t")]
-    // [NativeName     ("Name", "content_length")]
     public nuint ContentLength;
-
-    // [NativeName     ("Type", "void *")]
-    // [NativeName     ("Type.Name", "void *")]
-    // [NativeName     ("Name", "user_data")]
     public void* UserData;
 }
-// [NativeName     ("Name", "shaderc_compilation_result")]
-public unsafe  partial struct CompilationResult
+
+
+public unsafe partial struct CompilationResult
 {
 }
 
-// [NativeName     ("Name", "shaderc_compile_options")]
 public unsafe  partial struct CompileOptions
 {
 }

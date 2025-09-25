@@ -16,6 +16,7 @@ using static Hemy.Lib.Tools.Shaders.ShaderCompiler.Native;
 
 public unsafe static class ShadercImpl
 {
+    
     public static void CompilVertx(GraphicData* graphicData, GraphicDescriptorData* descriptor)
     {
         // code : https://github.com/google/shaderc/blob/main/examples/online-compile/main.cc
@@ -25,10 +26,10 @@ public unsafe static class ShadercImpl
         byte* shaderSource = Memory.NewStr(VertexBaseShader());
         uint shaderSourceLength = Str.Length(shaderSource);
 
-       
+
         byte* filename = Memory.NewStr("shaderSourceVert");
 
-        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength, ShaderKind.VertexShader, filename, descriptor->Entrypoint , null);
+        var result = Native.CompileIntoSpv(compiler, shaderSource, shaderSourceLength, ShaderKind.VertexShader, filename, descriptor->Entrypoint, null);
 
         var status = Native.ResultGetCompilationStatus(result);
 
@@ -57,7 +58,7 @@ public unsafe static class ShadercImpl
         }
 
         Memory.DisposeStr(shaderSource);
-       
+
         Memory.DisposeStr(filename);
 
         Native.ResultRelease(result);
