@@ -21,6 +21,7 @@ using VkDeviceAddress = System.UInt64;
 using VkDeviceSize = System.UInt64;
 using Flag = System.Int32;
 
+using HRESULT = System.Int32;
 using static Hemy.Lib.Core.Platform.V2.WindowsContextGraphicDeviceCommon;
 
 
@@ -119,7 +120,6 @@ internal struct VkSurfaceKHR;
 [StructLayout(LayoutKind.Sequential)]
 internal struct VkQueue;
 
-
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
@@ -181,7 +181,6 @@ internal static unsafe class WindowsContextUtils
 	
 
 }
-
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
@@ -588,7 +587,6 @@ internal unsafe static partial class WindowsContextSystem
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial nint LoadLibrary(string lpFileName);
 }
-
 
 internal unsafe static partial class WindowsContextIO
 {
@@ -2089,6 +2087,58 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 
 internal unsafe static class WindowsContextGraphicSync
 {
+	internal static void CreateFence(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	{
+		// if (contextData->InFlightFences == null)
+		// 	// contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
+		// 	contextData->InFlightFences = Memory.Memory.NewArray<VkFence>(contextData->MaxFrameInFlight);
+
+		// VkFenceCreateInfo* fenceInfo = stackalloc VkFenceCreateInfo[1];
+		// fenceInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		// fenceInfo[0].flags = (uint)VkFenceCreateFlagBits.VK_FENCE_CREATE_SIGNALED_BIT;
+		// fenceInfo[0].pNext = null;
+
+		// for (uint i = 0; i < contextData->MaxFrameInFlight; i++)
+		// {
+		// 	result = Vk.vkCreateFence(contextData->Device, &fenceInfo[0], null, &contextData->InFlightFences[i]);//;//.Check("Failed to create Fence InFlightFence");
+
+		// 	// _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Fence  : {contextData->InFlightFences[i]}");
+		// }
+
+	}
+
+	internal static void CreateSemaphore(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	{
+		// VkResult result;
+
+		// if (contextData->ImageAvailableSemaphores == null)
+		// 	// contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+		// 	contextData->ImageAvailableSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
+		// //TODO : change NAtiveMEmor
+
+		// if (contextData->RenderFinishedSemaphores == null)
+		// 	// contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
+		// 	contextData->RenderFinishedSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
+
+		// VkSemaphoreCreateInfo* semaphoreInfo = stackalloc VkSemaphoreCreateInfo[1];
+		// semaphoreInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		// semaphoreInfo[0].flags = 0;
+		// semaphoreInfo[0].pNext = null;
+
+		// for (uint i = 0; i < contextData->MaxFrameInFlight; i++)
+		// {
+		// 	result = Vk.vkCreateSemaphore(contextData->Device, &semaphoreInfo[0], null, &contextData->ImageAvailableSemaphores[i]);
+
+		// 	// _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Image Semaphore Available : {contextData->ImageAvailableSemaphores[i]}");
+
+		// 	result = Vk.vkCreateSemaphore(contextData->Device, &semaphoreInfo[0], null, &contextData->RenderFinishedSemaphores[i]);
+
+		// 	// _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Render Semaphore Available : {contextData->RenderFinishedSemaphores[i]}");
+
+		// }
+		
+	}
+
 
 
 	internal static void DisposeSemaphore(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
@@ -2139,78 +2189,37 @@ internal unsafe static class WindowsContextGraphicSync
 internal unsafe static class WindowsContextGraphicCommandAbdBarrier
 {
 
-	internal static void CreateSemaphore( WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos ) // + renderpass   + syncobj + command
-    {
-        VkResult result;
+	internal static void CreateCommandPool(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	{
+		// VkCommandPoolCreateInfo* poolInfoCompute = stackalloc VkCommandPoolCreateInfo[1];
+		// poolInfoCompute[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		// poolInfoCompute[0].flags = (uint)VkCommandPoolCreateFlagBits.VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		// poolInfoCompute[0].queueFamilyIndex = contextData->GraphicQueueIndex;
+		// poolInfoCompute[0].pNext = null;
 
-        if (contextData->ImageAvailableSemaphores == null)
-            // contextData->ImageAvailableSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
-            contextData->ImageAvailableSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
-        //TODO : change NAtiveMEmor
+		// result = Vk.vkCreateCommandPool(contextData->Device, &poolInfoCompute[0], null, &contextData->CommandPool);
 
-        if (contextData->RenderFinishedSemaphores == null)
-            // contextData->RenderFinishedSemaphores = (VkSemaphore*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkSemaphore>());
-            contextData->RenderFinishedSemaphores = Memory.Memory.NewArray<VkSemaphore>(contextData->MaxFrameInFlight);
+		// _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create Command Pool {contextData->CommandPool}") ? 1 : 0;
 
-        VkSemaphoreCreateInfo* semaphoreInfo = stackalloc VkSemaphoreCreateInfo[1];
-        semaphoreInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        semaphoreInfo[0].flags = 0;
-        semaphoreInfo[0].pNext = null;
+	}
 
-        for (uint i = 0; i < contextData->MaxFrameInFlight; i++)
-        {
-            result = Vk.vkCreateSemaphore(contextData->Device, &semaphoreInfo[0], null, &contextData->ImageAvailableSemaphores[i]);
+	internal static void CreateCommandBuffers(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	{
+		// if (contextData->CommandBuffers == null)
+		// 	contextData->CommandBuffers = Memory.Memory.NewArray<VkCommandBuffer>(contextData->MaxFrameInFlight);
+		// // contextData->CommandBuffers = (VkCommandBuffer*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkCommandBuffer>());
 
-            // _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Image Semaphore Available : {contextData->ImageAvailableSemaphores[i]}");
+		// VkCommandBufferAllocateInfo* allocInfo = stackalloc VkCommandBufferAllocateInfo[1];
+		// allocInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		// allocInfo[0].commandPool = contextData->CommandPool;
+		// allocInfo[0].level = VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		// allocInfo[0].commandBufferCount = (uint)contextData->MaxFrameInFlight;
+		// allocInfo[0].pNext = null;
 
-            result = Vk.vkCreateSemaphore(contextData->Device, &semaphoreInfo[0], null, &contextData->RenderFinishedSemaphores[i]);
+		// result = Vk.vkAllocateCommandBuffers(contextData->Device, &allocInfo[0], contextData->CommandBuffers);
 
-            // _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Render Semaphore Available : {contextData->RenderFinishedSemaphores[i]}");
-
-        }
-
-        if (contextData->InFlightFences == null)
-            // contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
-            contextData->InFlightFences = Memory.Memory.NewArray<VkFence>(contextData->MaxFrameInFlight);
-
-        VkFenceCreateInfo* fenceInfo = stackalloc VkFenceCreateInfo[1];
-        fenceInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        fenceInfo[0].flags = (uint)VkFenceCreateFlagBits.VK_FENCE_CREATE_SIGNALED_BIT;
-        fenceInfo[0].pNext = null;
-
-        for (uint i = 0; i < contextData->MaxFrameInFlight; i++)
-        {
-            result = Vk.vkCreateFence(contextData->Device, &fenceInfo[0], null, &contextData->InFlightFences[i]);//;//.Check("Failed to create Fence InFlightFence");
-
-            // _ = Log.Check(result != VkResult.VK_SUCCESS, $"-{i}  Create Fence  : {contextData->InFlightFences[i]}");
-        }
-
-        VkCommandPoolCreateInfo* poolInfoCompute = stackalloc VkCommandPoolCreateInfo[1];
-        poolInfoCompute[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolInfoCompute[0].flags = (uint)VkCommandPoolCreateFlagBits.VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        poolInfoCompute[0].queueFamilyIndex = contextData->GraphicQueueIndex;
-        poolInfoCompute[0].pNext = null;
-
-        result = Vk.vkCreateCommandPool(contextData->Device, &poolInfoCompute[0], null, &contextData->CommandPool);
-
-        // _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create Command Pool {contextData->CommandPool}") ? 1 : 0;
-
-        if (contextData->CommandBuffers == null)
-            contextData->CommandBuffers = Memory.Memory.NewArray<VkCommandBuffer>(contextData->MaxFrameInFlight);
-        // contextData->CommandBuffers = (VkCommandBuffer*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkCommandBuffer>());
-
-        VkCommandBufferAllocateInfo* allocInfo = stackalloc VkCommandBufferAllocateInfo[1];
-        allocInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo[0].commandPool = contextData->CommandPool;
-        allocInfo[0].level = VkCommandBufferLevel.VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo[0].commandBufferCount = (uint)contextData->MaxFrameInFlight;
-        allocInfo[0].pNext = null;
-
-        result = Vk.vkAllocateCommandBuffers(contextData->Device, &allocInfo[0], contextData->CommandBuffers);
-
-        // _ = Log.Check(result != VkResult.VK_SUCCESS, "Create  Command buffer ") ? 1 : 0;
-    }
-
+		// _ = Log.Check(result != VkResult.VK_SUCCESS, "Create  Command buffer ") ? 1 : 0;
+	}
 
 	internal static void DisposeCommandPool(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
 	{
@@ -2220,6 +2229,8 @@ internal unsafe static class WindowsContextGraphicCommandAbdBarrier
 		// 	Vk.vkDestroyCommandPool(contextData->Device, contextData->CommandPool, null);
 		// }
 	}
+	
+
 }
 
 internal unsafe static class WindowsContextGraphicRenderPass
@@ -2308,7 +2319,6 @@ internal unsafe static class WindowsContextGraphicRenderPass
 
 	}
 
-	
 
 
 }
@@ -2319,116 +2329,161 @@ internal unsafe static partial class WindowsContextGraphicRenderDrawings
 
 	static volatile uint currentFrame = 0;
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [UnmanagedCallConv]
-    internal static void Draw( WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos )
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[UnmanagedCallConv]
+	internal static void Draw(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// uint* waitStages = stackalloc uint[1] { (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT };
+		// VkFence CurrentinFlightFence = contextData->InFlightFences[currentFrame];
+		// ref VkSemaphore CurrentImageAvailableSemaphore = ref contextData->ImageAvailableSemaphores[currentFrame];
+		// ref VkSemaphore CurrentRenderFinishedSemaphore = ref contextData->RenderFinishedSemaphores[currentFrame];
+		// VkSemaphore* waitSemaphores = stackalloc VkSemaphore[1] { CurrentImageAvailableSemaphore };
+		// VkSemaphore* signalSemaphores = stackalloc VkSemaphore[1] { CurrentRenderFinishedSemaphore };
+		// VkSwapchainKHR* swapChains = stackalloc VkSwapchainKHR[1] { contextData->SwapChain };
+		// uint CurrentImageIndex = 0;
+		// contextData->CurrentCommandBuffer = contextData->CommandBuffers[currentFrame];
+
+		// VkResult result = Vk.vkWaitForFences(contextData->Device, 1, &CurrentinFlightFence, /*VK_TRUE*/1, contextData->Ticktimeout);//;//.Check("Acquire Image");
+		// result = Vk.vkResetFences(contextData->Device, 1, &CurrentinFlightFence);
+		// //now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
+		// result = Vk.vkResetCommandBuffer(contextData->CommandBuffers[currentFrame], (uint)VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+		// //request image from the swapchain =>  // Acquire an index of drawing image for this frame.
+		// result = Vk.vkAcquireNextImageKHR(contextData->Device, contextData->SwapChain, contextData->Ticktimeout, CurrentImageAvailableSemaphore, VkFence.Null, &CurrentImageIndex);
+
+		// if (result == VkResult.VK_ERROR_OUT_OF_DATE_KHR)
+		// {
+		//     // RecreateSwapChain(contextData);
+		//     Log.Error("Draw error out of date");
+		//     return;
+		// }
+		// else if (result != VkResult.VK_SUCCESS && result != VkResult.VK_SUBOPTIMAL_KHR)
+		// {
+		//     return;
+		// }
+
+		// RecordCommandBuffer(contextData, CurrentImageIndex);
+
+		// VkSubmitInfo* submitInfo = stackalloc VkSubmitInfo[1];
+		// submitInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		// submitInfo[0].waitSemaphoreCount = 1;
+		// submitInfo[0].pWaitSemaphores = waitSemaphores;
+		// submitInfo[0].pWaitDstStageMask = waitStages;
+		// submitInfo[0].commandBufferCount = 1;
+		// submitInfo[0].pCommandBuffers = &contextData->CommandBuffers[currentFrame];
+		// submitInfo[0].signalSemaphoreCount = 1;
+		// submitInfo[0].pSignalSemaphores = signalSemaphores;
+		// submitInfo[0].pNext = null;
+
+		// result = Vk.vkQueueSubmit(contextData->GraphicQueue, 1, &submitInfo[0], CurrentinFlightFence);
+
+		// VkPresentInfoKHR* presentInfo = stackalloc VkPresentInfoKHR[1];
+		// presentInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		// presentInfo[0].waitSemaphoreCount = 1;
+		// presentInfo[0].pWaitSemaphores = signalSemaphores;
+		// presentInfo[0].pImageIndices = &CurrentImageIndex;
+		// presentInfo[0].swapchainCount = 1;
+		// presentInfo[0].pSwapchains = swapChains;
+		// presentInfo[0].pNext = null;
+		// presentInfo[0].pResults = null;
+
+		// result = Vk.vkQueuePresentKHR(contextData->PresentQueue, &presentInfo[0]);
+
+		// if (result == VkResult.VK_ERROR_OUT_OF_DATE_KHR || result == VkResult.VK_SUBOPTIMAL_KHR)
+		// {
+		//     // RecreateSwapChain(contextData);
+		//     return;
+		// }
+		// else if (result != VkResult.VK_SUCCESS)
+		// {
+		//     return;
+		// }
+
+		// currentFrame = (currentFrame + 1) % contextData->MaxFrameInFlight;
+	}
+
+	[UnmanagedCallConv]
+
+	static void RecordCommandBuffer(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, uint currentImageIndex)
+	{
+		// int renderPasses = 1;
+
+		// VkCommandBufferBeginInfo* beginInfo = stackalloc VkCommandBufferBeginInfo[1];
+		// beginInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		// beginInfo[0].pNext = null;
+		// beginInfo[0].flags = (uint)VkCommandBufferUsageFlagBits.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		// beginInfo[0].pInheritanceInfo = null;
+
+		// var result = Vk.vkBeginCommandBuffer(contextData->CommandBuffers[currentFrame], &beginInfo[0]);
+
+		// // FOREACH RENDER PASS 
+		// VkRenderPassBeginInfo* renderPassInfo = stackalloc VkRenderPassBeginInfo[renderPasses];
+
+		// for (int i = 0; i < renderPasses; i++)
+		// {
+		//     renderPassInfo[i].sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		//     renderPassInfo[i].pNext = null;
+		//     renderPassInfo[i].renderArea = *contextData->RenderPassArea;
+		//     renderPassInfo[i].renderPass = contextData->RenderPass;
+		//     renderPassInfo[i].framebuffer = contextData->Framebuffers[currentImageIndex];
+		//     renderPassInfo[i].clearValueCount = 1;/* contextData->IsUseDepthBuffer ? (uint)2 : (uint)1;*/
+		//     renderPassInfo[i].pClearValues = contextData->RenderPassClearValues;
+
+		//     Vk.vkCmdBeginRenderPass(contextData->CommandBuffers[currentFrame], &renderPassInfo[i], VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
+		//     // Vk.vkCmdBeginRenderPass2(currentCommandBuffer, &renderPassInfo[i], null);
+
+		//     contextData->RenderPipeline();
+
+		//     Vk.vkCmdEndRenderPass(contextData->CommandBuffers[currentFrame]);
+		// } // END FOREACH RENDER PASS 
+
+		// result = Vk.vkEndCommandBuffer(contextData->CommandBuffers[currentFrame]);
+	}
+
+	public static void DrawOnlyShader( )
     {
-        // uint* waitStages = stackalloc uint[1] { (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT };
-        // VkFence CurrentinFlightFence = contextData->InFlightFences[currentFrame];
-        // ref VkSemaphore CurrentImageAvailableSemaphore = ref contextData->ImageAvailableSemaphores[currentFrame];
-        // ref VkSemaphore CurrentRenderFinishedSemaphore = ref contextData->RenderFinishedSemaphores[currentFrame];
-        // VkSemaphore* waitSemaphores = stackalloc VkSemaphore[1] { CurrentImageAvailableSemaphore };
-        // VkSemaphore* signalSemaphores = stackalloc VkSemaphore[1] { CurrentRenderFinishedSemaphore };
-        // VkSwapchainKHR* swapChains = stackalloc VkSwapchainKHR[1] { contextData->SwapChain };
-        // uint CurrentImageIndex = 0;
-        // contextData->CurrentCommandBuffer = contextData->CommandBuffers[currentFrame];
+       // if (renderData->State == 0) return;
 
-        // VkResult result = Vk.vkWaitForFences(contextData->Device, 1, &CurrentinFlightFence, /*VK_TRUE*/1, contextData->Ticktimeout);//;//.Check("Acquire Image");
-        // result = Vk.vkResetFences(contextData->Device, 1, &CurrentinFlightFence);
-        // //now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
-        // result = Vk.vkResetCommandBuffer(contextData->CommandBuffers[currentFrame], (uint)VkCommandBufferResetFlagBits.VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-        // //request image from the swapchain =>  // Acquire an index of drawing image for this frame.
-        // result = Vk.vkAcquireNextImageKHR(contextData->Device, contextData->SwapChain, contextData->Ticktimeout, CurrentImageAvailableSemaphore, VkFence.Null, &CurrentImageIndex);
-
-        // if (result == VkResult.VK_ERROR_OUT_OF_DATE_KHR)
+        // PUSH CONSTANTS ---------- ( do before bin pipeline)
+        // fixed(void* ptr = &data->Selected ) 
         // {
-        //     // RecreateSwapChain(contextData);
-        //     Log.Error("Draw error out of date");
-        //     return;
-        // }
-        // else if (result != VkResult.VK_SUCCESS && result != VkResult.VK_SUBOPTIMAL_KHR)
-        // {
-        //     return;
+        //     Vk.vkCmdPushConstants(data->CurrentCommandBuffer, data->PipelineLayout, 
+        //         (uint) VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT, 0,PushConstantsBool.SizeInBytes, ptr );
         // }
 
-        // RecordCommandBuffer(contextData, CurrentImageIndex);
-
-        // VkSubmitInfo* submitInfo = stackalloc VkSubmitInfo[1];
-        // submitInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        // submitInfo[0].waitSemaphoreCount = 1;
-        // submitInfo[0].pWaitSemaphores = waitSemaphores;
-        // submitInfo[0].pWaitDstStageMask = waitStages;
-        // submitInfo[0].commandBufferCount = 1;
-        // submitInfo[0].pCommandBuffers = &contextData->CommandBuffers[currentFrame];
-        // submitInfo[0].signalSemaphoreCount = 1;
-        // submitInfo[0].pSignalSemaphores = signalSemaphores;
-        // submitInfo[0].pNext = null;
-
-        // result = Vk.vkQueueSubmit(contextData->GraphicQueue, 1, &submitInfo[0], CurrentinFlightFence);
-
-        // VkPresentInfoKHR* presentInfo = stackalloc VkPresentInfoKHR[1];
-        // presentInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        // presentInfo[0].waitSemaphoreCount = 1;
-        // presentInfo[0].pWaitSemaphores = signalSemaphores;
-        // presentInfo[0].pImageIndices = &CurrentImageIndex;
-        // presentInfo[0].swapchainCount = 1;
-        // presentInfo[0].pSwapchains = swapChains;
-        // presentInfo[0].pNext = null;
-        // presentInfo[0].pResults = null;
-
-        // result = Vk.vkQueuePresentKHR(contextData->PresentQueue, &presentInfo[0]);
-
-        // if (result == VkResult.VK_ERROR_OUT_OF_DATE_KHR || result == VkResult.VK_SUBOPTIMAL_KHR)
+        // SEND DATA To SHADER UNIFORM
+        // fixed ( VkDescriptorSet* desc = &graphicData->ShaderDescribe_DescriptorSets[data->CurrentFrame])
         // {
-        //     // RecreateSwapChain(contextData);
-        //     return;
-        // }
-        // else if (result != VkResult.VK_SUCCESS)
-        // {
-        //     return;
+        //     Vk.vkCmdBindDescriptorSets(graphicData->CurrentCommandBuffer, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,data->PipelineLayout, 0, 1, desc, 0, null);
         // }
 
-        // currentFrame = (currentFrame + 1) % contextData->MaxFrameInFlight;
-    }
+        // USE SHADER  ENABLE
+        // Vk.vkCmdBindPipeline(graphicData->CurrentCommandBuffer, VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS, descriptorData-> Pipeline);
 
-    [UnmanagedCallConv]
+        // SET DYNAMIC STATES
+        // descriptorData-> DynamicStateViewport->x = 0.0f;
+        // descriptorData-> DynamicStateViewport->y = 0.0f;
+        // descriptorData-> DynamicStateViewport->width =  graphicData->RenderPassArea->extent.width;
+        // descriptorData-> DynamicStateViewport->height =  graphicData->RenderPassArea->extent.height;
+        // descriptorData-> DynamicStateViewport->minDepth = 0.0f;
+        // descriptorData-> DynamicStateViewport->maxDepth = 1.0f;
+        // Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateViewport );
 
-    static void RecordCommandBuffer(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos , uint currentImageIndex)
-    {
-        // int renderPasses = 1;
+        // descriptorData-> DynamicStateScissor->offset = new() {x=0, y=0};
+        // descriptorData-> DynamicStateScissor->extent =graphicData->RenderPassArea->extent ;
+        // Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateScissor);
 
-        // VkCommandBufferBeginInfo* beginInfo = stackalloc VkCommandBufferBeginInfo[1];
-        // beginInfo[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        // beginInfo[0].pNext = null;
-        // beginInfo[0].flags = (uint)VkCommandBufferUsageFlagBits.VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        // beginInfo[0].pInheritanceInfo = null;
+        // Vk.vkCmdSetLineWidth( _perFrame.CurrentCommandBuffer,data.Handles.DynamicStatee_LineWidth);
 
-        // var result = Vk.vkBeginCommandBuffer(contextData->CommandBuffers[currentFrame], &beginInfo[0]);
+        // BIND VERTEX AND INDICES
+        // VkDeviceSize* offsets = stackalloc VkDeviceSize[]{0};
+        // VkBuffer* vertexBuffers = stackalloc VkBuffer[] { settings.VertexBuffer};
+        // Vk.vkCmdBindVertexBuffers(graphicData->CurrentCommandBuffer, 0, 1, vertexBuffers, offsets);
+        // Vk.vkCmdBindIndexBuffer(graphicData->CurrentCommandBuffer, settings.IndicesBuffer, 0, VkIndexType.VK_INDEX_TYPE_UINT16);
+        // Vk.vkCmdDrawIndaexed(graphicData->CurrentCommandBuffer, renderData.IndicesSize, 1, 0, 0, 0);
 
-        // // FOREACH RENDER PASS 
-        // VkRenderPassBeginInfo* renderPassInfo = stackalloc VkRenderPassBeginInfo[renderPasses];
-
-        // for (int i = 0; i < renderPasses; i++)
-        // {
-        //     renderPassInfo[i].sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        //     renderPassInfo[i].pNext = null;
-        //     renderPassInfo[i].renderArea = *contextData->RenderPassArea;
-        //     renderPassInfo[i].renderPass = contextData->RenderPass;
-        //     renderPassInfo[i].framebuffer = contextData->Framebuffers[currentImageIndex];
-        //     renderPassInfo[i].clearValueCount = 1;/* contextData->IsUseDepthBuffer ? (uint)2 : (uint)1;*/
-        //     renderPassInfo[i].pClearValues = contextData->RenderPassClearValues;
-
-        //     Vk.vkCmdBeginRenderPass(contextData->CommandBuffers[currentFrame], &renderPassInfo[i], VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
-        //     // Vk.vkCmdBeginRenderPass2(currentCommandBuffer, &renderPassInfo[i], null);
-
-        //     contextData->RenderPipeline();
-
-        //     Vk.vkCmdEndRenderPass(contextData->CommandBuffers[currentFrame]);
-        // } // END FOREACH RENDER PASS 
-
-        // result = Vk.vkEndCommandBuffer(contextData->CommandBuffers[currentFrame]);
+        // Vk.vkCmdDraw(graphicData->CurrentCommandBuffer, descriptorData->VertexCount, descriptorData->InstanceCount, 0, 0);
     }
 
 }
@@ -2436,22 +2491,582 @@ internal unsafe static partial class WindowsContextGraphicRenderDrawings
 
 internal unsafe static class WindowsContextGraphicPipelineCreation
 {
-
-	internal unsafe static class ShaderCreation
+	internal static void CreatePipeline()
 	{
+		#region VERTEX DEFINITIONS : ATTRIBUTS & BINDINGS  For SHADERS
 
+		// VkVertexInputBindingDescription bindingDescription = new()
+		// {
+		//     binding = 0, // layout 
+		//     stride = renderData->ShaderData->Vertex_Stride,
+		//     inputRate = VkVertexInputRate.VK_VERTEX_INPUT_RATE_VERTEX
+		// };
+
+		// // TODO take this info inside Resource File ?
+
+		// VkVertexInputAttributeDescription* attributeDescriptions = stackalloc VkVertexInputAttributeDescription[3];
+		// attributeDescriptions[0].binding = 0;
+		// attributeDescriptions[0].location = 0;
+		// attributeDescriptions[0].format = VkFormat.VK_FORMAT_R32G32B32_SFLOAT;
+		// attributeDescriptions[0].offset = renderData->VertexData->Vertex_Offset;
+
+		// attributeDescriptions[1].binding = 0;
+		// attributeDescriptions[1].location = 1;
+		// attributeDescriptions[1].format = VkFormat.VK_FORMAT_R32G32B32_SFLOAT;
+		// attributeDescriptions[1].offset = 3;
+
+		// attributeDescriptions[2].binding = 0;
+		// attributeDescriptions[2].location = 2;
+		// attributeDescriptions[2].format = VkFormat.VK_FORMAT_R32G32_SFLOAT;
+		// attributeDescriptions[2].offset = 3;
+
+		// VkPipelineVertexInputStateCreateInfo vertexInputInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+		// 	pNext = null,
+		// 	flags = 0,
+		// 	vertexBindingDescriptionCount = 0 , //descriptorData->InstanceCount ,
+		// 	vertexAttributeDescriptionCount =0  //  descriptorData->VertexCount ,
+		// 	// pVertexAttributeDescriptions = renderData->VertexData->HasMesh ? attributeDescriptions : null,
+		// 	// pVertexBindingDescriptions = renderData->VertexData->HasMesh ? &bindingDescription : null
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION INPUT ASSEMBLY
+
+		// VkPipelineInputAssemblyStateCreateInfo inputAssembly = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+		// 	topology = descriptorData->PrimitiveTopology,
+		// 	primitiveRestartEnable = VK.VK_FALSE,
+		// 	flags = 0,
+		// 	pNext = null
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION COLOR bLEndING 
+
+		// VkPipelineColorBlendAttachmentState colorBlendAttachment = new()
+		// {
+		// 	colorWriteMask = (uint)(VkColorComponentFlagBits.VK_COLOR_COMPONENT_R_BIT | VkColorComponentFlagBits.VK_COLOR_COMPONENT_G_BIT | VkColorComponentFlagBits.VK_COLOR_COMPONENT_B_BIT | VkColorComponentFlagBits.VK_COLOR_COMPONENT_A_BIT),
+		// 	blendEnable = VK.VK_FALSE,
+		// 	srcColorBlendFactor = VkBlendFactor.VK_BLEND_FACTOR_ZERO,
+		// 	srcAlphaBlendFactor = VkBlendFactor.VK_BLEND_FACTOR_ZERO,
+		// 	alphaBlendOp = VkBlendOp.VK_BLEND_OP_ADD,
+		// 	colorBlendOp = VkBlendOp.VK_BLEND_OP_ADD,
+		// 	dstAlphaBlendFactor = VkBlendFactor.VK_BLEND_FACTOR_ZERO,
+		// 	dstColorBlendFactor = VkBlendFactor.VK_BLEND_FACTOR_ZERO
+		// };
+
+		// VkPipelineColorBlendStateCreateInfo colorBlending = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+		// 	logicOpEnable = VK.VK_FALSE,
+		// 	logicOp = VkLogicOp.VK_LOGIC_OP_COPY,
+		// 	attachmentCount = 1,
+		// 	pAttachments = &colorBlendAttachment,
+		// 	flags = 0,
+		// 	pNext = null
+		// };
+		// colorBlending.blendConstants[0] = 0.0f;
+		// colorBlending.blendConstants[1] = 0.0f;
+		// colorBlending.blendConstants[2] = 0.0f;
+		// colorBlending.blendConstants[3] = 0.0f;
+
+		#endregion
+
+		#region FIXED FUNCTION RASTERIZATION
+
+		// VkPipelineRasterizationStateCreateInfo rasterizer = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+		// 	rasterizerDiscardEnable = VK.VK_FALSE,// config.RasterizerDiscardEnable?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	polygonMode = VkPolygonMode.VK_POLYGON_MODE_FILL,
+		// 	lineWidth = 1.0f,
+		// 	cullMode = (uint)VkCullModeFlagBits.VK_CULL_MODE_NONE,
+		// 	frontFace = VkFrontFace.VK_FRONT_FACE_CLOCKWISE,
+		// 	flags = 0,
+		// 	pNext = null,
+		// 	depthBiasEnable = VK.VK_FALSE,// config.DepthBiasEnable? 1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 								  // depthClampEnable = data->VK_FALSE,// config.DepthClampEnable?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 								  // depthBiasClamp = 0.0f,//config.DepthBiasClamp ; // 0.0f;
+		// 								  // depthBiasConstantFactor = 1.0f,// config.DepthBiasConstantFactor ;  // 1.0f;
+		// 								  // depthBiasSlopeFactor = 1.0f// config.DepthBiasSlopeFactor ;   //1.0f;
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION MULTISAMPLING ( ANTIALIASING ? )
+
+		// VkPipelineMultisampleStateCreateInfo multisampling = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+		// 	pNext = null,
+		// 	flags = 0,
+		// 	sampleShadingEnable = VK.VK_FALSE,// config.SampleShadingEnable ?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	rasterizationSamples = VkSampleCountFlagBits.VK_SAMPLE_COUNT_1_BIT,
+		// 	// alphaToCoverageEnable = data->VK_FALSE,//  config.AlphaToCoverageEnable ? 1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	// alphaToOneEnable = data->VK_FALSE,//config.AlphaToOneEnable  ?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;       
+		// 	// minSampleShading = 0.0f,
+		// 	// pSampleMask = null
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION DETPH & STENCIL 
+
+		// VkPipelineDepthStencilStateCreateInfo depthStencilStateCreateInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+		// 	pNext = null,
+		// 	depthTestEnable = VK.VK_FALSE, //graphicData->IsUseDepthBuffer ? VK.VK_TRUE : VK.VK_FALSE,// config.DepthTestEnable ?   1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	depthWriteEnable = 0, // config.DepthWriteEnable  ?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	depthCompareOp = VkCompareOp.VK_COMPARE_OP_LESS,
+		// 	depthBoundsTestEnable = 0,//config.DepthBoundsTestEnable ?  1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	stencilTestEnable = 0,// config.DepthStencilTestEnable ? 1 /*data->VK_TRUE*/ :0 /*data->VK_FALSE*/ ;
+		// 	maxDepthBounds = 1.0f,// config.DepthMaxDepthBounds;
+		// 	minDepthBounds = 0.0f,// config.DepthMinDepthBounds;
+		// 						  // flags = (uint)VkPipelineDepthStencilStateCreateFlagBits.VK_PIPELINE_DEPTH_STENCIL_STATE_CREATE_RASTERIZATION_ORDER_ATTACHMENT_DEPTH_ACCESS_BIT_ARM
+		// };
+		// if (graphicData->IsUseDepthBuffer)
+		// {
+
+		//     // depthStencilStateCreateInfo.front = config.DepthFront ;
+		//     // depthStencilStateCreateInfo.back = config.DepthBack ;
+		// }
+
+
+		#endregion
+
+		#region FIXED FUNCTION DYNAMIC STATE
+
+		// CreateDynamicStates(descriptorData);
+		
+		// VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+		// 	pNext = null,
+		// 	flags = 0,
+		// 	dynamicStateCount = descriptorData->DynamicStatesCount,
+		// 	pDynamicStates = descriptorData->DynamicStates
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION VIEWPORT SCISSOR
+
+		// descriptorData-> DynamicStateViewport->x = 0.0f;
+        // descriptorData-> DynamicStateViewport->y = 0.0f;
+        // descriptorData-> DynamicStateViewport->width =  graphicData->RenderPassArea->extent.width;
+        // descriptorData-> DynamicStateViewport->height =  graphicData->RenderPassArea->extent.height;
+        // descriptorData-> DynamicStateViewport->minDepth = 0.0f;
+        // descriptorData-> DynamicStateViewport->maxDepth = 1.0f;
+        // Vk.vkCmdSetViewport(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateViewport );
+
+        // descriptorData-> DynamicStateScissor->offset = new() {x=0, y=0};
+        // descriptorData-> DynamicStateScissor->extent =graphicData->RenderPassArea->extent ;
+        // Vk.vkCmdSetScissor(graphicData->CurrentCommandBuffer, 0, 1, descriptorData->DynamicStateScissor);
+
+		// VkPipelineViewportStateCreateInfo viewportState = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+		// 	flags = 0,
+		// 	pNext = null,
+		// 	viewportCount = 1,
+		// 	pViewports = descriptorData->DynamicStateViewport,
+		// 	scissorCount = 1,
+		// 	pScissors = descriptorData->DynamicStateScissor
+		// };
+
+		#endregion
+
+		#region FIXED FUNCTION TESSLATION 
+
+		// VkPipelineTessellationStateCreateInfo tessellationStateCreateInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
+		// 	pNext = null,
+		// 	flags = 0,
+		// 	patchControlPoints = 0
+		// };
+
+		#endregion
+
+		// VkGraphicsPipelineCreateInfo pipelineInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		// 	pNext = null,
+		// 	flags = (uint)VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT,
+		// 	renderPass = graphicData->RenderPass,
+		// 	subpass = 0,
+
+		// 	pVertexInputState = &vertexInputInfo,
+		// 	pInputAssemblyState = &inputAssembly,
+
+		// 	pColorBlendState = &colorBlending,
+
+		// 	pViewportState = &viewportState,
+
+		// 	pRasterizationState = &rasterizer,
+
+		// 	pMultisampleState = &multisampling,
+
+		// 	layout = descriptorData->PipelineLayout,
+
+		// 	pTessellationState = &tessellationStateCreateInfo,
+
+		// 	pDepthStencilState = /*graphicData->IsUseDepthBuffer ? &depthStencilStateCreateInfo : */null,
+
+		// 	pDynamicState = &dynamicStateCreateInfo,
+
+		// 	basePipelineIndex = 0,
+		// 	basePipelineHandle = VkPipeline.Null,
+
+		// 	stageCount = descriptorData->ShaderStageCount,
+		// 	pStages = descriptorData->shaderStages,
+		// };
+
+		// var err = Vk.vkCreateGraphicsPipelines(graphicData->Device, VkPipelineCache.Null, 1, &pipelineInfo, null, &descriptorData->Pipeline);
+
+		// if (err != VkResult.VK_SUCCESS) Log.Error("Create Pipeline");
+
+		// DisposeShaderModules(graphicData, descriptorData);
+	}
+
+
+	internal static void DisposePipeline()
+	{
+		// if (descriptorData->Pipeline.IsNull) return;
+
+		// // Log.Info("INFO",$"Destroy PIPELINE : {renderData->Pipeline}");
+		// Vk.vkDestroyPipeline(graphicData->Device, descriptorData->Pipeline, null);
+	}
+
+
+
+}
+
+
+internal unsafe static class GraphicPipelineFixedFunction
+{
+
+	internal static void CreateDynamicStates()
+	{
+		// descriptorData->DynamicStates = Memory.Memory.NewArray<VkDynamicState>(descriptorData->DynamicStatesCount);
+
+		// descriptorData->DynamicStates[0] = VkDynamicState.VK_DYNAMIC_STATE_VIEWPORT;
+		// descriptorData->DynamicStates[1] = VkDynamicState.VK_DYNAMIC_STATE_SCISSOR;
+
+		// descriptorData->DynamicStateViewport = Memory.Memory.New<VkViewport>();
+		// descriptorData->DynamicStateScissor = Memory.Memory.New<VkRect2D>();
+	}
+
+	internal static void DispsoseDynamicStates()
+	{
+		// Memory.Memory.Dispose(descriptorData->DynamicStates);
+
+		// Memory.Memory.Dispose(descriptorData->DynamicStateScissor);
+		// Memory.Memory.Dispose(descriptorData->DynamicStateViewport);
+	}
+
+
+
+
+}
+
+
+internal unsafe static class GraphicPipelineCreationShaders
+{
+	internal static void CreateShaderModule()
+	{
+		// string vertexfilename = @"Shader_Base.vert";
+		// // string fragmentfilename = @"Shader_Base.vert";
+
+		// string vertexSource = ShadersImpl.VertexBaseShader();
+		// // string FragmentSource = ShadersImpl.FragmentBaseShader();
+
+		// using var compilerVertex = new Compiler();
+
+		// compilerVertex.Options.ShaderStage = ShaderKind.GLSL_DefaultVertexShader;
+		// compilerVertex.Options.EntryPoint = "main";
+		// // compilerVertex.Options.SourceLanguage = SourceLanguage.GLSL;
+		// // compilerVertex.Options.TargetEnv = TargetEnvironmentVersion.Vulkan_1_3;
+		// // compilerVertex.Options.TargetSpv = SpirVVersion.Version_1_0;
+
+		// CompileResult resultVertex = compilerVertex.Compile(vertexSource, vertexfilename);
+
+		// byte* entryPt = Memory.Memory.NewStr("main");
+
+		// VkShaderModuleCreateInfo* createInfoVert = stackalloc VkShaderModuleCreateInfo[1];
+
+		// createInfoVert[0].sType = VkStructureType.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		// createInfoVert[0].codeSize = resultVertex.BytesSize;  
+		// createInfoVert[0].pCode = (uint*)resultVertex.Bytes;
+		// createInfoVert[0].pNext = null;
+		// createInfoVert[0].flags = 0;
+
+
+		// VkShaderModule shaderModule = VkShaderModule.Null;
+		// var result = Vk.vkCreateShaderModule(graphicData->Device, &createInfoVert[0], null, &shaderModule);
+		// if (result != VkResult.VK_SUCCESS) Log.Error("Vertex ShaderModule ");
+
+		// descriptorData->ShaderModulesVertex = shaderModule ;
+	}
+
+	internal static void CreateShaderStage()
+	{
+		// CreateShaderModuleVertex(graphicData, descriptorData, shaderData);
+		// CreateShaderModuleFragment(graphicData, descriptorData, shaderData);
+
+		// descriptorData->shaderStages = Memory.Memory.NewArray<VkPipelineShaderStageCreateInfo>(descriptorData->ShaderStageCount);
+
+		// descriptorData->shaderStages[0] = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		// 	stage = VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT,
+		// 	module = descriptorData->ShaderModulesVertex,
+		// 	pName = descriptorData->Entrypoint,
+		// 	flags = 0,
+		// 	pNext = null,
+		// 	pSpecializationInfo = null
+		// };
+
+		// descriptorData->shaderStages[1] = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		// 	stage = VkShaderStageFlagBits.VK_SHADER_STAGE_FRAGMENT_BIT,
+		// 	module = descriptorData->ShaderModulesFragment,
+		// 	pName = descriptorData->Entrypoint,
+		// 	flags = 0,
+		// 	pNext = null,
+		// 	pSpecializationInfo = null
+		// };
 
 	}
-	internal unsafe static class TextureCreation
+
+	internal static void DisposeShaderModules()
 	{
 
+		// if (descriptorData->ShaderModulesFragment.IsNotNull)
+		// {
+		// 	Vk.vkDestroyShaderModule(graphicData->Device, descriptorData->ShaderModulesFragment, null);
+		// 	descriptorData->ShaderModulesFragment = VkShaderModule.Null;
+		// }	
+		// if (descriptorData->ShaderModulesVertex.IsNotNull)
+		// {
+		// 	Vk.vkDestroyShaderModule(graphicData->Device, descriptorData->ShaderModulesVertex, null);
+		// 	descriptorData->ShaderModulesVertex = VkShaderModule.Null;
+		// }
 
 	}
-	internal unsafe static class VertexCreation
+
+	internal static void DisposeShader()
+	{
+		// DisposeShaderModules(graphicData, descriptorData);
+
+		// Memory.Memory.Dispose(descriptorData->shaderStages);
+	}
+
+	internal static void CreatePipelineLayout()
+	//  ref VkDescriptorSetLayout descriptorSetLayout,ref VkPushConstantRange[] push_constants )
+	{
+		// VkPushConstantRange push_constant;
+		// if (shaderData->HasPushConstant)
+		// {
+		// 	// PUSH CONSTANT
+		// 	//this push constant range starts at the beginning
+		// 	push_constant.offset = 0;
+		// 	//this push constant range takes up the size of a MeshPushConstants struct
+		// 	// push_constant.size =  Rita.Lib.Math.Geometry.PushConstantsBool.SizeInBytes ;
+		// 	//this push constant range is accessible only in the vertex shader
+		// 	push_constant.stageFlags = (uint)VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT;
+		// }
+
+
+		// VkPipelineLayoutCreateInfo pipelineLayoutInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+		// 	flags = 0,
+		// 	pNext = null,
+		// 	pSetLayouts =null,// &shaderData->ShaderDescribe_DescriptorSetLayout,
+		// 	setLayoutCount =0, //shaderData->DescriptorSetLayoutCount,
+		// 	pushConstantRangeCount =0, //shaderData->HasPushConstant ? 1 : (uint)0,    // Optionnel
+		// 	pPushConstantRanges = /*shaderData->HasPushConstant ? &push_constant :*/ null
+		// };
+
+		// var result = Vk.vkCreatePipelineLayout(graphicData->Device, &pipelineLayoutInfo, null, &descriptorData->PipelineLayout);//.Check ("failed to create pipeline layout!");
+
+		// if (result != VkResult.VK_SUCCESS) Log.Error($"Create Pipeline Layout ");
+	}
+
+	internal static void DisposePipelineLayout()// ref VkPipelineLayout pipelineLayout)
+	{
+		// if (descriptorData->PipelineLayout.IsNull) return;
+
+		// Log.Info("INFO", $"Destroy Pipeline Layout : {descriptorData->PipelineLayout}");
+		// Vk.vkDestroyPipelineLayout(graphicData->Device, descriptorData->PipelineLayout, null);
+	}
+
+	internal static void CreateDescriptorSets()
 	{
 
+		// VkDescriptorSetLayout* layouts = stackalloc VkDescriptorSetLayout[2] { ShaderData->ShaderDescribe_DescriptorSetLayout, ShaderData->ShaderDescribe_DescriptorSetLayout };
+
+		// VkDescriptorSetAllocateInfo allocInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		// 	descriptorPool = ShaderData->ShaderDescribe_DescriptorPool,
+		// 	descriptorSetCount = graphicData->MaxFrameInFlight,
+		// 	pSetLayouts = layouts,
+		// 	pNext = null
+		// };
+
+		// Vk.vkAllocateDescriptorSets(graphicData->Device, &allocInfo, ShaderData->ShaderDescribe_DescriptorSets);//.Check("failed to allocate descriptor sets!");
+
+		// VkWriteDescriptorSet* descriptorWrites = Memory.Memory.NewArray<VkWriteDescriptorSet>(1);
+		// // uint index = 0;
+		// for (int i = 0; i < graphicData->MaxFrameInFlight; i++)
+		// {
+
+		// 	// VkDescriptorBufferInfo bufferInfo = new ();
+		// 	// bufferInfo.buffer = settings.UniformCameraBuffers[i];
+		// 	// bufferInfo.offset = 0;
+		// 	// bufferInfo.range = UboVS.SizeInBytes ;// sizeof UNIFORM_MVP
+
+		// 	descriptorWrites[0].sType = VkStructureType.VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		// 	descriptorWrites[0].dstSet = ShaderData->ShaderDescribe_DescriptorSets[i];
+		// 	descriptorWrites[0].dstBinding = 0;
+		// 	descriptorWrites[0].dstArrayElement = 0;
+		// 	descriptorWrites[0].descriptorType = VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		// 	descriptorWrites[0].descriptorCount = 1;
+		// 	// descriptorWrites[0].pBufferInfo =&bufferInfo;
+
+		// 	// descriptorWrites[1].sType = VkStructureType.VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		// 	// descriptorWrites[1].dstSet = descriptorSets[i];
+		// 	// descriptorWrites[1].dstBinding = 1;
+		// 	// descriptorWrites[1].dstArrayElement = 0;
+		// 	// descriptorWrites[1].descriptorType =VkDescriptorType.VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		// 	// descriptorWrites[1].descriptorCount = 1;
+		// 	// fixed(VkDescriptorImageInfo* iI =  &imageInfo)
+		// 	// {
+		// 	//     descriptorWrites[1].pImageInfo = iI;
+		// 	// }
+
+		// 	Vk.vkUpdateDescriptorSets(graphicData->Device, 1, descriptorWrites, 0, null);
+
+		// }
+
+		// Memory.Memory.DisposeArray(descriptorWrites);
 
 	}
+
+	internal static void DisposeDescriptorSet()
+	{
+		// if (ShaderData->ShaderDescribe_DescriptorPool.IsNull || ShaderData->ShaderDescribe_DescriptorSets == null) return;
+
+		// for (int i = 0; i < graphicData->MaxFrameInFlight; i++)
+		// {
+		// 	Vk.vkFreeDescriptorSets(graphicData->Device, ShaderData->ShaderDescribe_DescriptorPool, 0, &ShaderData->ShaderDescribe_DescriptorSets[i]);//.Check("Error Free Descriptor Sets");
+		// }
+	}
+
+	internal static void CreateDescriptorPool()
+	{
+		// VkDescriptorPoolSize* poolSizes = stackalloc VkDescriptorPoolSize[(int)1];
+
+		// poolSizes[0].type = VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		// poolSizes[0].descriptorCount = graphicData->MaxFrameInFlight;
+
+		// if TextureActive
+		// index--;
+		// poolSizes[1].type = VkDescriptorType.VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		// poolSizes[1].descriptorCount =(uint)(config.Render.MAX_FRAMES_IN_FLIGHT);
+
+		// VkDescriptorPoolCreateInfo poolInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		// 	poolSizeCount = 1,
+		// 	maxSets = graphicData->MaxFrameInFlight,
+		// 	pPoolSizes = poolSizes
+		// };
+
+		// Vk.vkCreateDescriptorPool(graphicData->Device, &poolInfo, null, &ShaderData->ShaderDescribe_DescriptorPool);//.Check("failed to create descriptor pool!");
+
+		// Log.Info("INFO", $"Create Descriptor Pool : {ShaderData->ShaderDescribe_DescriptorPool}");
+
+	}
+
+	internal static void DisposeDescriptorsPool()
+	{
+		// if (ShaderData->ShaderDescribe_DescriptorPool.IsNull) return;
+
+		// Log.Info("INFO", $"Destroy Descriptor Pool : {ShaderData->ShaderDescribe_DescriptorPool}");
+		// Vk.vkDestroyDescriptorPool(graphicData->Device, ShaderData->ShaderDescribe_DescriptorPool, null);
+	}
+
+	internal static void CreateDescriptorSetLayout()
+	{
+		// VkDescriptorSetLayoutBinding* LayoutBinding = stackalloc VkDescriptorSetLayoutBinding[(int)1];
+
+		// LayoutBinding[0].binding = 0;
+		// LayoutBinding[0].descriptorCount = 1;
+		// LayoutBinding[0].descriptorType = VkDescriptorType.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		// LayoutBinding[0].pImmutableSamplers = null;
+		// LayoutBinding[0].stageFlags = (uint)VkShaderStageFlagBits.VK_SHADER_STAGE_VERTEX_BIT;
+
+		// VkDescriptorSetLayoutCreateInfo layoutInfo = new()
+		// {
+		// 	sType = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		// 	bindingCount = 1, //2;
+		// 	pBindings = LayoutBinding
+		// };
+
+		// Vk.vkCreateDescriptorSetLayout(graphicData->Device, &layoutInfo, null, &shaderData->ShaderDescribe_DescriptorSetLayout);//.Check("failed to create descriptor set layout!");
+
+		// Log.Info("INFO", $"Create Descriptor Set layout : {shaderData->ShaderDescribe_DescriptorSetLayout}");
+	}
+
+	internal static unsafe void DisposeDescriptorSetLayout()
+	{
+		// if (shaderData->ShaderDescribe_DescriptorSetLayout.IsNull) return;
+
+		// Log.Info("INFO", $"Destroy Descriptor Set layout : {shaderData->ShaderDescribe_DescriptorSetLayout}");
+		// Vk.vkDestroyDescriptorSetLayout(graphicData->Device, shaderData->ShaderDescribe_DescriptorSetLayout, null);
+	}
+
+
+}
+
+internal unsafe static class GraphicPipelineCreationTextureCreation
+{
+
+
+}
+
+
+internal unsafe static class GraphicPipelineCreationVertexCreation
+{
+
+	internal static void GetMemoryPropeties(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// VkPhysicalDeviceMemoryProperties2* mem2 = stackalloc VkPhysicalDeviceMemoryProperties2[1];
+
+		// if (graphicData->DeviceExtensions->IsExist(VK.VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME))
+		// {
+		// 	Vk.vkGetPhysicalDeviceMemoryProperties2KHR(graphicData->DevicePhysical, &mem2);
+		// 	graphicData->DeviceMemoryProperties = mem2.memoryProperties;
+		// }
+		// else
+		// {
+		// Vk.vkGetPhysicalDeviceMemoryProperties2(graphicData->DevicePhysical, &mem2[0]);
+		// graphicData->DeviceMemoryProperties = mem2.memoryProperties;
+		// }
+
+		// Vk.vkGetPhysicalDeviceMemoryProperties(graphicData->DevicePhysical, &graphicData->DeviceMemoryProperties);
+	}
+
 
 }
 
@@ -2484,20 +3099,244 @@ internal unsafe static class WindowsContextGamepads
 internal unsafe static class WindowsContextAudioDevice
 {
 
-	internal unsafe static class AudioDeviceInit
+	internal static int Init(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
 	{
+		// const float SpeedOfSound = 345.0f;
 
+		// contextData->AudioModule = GetAudioModuleDLL();
+		// if (contextData->AudioModule == nint.Zero)
+		// {
+		// 	Log.Error("Load XAUDIO2 DLL");
+		// 	return 1;
+		// }
+
+		// Load(LibraryLoader.GetSymbol, contextData->AudioModule);
+
+		// IXAudio2* Instance = null;
+		// var err = XAudio2Create(&Instance, 0, AudioConsts.XAUDIO2_DEFAULT_PROCESSOR);
+
+		// // if ( Instance == null || err != (uint)XAUDIO2_ERRORS.XAUDIO2_SUCESS, "Create Xaudio2 INSTANCE ")) { return 1; }
+
+		// IXAudio2 iXAudio2Temp = new(Instance);
+		// contextData->AudioInstance = Memory.Memory.New<IXAudio2>(withCopyInstance: false);//pool->New<IXAudio2>( );
+		// Memory.Memory.Copy(Memory.Memory.ToPtr(ref iXAudio2Temp), contextData->AudioInstance, Memory.Memory.Size<IXAudio2>());
+
+		// contextData->Debug = Memory.Memory.New<XAUDIO2_DEBUG_CONFIGURATION>(false);// pool->New<XAUDIO2_DEBUG_CONFIGURATION>( new() );	
+		// contextData->Debug->LogThreadID = 0;
+		// contextData->Debug->LogFileline = 0;
+		// contextData->Debug->LogFunctionName = 0;
+		// contextData->Debug->LogTiming = 0;
+		// contextData->Debug->TraceMask = AudioConsts.XAUDIO2_LOG_ERRORS | AudioConsts.XAUDIO2_LOG_WARNINGS | AudioConsts.XAUDIO2_LOG_INFO;
+		// contextData->Debug->BreakMask = AudioConsts.XAUDIO2_LOG_ERRORS;
+		// contextData->AudioInstance->SetDebugConfiguration(contextData->Debug, null);
+
+		// if (contextData->Debug == null) { Log.Error("Create Xaudio2 Debug "); return 1; }
+
+		// // IXAudio2EngineCallback mEngineCallback;
+		// // err = contextData->AudioInstance->RegisterForCallbacks( &mEngineCallback );
+		// // if ( Log.Check(err != 0, "Create Xaudio2 Debug ")) { return 1; }
+
+		// WAVEFORMATEX waveFormatEx = default;
+		// waveFormatEx.nChannels = 2;
+		// waveFormatEx.nSamplesPerSec = 0;
+		// IXAudio2MasteringVoice* tempMaster = null;
+		// err = contextData->AudioInstance->CreateMasteringVoice(&tempMaster, 2, 0, 0, null, null, AudioConsts.AUDIO_STREAM_CATEGORY_GameEffects);
+
+		// if (tempMaster == null) { Log.Error("Create Xaudio2 Master Voice"); return 1; }
+
+		// IXAudio2MasteringVoice iXAudio2MasteringVoice = new(tempMaster);
+		// contextData->MasterVoice = Memory.Memory.New<IXAudio2MasteringVoice>(false);
+		// Memory.Memory.Copy(Memory.Memory.ToPtr(ref iXAudio2MasteringVoice), contextData->MasterVoice, Memory.Memory.Size<IXAudio2MasteringVoice>());
+
+
+		// uint channelMask = 0;
+		// err = contextData->MasterVoice->GetChannelMask(&channelMask);
+
+		// if (err != 0) { Log.Error("GetChannel MAsk "); return 1; }
+
+		// X3DAUDIO_HANDLE* Handle3D;
+		// err = (uint)X3DAudioInitialize(channelMask, SpeedOfSound, &Handle3D);
+
+		// contextData->Handle3D = Handle3D;
+
+		// if (Handle3D == null) { Log.Error("X3D Audio "); return 1; }
+
+		return 0;
+	}
+
+	internal static void Dispose(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// if (audioData->AudioInstance == null) return;
+
+		// if (audioData->MasterVoice != null)
+		// 	audioData->MasterVoice->DestroyVoice();
+
+		// var error = audioData->AudioInstance->Release();
+
+		// Memory.Memory.Dispose(audioData->AudioInstance);
+		// Memory.Memory.Dispose(audioData->Debug);
+		// Memory.Memory.Dispose(audioData->MasterVoice);
+		// // Memory.Dispose(audioData->Handle3D); // TODO ne pas faire dispose Pourquoi ?
+
+		// LibraryLoader.Unload(audioData->AudioModule);
+	}
+
+	internal static void SetVolume(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, float value)
+	{
+		//clamp  value < min ? min : value > max ? max : value
+		// audioData->Volume = value;
+		// var err = audioData->MasterVoice->SetVolume(value);
+		// if (err != 0)
+		// 	Log.Error("Set Volume failed");
+	}
+
+	internal static void Suspend(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// if (audioData->AudioInstance == null) return;
+
+		// audioData->AudioInstance->StopEngine();
+	}
+
+	internal static void Resume(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// if (audioData->AudioInstance == null) return;
+
+		// var result = audioData->AudioInstance->StartEngine();
+		// if (result != 0)
+		// {
+		// 	Log.Error("Resume of the audio engine failed; running in 'silent mode");
+		// 	//Silent MOde
+		// }
+	}
+
+	internal static void Reset(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	{
+		// if (audioData->AudioInstance != null)
+		// 	Dispose(audioData: audioData);
+
+		// Init(audioData);
+	}
+
+	static nint GetAudioModuleDLL()
+	{
+		var AudioModule = WindowsContextSystem.Load(XAudio2_9);
+
+		if (AudioModule != nint.Zero) { return AudioModule; }
+
+		AudioModule = WindowsContextSystem.Load(XAudio2_8);
+
+		if (AudioModule != nint.Zero) { return AudioModule; }
+
+		AudioModule = WindowsContextSystem.Load(XAudio1_7);
+
+		if (AudioModule != nint.Zero) { return AudioModule; }
+
+		return nint.Zero;
+	}
+
+	internal const string XAudio2_9 = "XAudio2_9";
+	internal const string XAudio2_8 = "XAudio2_8";
+	internal const string XAudio1_7 = "XAudio1_7";
+
+
+	// // TODO replace System.MAth by own method  ( Log10 , Sin POw ASin )
+	// public static float XAudio2DecibelsToAmplitudeRatio(float Decibels)
+	// 	=> Math.MathFuncs.powf(10.0f, Decibels / 20.0f);
+
+	// /// <summary>
+	// /// // Inline function that converts an amplitude ratio value to a decibel value.
+	// /// </summary>
+	// /// <param name="Volume"></param>
+	// /// <returns></returns>
+	// public static float XAudio2AmplitudeRatioToDecibels(float Volume)
+	// 	=> Volume == 0.0f ? -3.402823466e+38f : 20.0f * Math.MathFuncs.clog10f(Volume);
+
+	// public static float XAudio2SemitonesToFrequencyRatio(float Semitones)
+	// 	=> Math.MathFuncs.powf(2.0f, Semitones / 12.0f);
+
+	// public static float XAudio2FrequencyRatioToSemitones(float FrequencyRatio)
+	// 	=> 39.86313713864835f * Math.MathFuncs.clog10f(FrequencyRatio);
+
+	// public static float XAudio2CutoffFrequencyToRadians(float CutoffFrequency, uint SampleRate)
+	// 	=> (uint)(CutoffFrequency * 6.0f) >= SampleRate ? 1.0f : 2.0f * Math.MathFuncs.sinf((float)3.14159265358979323846 * CutoffFrequency / SampleRate);
+
+	// public static float XAudio2RadiansToCutoffFrequency(float Radians, float SampleRate)
+	// 	=> SampleRate * Math.MathFuncs.asinf(Radians / 2.0f) / (float)3.14159265358979323846;
+
+	// public static float XAudio2CutoffFrequencyToOnePoleCoefficient(float CutoffFrequency, uint SampleRate)
+	// 	=> (uint)CutoffFrequency >= SampleRate ? 1.0f : 1.0f - Math.MathFuncs.powf(1.0f - (2.0f * CutoffFrequency / SampleRate), 2.0f);
+
+
+	/// <summary> Creates a new XAudio2 object and returns a pointer to its IXAudio2 interface. </summary>
+	// private static delegate* unmanaged[MemberFunction]<IXAudio2**, uint, uint, HRESULT> PFN_XAudio2Create = null;
+	private static delegate* unmanaged[MemberFunction]<void**, uint, HRESULT> PFN_CreateAudioReverb = null;
+	private static delegate* unmanaged[MemberFunction]<void**, uint, HRESULT> PFN_CreateAudioVolumeMeter = null;
+	private static delegate* unmanaged[MemberFunction]<uint, float, X3DAUDIO_HANDLE**, HRESULT> PFN_X3DAudioInitialize = null;
+	private static delegate* unmanaged[MemberFunction]<void*, void*, void*, uint, void*, void> PFN_X3DAudioCalculate = null;
+
+	public unsafe delegate nint LoadFunction(nint ptr, string name);
+
+	public static void Load(LoadFunction load, nint module)
+	{
+		// PFN_XAudio2Create = (delegate* unmanaged[MemberFunction]<IXAudio2**, uint, uint, HRESULT>)load(module, "XAudio2Create");
+		PFN_CreateAudioReverb = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)load(module, "CreateAudioReverb");
+		PFN_CreateAudioVolumeMeter = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)load(module, "CreateAudioVolumeMeter");
+		PFN_X3DAudioInitialize = (delegate* unmanaged[MemberFunction]<uint, float, X3DAUDIO_HANDLE**, HRESULT>)load(module, "X3DAudioInitialize");
+		PFN_X3DAudioCalculate = (delegate* unmanaged[MemberFunction]<void*, void*, void*, uint, void*, void>)load(module, "X3DAudioCalculate");
 
 	}
-	internal unsafe static class Sound2DCreation
-	{
+
+	// XAUDIO2 
+	// [SuppressGCTransition]
+	// [SkipLocalsInit]
+	// [SuppressUnmanagedCodeSecurity]
+	// internal static HRESULT XAudio2Create(IXAudio2** ppXAudio2, uint Flags = 0, uint XAudio2Processor = XAUDIO2_DEFAULT_PROCESSOR)
+	// 	=> PFN_XAudio2Create(ppXAudio2, Flags, XAudio2Processor);
+
+	// XAUDIO 3D
+	[SuppressGCTransition]
+	[SkipLocalsInit]
+	[SuppressUnmanagedCodeSecurity]
+	internal static HRESULT X3DAudioInitialize(uint SpeakerChannelMask, float SpeedOfSound, X3DAUDIO_HANDLE** Instance)
+		=> PFN_X3DAudioInitialize(SpeakerChannelMask, SpeedOfSound, Instance);
+
+	// [SuppressGCTransition]
+	// [SkipLocalsInit]
+	// [SuppressUnmanagedCodeSecurity]
+	// internal static void X3DAudioCalculate(X3DAUDIO_HANDLE* Instance, X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, uint Flags, X3DAUDIO_DSP_SETTINGS* pDSPSettings)
+	// 	=> PFN_X3DAudioCalculate(Instance, pListener, pEmitter, Flags, pDSPSettings);
+
+	//XAUDIO2 FX
+	[SuppressGCTransition]
+	[SkipLocalsInit]
+	[SuppressUnmanagedCodeSecurity]
+	internal static HRESULT CreateAudioReverb(void** ppApo, uint flags)
+		=> PFN_CreateAudioReverb(ppApo, flags);
+
+	[SuppressGCTransition]
+	[SkipLocalsInit]
+	[SuppressUnmanagedCodeSecurity]
+	internal static HRESULT CreateVolumeMeter(void** ppApo, uint flags)
+		=> PFN_CreateAudioVolumeMeter(ppApo, flags);
+
+	internal const int XAUDIO2_DEFAULT_PROCESSOR = 0x00000001;
+	
+	[StructLayout(LayoutKind.Explicit, Size = 20)]
+	internal readonly struct X3DAUDIO_HANDLE;
 
 
-	}
+}
+
+	
+
+
+internal unsafe static class Sound2DCreation
+{
+
+
+}
 	internal unsafe static class Sound3DCreation
 	{
 
 
 	}
-
-}
