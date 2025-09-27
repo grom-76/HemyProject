@@ -43,67 +43,85 @@ public sealed class WindowSettings : IDisposable
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
+public interface IWindow : IDisposable
+{
+	WindowSettings Settings { get; }
+
+	void RequestClose();
+
+	bool IsRunning();
+}
+
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 public unsafe sealed class Context : IDisposable
 {
-	[SkipLocalsInit]
-	public Window Window
-	{
+	// only Context hawe new ....
+#if WINDOWS
+	private readonly WindowsData* _data = null;
+#endif
 
+	private readonly WindowSettings _windowSettings = null;
+
+	[SkipLocalsInit]
+	public IWindow Window
+	{
+		[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
 		get;
-	} = new();
+	} = null;
 
-	public void Dispose()
+
+	public Context()
 	{
-		Window.Dispose();
-		GC.SuppressFinalize(this);
-
+#if WINDOWS
+		_data = WindowsMemory.New<WindowsData>();
+		_windowSettings = new();
+		Window = new WindowsWindow(_windowSettings, _data);
+#endif
 	}
-}
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-public unsafe sealed class Window : IDisposable // Agnostic for user
-{
-
-	[SkipLocalsInit]
-	public WindowSettings Settings { get; }=new();
-
-	public void Dispose()
-	{
-		Settings.Dispose();
-		GC.SuppressFinalize(this);
-	}
-
-}
-
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal unsafe struct WindowsContext // = Settings +Data + Infos  
-{
-	
-
-	public WindowsContext()
-	{
-
-	}
-
 
 	public void Create()
 	{
+#if WINDOWS
 
-	}
-
-	public void Update()
-	{
+#endif
 
 	}
 
 	public void Dispose()
 	{
-		
+		_windowSettings.Dispose();
+#if WINDOWS
+		Window.Dispose();
+		WindowsMemory.Dispose(_data);
+#endif
+		GC.SuppressFinalize(this);
 	}
+	
+	
+}
+
+
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe readonly struct WindowsWindow(WindowSettings windowSettings, WindowsData* windowData  ) : IWindow // = Settings +Data + Infos  
+{
+	[ SkipLocalsInit]
+    public readonly WindowSettings Settings => windowSettings;
+
+	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
+	public readonly void Dispose()
+		=> WindowsWindowImpl.DisposeWindow(windowData);
+
+	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
+	public readonly bool IsRunning()
+		=> windowData->State == 1 && windowData->Error == 0;
+
+	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
+	public readonly void RequestClose()
+		=> Windows.WindowsEvents.RequestClose(&windowData->State);
 }
 
 
@@ -716,7 +734,7 @@ internal unsafe static class WindowsMonitors
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe static partial class WindowsWindow
+internal unsafe static partial class WindowsWindowImpl
 {
 	internal const string Kernel = "kernel32";// https://www.geoffchappell.com/studies/windows/win32/kernel32/api/index.htm
 	internal const string User = "user32";// https://learn.microsoft.com/en-us/windows/win32/api/winuser/
