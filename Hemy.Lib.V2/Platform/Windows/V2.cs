@@ -1,4 +1,4 @@
-namespace Hemy.Lib.Core.Platform.V2;
+namespace Hemy.Lib.V2.Platform.Windows;
 
 using System;
 using System.Runtime.CompilerServices;
@@ -9,6 +9,7 @@ using System.Threading;
 using const_char = System.Byte;
 using BOOL = System.Int32;
 
+// https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types
 using size_t = System.UIntPtr;
 using uint32_t = System.UInt32;
 using uint64_t = System.UInt64;
@@ -16,51 +17,127 @@ using uint8_t = System.Byte;
 using int32_t = System.Int32;
 using int64_t = System.Int64;
 using uint16_t = System.UInt16;
+
 using VkBool32 = System.UInt32;
 using VkDeviceAddress = System.UInt64;
 using VkDeviceSize = System.UInt64;
 using Flag = System.Int32;
 
 using HRESULT = System.Int32;
-using static Hemy.Lib.Core.Platform.V2.WindowsContextGraphicDeviceCommon;
 
+using static Hemy.Lib.V2.Platform.Windows.WindowsGraphicCommon;
+using static Hemy.Lib.V2.Platform.Windows.WindowsCommon;
 
-public sealed class WindowSettings
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+public sealed class WindowSettings : IDisposable
 {
 	public uint Resolution = 0;
+
+	public void Dispose()
+	{
+		GC.SuppressFinalize(this);
+	}
+}
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+public unsafe sealed class Context : IDisposable
+{
+	[SkipLocalsInit]
+	public Window Window
+	{
+
+		get;
+	} = new();
+
+	public void Dispose()
+	{
+		Window.Dispose();
+		GC.SuppressFinalize(this);
+
+	}
+}
+
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+public unsafe sealed class Window : IDisposable // Agnostic for user
+{
+
+	[SkipLocalsInit]
+	public WindowSettings Settings { get; }=new();
+
+	public void Dispose()
+	{
+		Settings.Dispose();
+		GC.SuppressFinalize(this);
+	}
+
 }
 
 
-internal unsafe struct WindowsContextDataPerFrame()
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct WindowsContext // = Settings +Data + Infos  
 {
+	
+
+	public WindowsContext()
+	{
+
+	}
+
+
+	public void Create()
+	{
+
+	}
+
+	public void Update()
+	{
+
+	}
+
+	public void Dispose()
+	{
+		
+	}
+}
+
+
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct WindowsData() // = Settings +Data + Infos  
+{
+
 	internal uint State = 0;
 	internal uint Error = 0;
+
+	//WINDOW
 	internal Hwnd* WindowHandle = null;
-
-}
-
-
-internal unsafe struct WindowsContextDataInfos() // = Settings  
-{
 	internal fixed byte GameName[256];
 	internal fixed byte EngineName[16];
 	internal fixed byte LogoIcon[32];
-	internal void* Handle = null;
 	internal Hwnd* HInstance = null;
 	internal uint Style = 0;
+	internal int Width = 1280;
+	internal int Height = 720;
+
+	//GRAPHIC
 	internal VkInstance* VkInstance = null;
 	internal VkSurfaceKHR* VkSurface = null;
 	internal VkDebugUtilsMessengerEXT* VkDebugUtilsMessenger = null;
-	internal int Width = 1280;
-	internal int Height = 720;
+
 #if DEBUG
 	internal bool EnableDebugMode = true;
 #else
 	internal bool EnableDebugMode = false;
 #endif
-	internal WindowsContextStrArray* ValidationLayers = null;
-	internal WindowsContextStrArray* InstanceExtensions = null;
-	internal WindowsContextStrArray* DeviceExtensions = null;
+	internal WindowsStrArray* ValidationLayers = null;
+	internal WindowsStrArray* InstanceExtensions = null;
+	internal WindowsStrArray* DeviceExtensions = null;
 
 	internal ulong VkEnxtensions = 0UL;
 	internal VkPhysicalDevice* PhysicalDevice = null;
@@ -70,60 +147,40 @@ internal unsafe struct WindowsContextDataInfos() // = Settings
 	internal VkDevice* VkDevice = null;
 	internal VkQueue* GraphicQueue = null;
 	internal VkQueue* PresentQueue = null;
+	// AUDIO
+	internal nint AudioModule = 0;
+
+
 
 }
 
-internal unsafe struct WindowsContextDataGraphicPipeline()
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct WindowsGraphicPipelineData()
 {
 	// Materials  : shader , texture
 	// Vertices
 	// FixedFunction Dynamic states
 	// RenderPAss ?
 	//Camera? 
-   
+
 }
 
-internal unsafe struct WindowsContextDataAudioPipeline()
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct WindowsAudioPipelineData()
 {
-   // Materials  : shader , texture
-   // Vertices
+	// Materials  : shader , texture
+	// Vertices
 	// FixedFunction Dynamic states
-   // RenderPAss ?
+	// RenderPAss ?
 }
 
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct Hwnd;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkInstance;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkDevice;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkDebugUtilsMessengerEXT;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkPhysicalDevice;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkSurfaceKHR;
-
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal struct VkQueue;
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal static unsafe class WindowsContextUtils
+internal static unsafe class WindowsUtils
 {
 
 	[SkipLocalsInit]
@@ -185,13 +242,33 @@ internal static unsafe class WindowsContextUtils
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe static partial class WindowsContextEvents
+internal static unsafe class WindowsCommon
+{
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct Hwnd;
+
+	internal const uint STATE_NOTINIT = 0;
+	internal const uint STATE_RUNNING = 1;
+	internal const uint STATE_DISPOSE = 2;
+	internal const uint STATE_QUIT = 3;
+	internal const int NO_ERROR = 0;
+	internal const int ERROR = 1;
+
+}
+
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsEvents
 {
 
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
-	internal static void Update(WindowsContextDataPerFrame* contextData)
+	internal static void Update(uint* state)
 	{
 		MSG msg;
 		if (PeekMessageA(&msg, null, 0, 0, PM_REMOVE) > 0)
@@ -199,15 +276,15 @@ internal unsafe static partial class WindowsContextEvents
 			_ = TranslateMessage(&msg);
 			_ = DispatchMessageA(&msg);
 
-			contextData->State = msg.message != WM_QUIT ? 0U : 1U;
+			*state = msg.message != WM_QUIT ? 0U : 1U;
 		}
 	}
 
-	internal static void RequestClose(WindowsContextDataPerFrame* contextData)
+	internal static void RequestClose(uint* state)
     {
-        if (contextData->State == 0) return;
+        if (*state == 0) return;
         
-        contextData->State = 1;
+        *state = 1;
         PostQuitMessage(0);
     }
 
@@ -281,7 +358,7 @@ internal unsafe static partial class WindowsContextEvents
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal static unsafe partial class Log
+internal static unsafe partial class WindowsLog
 {
 	internal const string Ucrt = "ucrtbase";
 	internal const string Kernel = "kernel32";
@@ -341,7 +418,7 @@ internal static unsafe partial class Log
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe static partial class WindowsContextMemory
+internal unsafe static partial class WindowsMemory
 {
 	internal const int DataAlignementSize = 8;
 	internal const string Ucrt = "ucrtbase";
@@ -369,7 +446,7 @@ internal unsafe static partial class WindowsContextMemory
 	internal static byte* New(string text) // FOr STRINGS
 	{
 		byte* bytes = New<byte>((uint)text.Length + 1);
-		WindowsContextUtils.FillBytesWithString(bytes, text);
+		WindowsUtils.FillBytesWithString(bytes, text);
 		return bytes;
 	}
 
@@ -378,7 +455,7 @@ internal unsafe static partial class WindowsContextMemory
 	[SuppressUnmanagedCodeSecurity] // FOR ARRAY
 	internal static T* New<T>(nuint count) where T : unmanaged
 	{
-		size_t size = WindowsContextUtils.GetByteCount(Size<T>(), count);
+		size_t size = WindowsUtils.GetByteCount(Size<T>(), count);
 		T* result = (T*)_aligned_malloc(size , DataAlignementSize);
 		
 		Interlocked.Increment(ref _allocations);
@@ -455,7 +532,10 @@ internal unsafe static partial class WindowsContextMemory
 	internal static partial void* memset(void* dest, int c, nuint count);
 }
 
-internal unsafe static partial class WindowsContextSystem
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsSystem
 {
 	internal const string Kernel = "kernel32";
 	//BigEndian
@@ -525,7 +605,7 @@ internal unsafe static partial class WindowsContextSystem
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Kernel, SetLastError = false)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	private static partial int QueryPerformanceCounter(out ulong lpPerformanceCount);
 
@@ -533,71 +613,77 @@ internal unsafe static partial class WindowsContextSystem
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Kernel, SetLastError = false)]
-	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	private static partial int QueryPerformanceFrequency(out ulong frequency);
-	
+
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static nint Load(string libraryName)
-    {
-        nint dll = LoadLibrary(libraryName);
-        return dll;
-    }
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static nint Load(string libraryName)
+	{
+		nint dll = LoadLibrary(libraryName);
+		return dll;
+	}
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static uint Unload(nint module)
-    {
-		return FreeLibrary(module) ;
-    }
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static uint Unload(nint module)
+	{
+		return FreeLibrary(module);
+	}
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    internal static nint GetSymbol(nint library, string symbolName)
-    {
-        nint proc = GetProcAddress(library, symbolName);
-        return proc;
-    }
-    
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(Kernel, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial uint FreeLibrary(nint hModule);
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static nint GetSymbol(nint library, string symbolName)
+	{
+		nint proc = GetProcAddress(library, symbolName);
+		return proc;
+	}
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(Kernel, SetLastError = false, StringMarshalling = StringMarshalling.Custom, StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller))]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial nint GetProcAddress(nint hModule, string lpProcName);
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(Kernel, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial uint FreeLibrary(nint hModule);
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(Kernel, SetLastError = false, EntryPoint = "LoadLibraryA", StringMarshalling = StringMarshalling.Custom, StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller))]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial nint LoadLibrary(string lpFileName);
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(Kernel, SetLastError = false, StringMarshalling = StringMarshalling.Custom, StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller))]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial nint GetProcAddress(nint hModule, string lpProcName);
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(Kernel, SetLastError = false, EntryPoint = "LoadLibraryA", StringMarshalling = StringMarshalling.Custom, StringMarshallingCustomType = typeof(System.Runtime.InteropServices.Marshalling.AnsiStringMarshaller))]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial nint LoadLibrary(string lpFileName);
 }
 
-internal unsafe static partial class WindowsContextIO
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsIO
 {
 	internal const string Ucrt = "ucrtbase";
 
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	internal static bool IsFileExist(string file)
 	{
 		//https://learn.microsoft.com/fr-fr/cpp/c-runtime-library/reference/access-s-waccess-s?view=msvc-170 
-		var bytes = WindowsContextMemory.New(file);
+		var bytes = WindowsMemory.New(file);
 		int err = _access_s(bytes, 0);
-		WindowsContextMemory.Dispose(bytes);
+		WindowsMemory.Dispose(bytes);
 		return err == 0;
 	}
 
@@ -610,31 +696,47 @@ internal unsafe static partial class WindowsContextIO
 	internal static partial int _access_s(const_char* path, int mode);
 }
 
-internal unsafe static class WindowsContextMaths
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsMath
 {
 
 }
 
-internal unsafe static class WindowsContextGraphicMonitors
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsMonitors
 {
 
 
 }
 
-internal unsafe static partial class WindowsContextGraphicWindow
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsWindow
 {
 	internal const string Kernel = "kernel32";// https://www.geoffchappell.com/studies/windows/win32/kernel32/api/index.htm
 	internal const string User = "user32";// https://learn.microsoft.com/en-us/windows/win32/api/winuser/
 
-	internal static int CreateWindowSettings(WindowsContextDataInfos* infos, WindowSettings settingsWindow )
+	internal static int CreateWindowSettings(WindowsData* infos, WindowSettings settingsWindows)
 	{
+		nuint value1 = 0;
+		void* ptr = null;
+		Hwnd* hwnd = null; 
+
+		ptr = &value1;
+		value1 = (nuint)ptr;
+		
 		// WindowStyle WinStyle =infos->Style;
 
 		// Str.StringToBytes(contextData->GameName, Str.BytesToString(info->GameName));
 		// Str.StringToBytes(contextData->EngineName, "Hemy Engine");
 		// byte* LogoIcon = Str.New("Logo.ico");
 		// contextData->HInstance = GetModuleHandleA(null);
-		WindowsContextUtils.FillBytesWithString(infos->LogoIcon, "LogoIcon");
+		WindowsUtils.FillBytesWithString(infos->LogoIcon, "LogoIcon");
 
 		// WS_EX_LEFT | WS_EX_WINDOWEDGE | WS_EX_APPWINDOW;
 		// int Left = CW_USEDEFAULT;
@@ -665,12 +767,12 @@ internal unsafe static partial class WindowsContextGraphicWindow
 		//     CenterWindow(contextData, &Left, &Top);
 		//     // data->WindowState = Consts.SW_SHOWNORMAL;
 		// }
-		return 0;	
+		return 0;
 	}
 
-	internal static int CreateWindow(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, delegate* unmanaged[Stdcall, SuppressGCTransition]<void*, uint, uint*, long*, long*> WinMessageProcedure)
+	internal static int CreateWindow(WindowsData* infos, delegate* unmanaged[Stdcall, SuppressGCTransition]<void*, uint, uint*, long*, long*> WinMessageProcedure)
 	{
-		var styleEx = 23589U; 
+		var styleEx = 23589U;
 
 		WndClassExA* wndClassExA = stackalloc WndClassExA[1];
 		wndClassExA->cbSize = (uint)Unsafe.SizeOf<WndClassExA>();
@@ -686,9 +788,9 @@ internal unsafe static partial class WindowsContextGraphicWindow
 		wndClassExA->hInstance = infos->HInstance;
 		wndClassExA->lpszClassName = infos->EngineName;
 
-		if (RegisterClassExA(wndClassExA) == 0)	{ return 1;	}
+		if (RegisterClassExA(wndClassExA) == 0) { return 1; }
 
-		perframe->WindowHandle = CreateWindowExA(
+		infos->WindowHandle = CreateWindowExA(
 			styleEx,
 			infos->EngineName,
 			infos->GameName,
@@ -699,30 +801,29 @@ internal unsafe static partial class WindowsContextGraphicWindow
 			null, null,
 			infos->HInstance, null);
 
-		return perframe->WindowHandle == null ? 1:0;
+		return infos->WindowHandle == null ? 1 : 0;
 	}
-	
-	internal static int DisposeWindow(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
-    {
-        
-        if (perframe->WindowHandle != null)
-        {
-			if (0 == DestroyWindow(perframe->WindowHandle))
+
+	internal static int DisposeWindow(WindowsData* infos)
+	{
+
+		if (infos->WindowHandle != null)
+		{
+			if (0 == DestroyWindow(infos->WindowHandle))
 				return 1;
-        }
+		}
 
 		if (0 == UnregisterClassA(infos->EngineName, infos->HInstance))
 			return 1;
 		return 0;
-    }
-
-	internal static void ShowWindow(WindowsContextDataInfos* infos)
-	{
-		if (infos->Handle == null) return;// Debug if hancle  null
-
-		_ = ShowWindow(infos->Handle, 5);
 	}
 
+	internal static void ShowWindow(WindowsData* infos)
+	{
+		if (infos->WindowHandle == null) return;// Debug if hancle  null
+
+		_ = ShowWindow(infos->WindowHandle, 5);
+	}
 
 	[SkipLocalsInit]
 	[SuppressGCTransition]
@@ -765,30 +866,28 @@ internal unsafe static partial class WindowsContextGraphicWindow
 	private static partial Hwnd* CreateWindowExA(uint dwExStyle, byte* lpClassName, byte* lpWindowName, uint dwStyle, int X, int Y, int nWidth, int nHeight, void* hWndParent, void* hMenu, void* hInstance, void* lpParam);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(User, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial int ShowWindow(void* hWnd, int nCmdShow);
-
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial int ShowWindow(void* hWnd, int nCmdShow);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(User, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial void* LoadCursorA(void* hInstance, int lpCursorName);
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial void* LoadCursorA(void* hInstance, int lpCursorName);
 
-    [SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
-    [LibraryImport(User, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial void* LoadImageA(void* hInstance, byte* lpIconName, uint type, int cx, int cy, uint fuLoad);
-
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[LibraryImport(User, SetLastError = false)]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	private static partial void* LoadImageA(void* hInstance, byte* lpIconName, uint type, int cx, int cy, uint fuLoad);
 
 	[SkipLocalsInit]
 	[StructLayout(LayoutKind.Sequential)]
@@ -796,7 +895,7 @@ internal unsafe static partial class WindowsContextGraphicWindow
 	{
 		internal uint cbSize;
 		internal uint style;
-		internal unsafe delegate* unmanaged[Stdcall,SuppressGCTransition ]<Hwnd* /*hWnd*/, uint /*msg*/, uint* /*wParam*/, long* /*lpParam*/, long* /*LRESULT*/> WindowPrecedureMessage;
+		internal unsafe delegate* unmanaged[Stdcall, SuppressGCTransition]<Hwnd* /*hWnd*/, uint /*msg*/, uint* /*wParam*/, long* /*lpParam*/, long* /*LRESULT*/> WindowPrecedureMessage;
 		internal int cbClsExtra;
 		internal int cbWndExtra;
 		internal unsafe void* hInstance;
@@ -810,7 +909,11 @@ internal unsafe static partial class WindowsContextGraphicWindow
 
 }
 
-internal unsafe static partial class WindowsContextGraphicDeviceCommon
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicCommon
 {
 	internal const string Vulkan =
 #if WINDOWS
@@ -821,53 +924,46 @@ internal unsafe static partial class WindowsContextGraphicDeviceCommon
 	internal const uint VK_FALSE = 0U;
 
 	internal static uint ToUint(uint major, uint minor, uint patch) => (major << 22) | (minor << 12) | patch;
-	// 
-	// 		"INSTANCE",
-	// 		"PHYSICAL_DEVICE",
-	// 		"DEVICE",
-	// 		"QUEUE",
-	// 		"SEMAPHORE",
-	// 		"COMMAND_BUFFER",
-	// 		"FENCE",
-	// 		"DEVICE_MEMORY",
-	// 		"BUFFER",
-	// 		"IMAGE",
-	// 		"EVENT",
-	// 		"QUERY_POOL",
-	// 		"BUFFER_VIEW",
-	// 		"IMAGE_VIEW",
-	// 		"SHADER_MODULE",
-	// 		"PIPELINE_CACHE",
-	// 		"PIPELINE_LAYOUT",
-	// 		"RENDER_PASS",
-	// 		"PIPELINE",
-	// 		"DESCRIPTOR_SET_LAYOUT",
-	// 		"SAMPLER",
-	// 		"DESCRIPTOR_POOL",
-	// 		"DESCRIPTOR_SET",
-	// 		"FRAMEBUFFER",
-	// 		"COMMAND_POOL",
-	// 		"DESCRIPTOR_UPDATE_TEMPLATE_KHR",
-	// 		"SURFACE_KHR",
-	// 		"SWAPCHAIN_KHR",
-	// 		"DEBUG_UTILS_MESSENGER_EXT",
-	// 		"DEBUG_REPORT_CALLBACK_EXT",
-	// 		"ACCELERATION_STRUCTURE",
-	// 		"VMA_BUFFER_OR_IMAGE" };
+	
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkInstance;
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkDevice;
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkDebugUtilsMessengerEXT;
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkPhysicalDevice;
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkSurfaceKHR;
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkQueue;
+
 	public unsafe static void* LoadInstanceFunc(VkInstance* vkInstance, string name)
 	{
-		byte* str = WindowsContextMemory.New(name);
+		byte* str = WindowsMemory.New(name);
 		void* result = vkGetInstanceProcAddr(*vkInstance, str);
-		WindowsContextMemory.Dispose(str);
+		WindowsMemory.Dispose(str);
 
 		return result;
 	}
 
 	public unsafe static void* LoadDeviceFunc(VkDevice* vkDevice, string name)
 	{
-		byte* str = WindowsContextMemory.New(name);
+		byte* str = WindowsMemory.New(name);
 		void* result = vkGetDeviceProcAddr(*vkDevice, str);
-		WindowsContextMemory.Dispose(str);
+		WindowsMemory.Dispose(str);
 		return result;
 	}
 
@@ -917,7 +1013,6 @@ internal unsafe static partial class WindowsContextGraphicDeviceCommon
 		VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE = 0,
 		VK_INTERNAL_ALLOCATION_TYPE_MAX_ENUM = 0x7FFFFFFF
 	};
-
 
 
 	internal enum VkResult
@@ -987,7 +1082,6 @@ internal unsafe static partial class WindowsContextGraphicDeviceCommon
 
 	internal enum VkStructureType
 	{
-
 		VK_STRUCTURE_TYPE_APPLICATION_INFO = 0,
 		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1,
 		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO = 2,
@@ -1001,6 +1095,42 @@ internal unsafe static partial class WindowsContextGraphicDeviceCommon
 		VK_EXT_DEBUG_UTILS_EXTENSION_NAME = 0,
 		VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 		VK_KHR_SURFACE_EXTENSION_NAME,
+	}
+	internal enum VkModuleInit
+	{
+		// 
+	// 		"INSTANCE",
+	// 		"PHYSICAL_DEVICE",
+	// 		"DEVICE",
+	// 		"QUEUE",
+	// 		"SEMAPHORE",
+	// 		"COMMAND_BUFFER",
+	// 		"FENCE",
+	// 		"DEVICE_MEMORY",
+	// 		"BUFFER",
+	// 		"IMAGE",
+	// 		"EVENT",
+	// 		"QUERY_POOL",
+	// 		"BUFFER_VIEW",
+	// 		"IMAGE_VIEW",
+	// 		"SHADER_MODULE",
+	// 		"PIPELINE_CACHE",
+	// 		"PIPELINE_LAYOUT",
+	// 		"RENDER_PASS",
+	// 		"PIPELINE",
+	// 		"DESCRIPTOR_SET_LAYOUT",
+	// 		"SAMPLER",
+	// 		"DESCRIPTOR_POOL",
+	// 		"DESCRIPTOR_SET",
+	// 		"FRAMEBUFFER",
+	// 		"COMMAND_POOL",
+	// 		"DESCRIPTOR_UPDATE_TEMPLATE_KHR",
+	// 		"SURFACE_KHR",
+	// 		"SWAPCHAIN_KHR",
+	// 		"DEBUG_UTILS_MESSENGER_EXT",
+	// 		"DEBUG_REPORT_CALLBACK_EXT",
+	// 		"ACCELERATION_STRUCTURE",
+	// 		"VMA_BUFFER_OR_IMAGE" };
 	}
 
 	internal static int ReadBit(this ulong value, VkExtension mask)
@@ -1016,15 +1146,15 @@ internal unsafe static partial class WindowsContextGraphicDeviceCommon
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
-public unsafe struct WindowsContextStrArray(uint count, uint itemMaxSize)
+public unsafe struct WindowsStrArray(uint count, uint itemMaxSize)
 {
-	byte* _array = WindowsContextMemory.New<byte>(count * itemMaxSize);
-    byte* _pointer = WindowsContextMemory.New<byte>( count * (uint)Unsafe.SizeOf<IntPtr>() );
+	byte* _array = WindowsMemory.New<byte>(count * itemMaxSize);
+    byte* _pointer = WindowsMemory.New<byte>( count * (uint)Unsafe.SizeOf<IntPtr>() );
 
 	internal void Init(uint ncount, uint nitemMaxSize )
 	{
-		_array = WindowsContextMemory.New<byte>(ncount * nitemMaxSize);
-		_pointer = WindowsContextMemory.New<byte>( ncount * (uint)Unsafe.SizeOf<IntPtr>() );
+		_array = WindowsMemory.New<byte>(ncount * nitemMaxSize);
+		_pointer = WindowsMemory.New<byte>( ncount * (uint)Unsafe.SizeOf<IntPtr>() );
 	}
 
     /// <summary> le nombre de ligne du tableau </summary>
@@ -1046,9 +1176,9 @@ public unsafe struct WindowsContextStrArray(uint count, uint itemMaxSize)
 
         if (index <= 0 && index >= count) return false;
 
-        uint size = WindowsContextUtils.Length(value) + 1;
+        uint size = WindowsUtils.Length(value) + 1;
 
-        WindowsContextMemory.Copy(value, _array + (itemMaxSize * index), size);
+        WindowsMemory.Copy(value, _array + (itemMaxSize * index), size);
 
         ((byte**)_pointer)[index] = _array + (itemMaxSize * index);
 
@@ -1059,7 +1189,7 @@ public unsafe struct WindowsContextStrArray(uint count, uint itemMaxSize)
     /// <param name="index"></param>
     /// <returns></returns>
     public readonly string GetString(uint index)
-		=> WindowsContextUtils.BytesToString( _array + (itemMaxSize * index),itemMaxSize );
+		=> WindowsUtils.BytesToString( _array + (itemMaxSize * index),itemMaxSize );
 
     /// <summary>
     /// 
@@ -1097,17 +1227,20 @@ public unsafe struct WindowsContextStrArray(uint count, uint itemMaxSize)
 	[SuppressUnmanagedCodeSecurity]
     public readonly void Dispose()
     {
-        WindowsContextMemory.Dispose(_array);
-        WindowsContextMemory.Dispose(_pointer);
+        WindowsMemory.Dispose(_array);
+        WindowsMemory.Dispose(_pointer);
     }
 
-    public static implicit operator byte**(WindowsContextStrArray array) => (byte**)array._pointer;
+    public static implicit operator byte**(WindowsStrArray array) => (byte**)array._pointer;
 }
 
-internal unsafe static partial class WindowsContextGraphicDeviceInstance
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicInstance
 {
 
-	internal static int CreateInstance(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int CreateInstance(WindowsData* infos)
 	{
 		// 	//Enumarate instance Layer 
 		uint layerCount = 0;
@@ -1185,7 +1318,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		return result != VkResult.VK_SUCCESS ? 0 : 1;
 	}
 
-	internal static int DisposeInstance(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int DisposeInstance(WindowsData* infos)
 	{
 		if (infos->VkInstance == null) return 1;
 
@@ -1194,15 +1327,15 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		return 0;
 	}
 
-	internal static int LoadDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int LoadDebug(WindowsData* infos)
 	{
-		vkDestroyDebugUtilsMessengerEXT = ( delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerEXT, VkAllocationCallbacks*, void>)LoadInstanceFunc(infos->VkInstance, "vkDestroyDebugUtilsMessengerEXT");
-		vkCreateDebugUtilsMessengerEXT = ( delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerCreateInfoEXT*, VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*, VkResult>)LoadInstanceFunc(infos->VkInstance, "vkCreateDebugUtilsMessengerEXT");
-		
+		vkDestroyDebugUtilsMessengerEXT = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerEXT, VkAllocationCallbacks*, void>)LoadInstanceFunc(infos->VkInstance, "vkDestroyDebugUtilsMessengerEXT");
+		vkCreateDebugUtilsMessengerEXT = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkDebugUtilsMessengerCreateInfoEXT*, VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*, VkResult>)LoadInstanceFunc(infos->VkInstance, "vkCreateDebugUtilsMessengerEXT");
+
 		return 0;
 	}
 
-	internal static int CreateDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, VkDebugUtilsMessengerCreateInfoEXT* debugCreateInfo)
+	internal static int CreateDebug(WindowsData* infos, VkDebugUtilsMessengerCreateInfoEXT* debugCreateInfo)
 	{
 		if (infos->EnableDebugMode == false) return 0;
 
@@ -1212,7 +1345,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		return 0;
 	}
 
-	internal static int DisposeDebug(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int DisposeDebug(WindowsData* infos)
 	{
 		if (infos->VkInstance == null || infos->VkDebugUtilsMessenger == null) return 1;
 
@@ -1235,7 +1368,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 			"ERROR" : messageSeverity == VkDebugUtilsMessageSeverityFlagBitsEXT.VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT ?
 				"WARNING" : "INFO";
 
-		Log.Display(Header, pCallbackData->pMessage);
+		WindowsLog.Display(Header, pCallbackData->pMessage);
 		return VK_FALSE;
 	}
 
@@ -1358,15 +1491,16 @@ internal unsafe static partial class WindowsContextGraphicDeviceInstance
 		internal const_char** ppEnabledExtensionNames;
 	}
 
-	
 
-internal enum VkDebugUtilsMessageSeverityFlagBitsEXT    {
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT = 0x00000001, 
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT = 0x00000010, 
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT = 0x00000100, 
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT = 0x00001000, 
-    VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF 
-};
+
+	internal enum VkDebugUtilsMessageSeverityFlagBitsEXT
+	{
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT = 0x00000001,
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT = 0x00000010,
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT = 0x00000100,
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT = 0x00001000,
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF
+	};
 
 	internal enum VkDebugUtilsMessageTypeFlagBitsEXT
 	{
@@ -1377,93 +1511,98 @@ internal enum VkDebugUtilsMessageSeverityFlagBitsEXT    {
 		VK_DEBUG_UTILS_MESSAGE_TYPE_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF
 	};
 
-public enum VkInstanceCreateFlagBits    {
-    VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = 0x00000001, 
-    VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF  // 2147483647= int.MAx
-};
+	public enum VkInstanceCreateFlagBits
+	{
+		VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = 0x00000001,
+		VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF  // 2147483647= int.MAx
+	};
 
-public enum VkObjectType    {
-    VK_OBJECT_TYPE_UNKNOWN = 0, 
-    VK_OBJECT_TYPE_INSTANCE = 1, 
-    VK_OBJECT_TYPE_PHYSICAL_DEVICE = 2, 
-    VK_OBJECT_TYPE_DEVICE = 3, 
-    VK_OBJECT_TYPE_QUEUE = 4, 
-    VK_OBJECT_TYPE_SEMAPHORE = 5, 
-    VK_OBJECT_TYPE_COMMAND_BUFFER = 6, 
-    VK_OBJECT_TYPE_FENCE = 7, 
-    VK_OBJECT_TYPE_DEVICE_MEMORY = 8, 
-    VK_OBJECT_TYPE_BUFFER = 9, 
-    VK_OBJECT_TYPE_IMAGE = 10, 
-    VK_OBJECT_TYPE_EVENT = 11, 
-    VK_OBJECT_TYPE_QUERY_POOL = 12, 
-    VK_OBJECT_TYPE_BUFFER_VIEW = 13, 
-    VK_OBJECT_TYPE_IMAGE_VIEW = 14, 
-    VK_OBJECT_TYPE_SHADER_MODULE = 15, 
-    VK_OBJECT_TYPE_PIPELINE_CACHE = 16, 
-    VK_OBJECT_TYPE_PIPELINE_LAYOUT = 17, 
-    VK_OBJECT_TYPE_RENDER_PASS = 18, 
-    VK_OBJECT_TYPE_PIPELINE = 19, 
-    VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT = 20, 
-    VK_OBJECT_TYPE_SAMPLER = 21, 
-    VK_OBJECT_TYPE_DESCRIPTOR_POOL = 22, 
-    VK_OBJECT_TYPE_DESCRIPTOR_SET = 23, 
-    VK_OBJECT_TYPE_FRAMEBUFFER = 24, 
-    VK_OBJECT_TYPE_COMMAND_POOL = 25, 
-    VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION = 1000156000, 
-    VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE = 1000085000, 
-    VK_OBJECT_TYPE_PRIVATE_DATA_SLOT = 1000295000, 
-    VK_OBJECT_TYPE_SURFACE_KHR = 1000000000, 
-    VK_OBJECT_TYPE_SWAPCHAIN_KHR = 1000001000, 
-    VK_OBJECT_TYPE_DISPLAY_KHR = 1000002000, 
-    VK_OBJECT_TYPE_DISPLAY_MODE_KHR = 1000002001, 
-    VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT = 1000011000, 
-    VK_OBJECT_TYPE_VIDEO_SESSION_KHR = 1000023000, 
-    VK_OBJECT_TYPE_VIDEO_SESSION_PARAMETERS_KHR = 1000023001, 
-    VK_OBJECT_TYPE_CU_MODULE_NVX = 1000029000, 
-    VK_OBJECT_TYPE_CU_FUNCTION_NVX = 1000029001, 
-    VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT = 1000128000, 
-    VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR = 1000150000, 
-    VK_OBJECT_TYPE_VALIDATION_CACHE_EXT = 1000160000, 
-    VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV = 1000165000, 
-    VK_OBJECT_TYPE_PERFORMANCE_CONFIGURATION_INTEL = 1000210000, 
-    VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR = 1000268000, 
-    VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV = 1000277000, 
-    VK_OBJECT_TYPE_CUDA_MODULE_NV = 1000307000, 
-    VK_OBJECT_TYPE_CUDA_FUNCTION_NV = 1000307001, 
-    VK_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA = 1000366000, 
-    VK_OBJECT_TYPE_MICROMAP_EXT = 1000396000, 
-    VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV = 1000464000, 
-    VK_OBJECT_TYPE_SHADER_EXT = 1000482000, 
-    VK_OBJECT_TYPE_PIPELINE_BINARY_KHR = 1000483000, 
-    VK_OBJECT_TYPE_EXTERNAL_COMPUTE_QUEUE_NV = 1000556000, 
-    VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_EXT = 1000572000, 
-    VK_OBJECT_TYPE_INDIRECT_EXECUTION_SET_EXT = 1000572001, 
-    VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE, 
-    VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION, 
-    VK_OBJECT_TYPE_PRIVATE_DATA_SLOT_EXT = VK_OBJECT_TYPE_PRIVATE_DATA_SLOT, 
-    VK_OBJECT_TYPE_MAX_ENUM = 0x7FFFFFFF 
-};
+	public enum VkObjectType
+	{
+		VK_OBJECT_TYPE_UNKNOWN = 0,
+		VK_OBJECT_TYPE_INSTANCE = 1,
+		VK_OBJECT_TYPE_PHYSICAL_DEVICE = 2,
+		VK_OBJECT_TYPE_DEVICE = 3,
+		VK_OBJECT_TYPE_QUEUE = 4,
+		VK_OBJECT_TYPE_SEMAPHORE = 5,
+		VK_OBJECT_TYPE_COMMAND_BUFFER = 6,
+		VK_OBJECT_TYPE_FENCE = 7,
+		VK_OBJECT_TYPE_DEVICE_MEMORY = 8,
+		VK_OBJECT_TYPE_BUFFER = 9,
+		VK_OBJECT_TYPE_IMAGE = 10,
+		VK_OBJECT_TYPE_EVENT = 11,
+		VK_OBJECT_TYPE_QUERY_POOL = 12,
+		VK_OBJECT_TYPE_BUFFER_VIEW = 13,
+		VK_OBJECT_TYPE_IMAGE_VIEW = 14,
+		VK_OBJECT_TYPE_SHADER_MODULE = 15,
+		VK_OBJECT_TYPE_PIPELINE_CACHE = 16,
+		VK_OBJECT_TYPE_PIPELINE_LAYOUT = 17,
+		VK_OBJECT_TYPE_RENDER_PASS = 18,
+		VK_OBJECT_TYPE_PIPELINE = 19,
+		VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT = 20,
+		VK_OBJECT_TYPE_SAMPLER = 21,
+		VK_OBJECT_TYPE_DESCRIPTOR_POOL = 22,
+		VK_OBJECT_TYPE_DESCRIPTOR_SET = 23,
+		VK_OBJECT_TYPE_FRAMEBUFFER = 24,
+		VK_OBJECT_TYPE_COMMAND_POOL = 25,
+		VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION = 1000156000,
+		VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE = 1000085000,
+		VK_OBJECT_TYPE_PRIVATE_DATA_SLOT = 1000295000,
+		VK_OBJECT_TYPE_SURFACE_KHR = 1000000000,
+		VK_OBJECT_TYPE_SWAPCHAIN_KHR = 1000001000,
+		VK_OBJECT_TYPE_DISPLAY_KHR = 1000002000,
+		VK_OBJECT_TYPE_DISPLAY_MODE_KHR = 1000002001,
+		VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT = 1000011000,
+		VK_OBJECT_TYPE_VIDEO_SESSION_KHR = 1000023000,
+		VK_OBJECT_TYPE_VIDEO_SESSION_PARAMETERS_KHR = 1000023001,
+		VK_OBJECT_TYPE_CU_MODULE_NVX = 1000029000,
+		VK_OBJECT_TYPE_CU_FUNCTION_NVX = 1000029001,
+		VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT = 1000128000,
+		VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_KHR = 1000150000,
+		VK_OBJECT_TYPE_VALIDATION_CACHE_EXT = 1000160000,
+		VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV = 1000165000,
+		VK_OBJECT_TYPE_PERFORMANCE_CONFIGURATION_INTEL = 1000210000,
+		VK_OBJECT_TYPE_DEFERRED_OPERATION_KHR = 1000268000,
+		VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV = 1000277000,
+		VK_OBJECT_TYPE_CUDA_MODULE_NV = 1000307000,
+		VK_OBJECT_TYPE_CUDA_FUNCTION_NV = 1000307001,
+		VK_OBJECT_TYPE_BUFFER_COLLECTION_FUCHSIA = 1000366000,
+		VK_OBJECT_TYPE_MICROMAP_EXT = 1000396000,
+		VK_OBJECT_TYPE_OPTICAL_FLOW_SESSION_NV = 1000464000,
+		VK_OBJECT_TYPE_SHADER_EXT = 1000482000,
+		VK_OBJECT_TYPE_PIPELINE_BINARY_KHR = 1000483000,
+		VK_OBJECT_TYPE_EXTERNAL_COMPUTE_QUEUE_NV = 1000556000,
+		VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_EXT = 1000572000,
+		VK_OBJECT_TYPE_INDIRECT_EXECUTION_SET_EXT = 1000572001,
+		VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE,
+		VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION,
+		VK_OBJECT_TYPE_PRIVATE_DATA_SLOT_EXT = VK_OBJECT_TYPE_PRIVATE_DATA_SLOT,
+		VK_OBJECT_TYPE_MAX_ENUM = 0x7FFFFFFF
+	};
 
 }
 
-internal unsafe static partial class WindowsContextGraphicDeviceSurface
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicSurface
 {
-	internal static int LoadSurface(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int LoadSurface(WindowsData* infos)
 	{
 		vkCreateWin32SurfaceKHR = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkWin32SurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult>)LoadInstanceFunc(infos->VkInstance, "vkCreateWin32SurfaceKHR");
 
-		vkGetPhysicalDeviceWin32PresentationSupportKHR = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkPhysicalDevice,  UInt32, VkBool32>)LoadInstanceFunc(infos->VkInstance, "vkGetPhysicalDeviceWin32PresentationSupportKHR");
+		vkGetPhysicalDeviceWin32PresentationSupportKHR = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkPhysicalDevice, UInt32, VkBool32>)LoadInstanceFunc(infos->VkInstance, "vkGetPhysicalDeviceWin32PresentationSupportKHR");
 
 		vkDestroySurfaceKHR = (delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkSurfaceKHR, VkAllocationCallbacks*, void>)LoadInstanceFunc(infos->VkInstance, "vkDestroySurfaceKHR");
 
 		return 0;
 	}
 
-	internal static int CreateSurface(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int CreateSurface(WindowsData* infos)
 	{
 		VkWin32SurfaceCreateInfoKHR* sci = stackalloc VkWin32SurfaceCreateInfoKHR[1];
 		sci[0].hinstance = infos->HInstance;
-		sci[0].hwnd = infos->Handle;
+		sci[0].hwnd = infos->WindowHandle;
 		sci[0].pNext = null;
 		sci[0].flags = 0;
 		sci[0].sType = VkStructureType.VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -1473,10 +1612,10 @@ internal unsafe static partial class WindowsContextGraphicDeviceSurface
 		return result == VkResult.VK_SUCCESS ? 0 : 1;
 	}
 
-	internal static int DisposeSurface(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int DisposeSurface(WindowsData* infos)
 	{
 		if (infos->VkInstance == null || infos->VkSurface == null) return 0;
-        
+
 		vkDestroySurfaceKHR(*infos->VkInstance, *infos->VkSurface, null);
 
 		return 0;
@@ -1485,24 +1624,27 @@ internal unsafe static partial class WindowsContextGraphicDeviceSurface
 	public const string VK_KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
 	private static delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkWin32SurfaceCreateInfoKHR*, VkAllocationCallbacks*, VkSurfaceKHR*, VkResult> vkCreateWin32SurfaceKHR = null;
 	internal static delegate* unmanaged[Cdecl, SuppressGCTransition]<VkPhysicalDevice, UInt32, VkBool32> vkGetPhysicalDeviceWin32PresentationSupportKHR = null;
-	
+
 	private static delegate* unmanaged[Cdecl, SuppressGCTransition]<VkInstance, VkSurfaceKHR, VkAllocationCallbacks*, void> vkDestroySurfaceKHR = null;
-	
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-public unsafe struct VkWin32SurfaceCreateInfoKHR
-{
-    public VkStructureType sType;
-    public void* pNext;
-    public uint/*VkWin32SurfaceCreateFlagsKHR*/    flags;
-    public void*/*HINSTANCE*/                       hinstance;
-    public void*/*HWND*/                            hwnd;
-};
+
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct VkWin32SurfaceCreateInfoKHR
+	{
+		public VkStructureType sType;
+		public void* pNext;
+		public uint/*VkWin32SurfaceCreateFlagsKHR*/    flags;
+		public void*/*HINSTANCE*/                       hinstance;
+		public void*/*HWND*/                            hwnd;
+	};
 }
 
-internal unsafe static partial class WindowsContextGraphicDevicePhysicalDevice
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicPhysicalDevice
 {
-	internal static int SelectPhysicalDevice(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int SelectPhysicalDevice(WindowsData* infos)
 	{
 		// Enumerate physical Device
 		uint deviceCount = 0;
@@ -1517,8 +1659,8 @@ internal unsafe static partial class WindowsContextGraphicDevicePhysicalDevice
 		// 	// Find best physical device         //  : select in options your favorite device
 		for (int i = 0; i < (int)deviceCount; i++)
 		{
-			
-			infos->PhysicalDevice = IsSuitable(infos, devices[i] );
+
+			infos->PhysicalDevice = IsSuitable(infos, devices[i]);
 
 			if (infos->PhysicalDevice != null)
 				break;
@@ -1545,7 +1687,7 @@ internal unsafe static partial class WindowsContextGraphicDevicePhysicalDevice
 		return 0;
 	}
 
-	internal static VkPhysicalDevice* IsSuitable(WindowsContextDataInfos* infos, VkPhysicalDevice physical)
+	internal static VkPhysicalDevice* IsSuitable(WindowsData* infos, VkPhysicalDevice physical)
 	{
 		uint queueFamilyPropertyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(physical, &queueFamilyPropertyCount, null);
@@ -1563,7 +1705,7 @@ internal unsafe static partial class WindowsContextGraphicDevicePhysicalDevice
 			{
 				infos->GraphicQueueIndex = i;
 
-				uint presentSupport = WindowsContextGraphicDeviceSurface.vkGetPhysicalDeviceWin32PresentationSupportKHR(physical, infos->GraphicQueueIndex);
+				uint presentSupport = WindowsGraphicSurface.vkGetPhysicalDeviceWin32PresentationSupportKHR(physical, infos->GraphicQueueIndex);
 
 				if (presentSupport == VK_TRUE)
 				{
@@ -1629,99 +1771,104 @@ internal unsafe static partial class WindowsContextGraphicDevicePhysicalDevice
 		public VkExtent3D minImageTransferGranularity;
 	}
 
-[Flags] internal enum VkQueueFlags {
-    VK_QUEUE_GRAPHICS_BIT = 0x00000001,
-    VK_QUEUE_COMPUTE_BIT = 0x00000002,
-    VK_QUEUE_TRANSFER_BIT = 0x00000004,
-    VK_QUEUE_SPARSE_BINDING_BIT = 0x00000008,
-  // Provided by VK_VERSION_1_1
-    VK_QUEUE_PROTECTED_BIT = 0x00000010,
-  // Provided by VK_KHR_video_decode_queue
-    VK_QUEUE_VIDEO_DECODE_BIT_KHR = 0x00000020,
-  // Provided by VK_KHR_video_encode_queue
-    VK_QUEUE_VIDEO_ENCODE_BIT_KHR = 0x00000040,
-  // Provided by VK_NV_optical_flow
-    VK_QUEUE_OPTICAL_FLOW_BIT_NV = 0x00000100,
-  // Provided by VK_ARM_data_graph
-    VK_QUEUE_DATA_GRAPH_BIT_ARM = 0x00000400,
-} 
+	[Flags]
+	internal enum VkQueueFlags
+	{
+		VK_QUEUE_GRAPHICS_BIT = 0x00000001,
+		VK_QUEUE_COMPUTE_BIT = 0x00000002,
+		VK_QUEUE_TRANSFER_BIT = 0x00000004,
+		VK_QUEUE_SPARSE_BINDING_BIT = 0x00000008,
+		// Provided by VK_VERSION_1_1
+		VK_QUEUE_PROTECTED_BIT = 0x00000010,
+		// Provided by VK_KHR_video_decode_queue
+		VK_QUEUE_VIDEO_DECODE_BIT_KHR = 0x00000020,
+		// Provided by VK_KHR_video_encode_queue
+		VK_QUEUE_VIDEO_ENCODE_BIT_KHR = 0x00000040,
+		// Provided by VK_NV_optical_flow
+		VK_QUEUE_OPTICAL_FLOW_BIT_NV = 0x00000100,
+		// Provided by VK_ARM_data_graph
+		VK_QUEUE_DATA_GRAPH_BIT_ARM = 0x00000400,
+	}
 }
 
-internal unsafe static partial class WindowsContextGraphicDevice
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicDevice
 {
 
-	internal static int CreateDevice(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int CreateDevice(WindowsData* infos)
 	{
-		 // Get Devicxe Extensions
-        uint devicePropertiesExtCount = 0;
-        VkResult result = vkEnumerateDeviceExtensionProperties(*infos->PhysicalDevice, null, &devicePropertiesExtCount, null);
-        // if (Log.Check(result != VkResult.VK_SUCCESS || devicePropertiesExtCount == 0, "Error Create Enumerate Physical Device" + result)) { return 1; }
+		// Get Devicxe Extensions
+		uint devicePropertiesExtCount = 0;
+		VkResult result = vkEnumerateDeviceExtensionProperties(*infos->PhysicalDevice, null, &devicePropertiesExtCount, null);
+		// if (Log.Check(result != VkResult.VK_SUCCESS || devicePropertiesExtCount == 0, "Error Create Enumerate Physical Device" + result)) { return 1; }
 
-        VkExtensionProperties* properties = stackalloc VkExtensionProperties[(int)devicePropertiesExtCount];
-        result = vkEnumerateDeviceExtensionProperties(*infos->PhysicalDevice, null, &devicePropertiesExtCount, properties);
-        // if (Log.Check(result != VkResult.VK_SUCCESS, "Error Create Enumerate Physical Device" + result)) { return 1; }
+		VkExtensionProperties* properties = stackalloc VkExtensionProperties[(int)devicePropertiesExtCount];
+		result = vkEnumerateDeviceExtensionProperties(*infos->PhysicalDevice, null, &devicePropertiesExtCount, properties);
+		// if (Log.Check(result != VkResult.VK_SUCCESS, "Error Create Enumerate Physical Device" + result)) { return 1; }
 
-        // Hemy.Lib.Core.Memory.StrArray DeviceExtensions = new(devicePropertiesExtCount, VK_MAX_DESCRIPTION_SIZE);
+		// Hemy.Lib.Core.Memory.StrArray DeviceExtensions = new(devicePropertiesExtCount, VK_MAX_DESCRIPTION_SIZE);
 
-        for (uint i = 0; i < devicePropertiesExtCount; i++)
-        {
-            infos->DeviceExtensions->Add(properties[i].extensionName, i);
-            // _ = Log.Check(DeviceExtensions.Add(properties[i].extensionName, i) == false, "error not add device extension  at index : " + i);
-            // Log.Info("Device Extensions : "+ DeviceExtensions.GetString(i));
-        }
+		for (uint i = 0; i < devicePropertiesExtCount; i++)
+		{
+			infos->DeviceExtensions->Add(properties[i].extensionName, i);
+			// _ = Log.Check(DeviceExtensions.Add(properties[i].extensionName, i) == false, "error not add device extension  at index : " + i);
+			// Log.Info("Device Extensions : "+ DeviceExtensions.GetString(i));
+		}
 
-        // 	// Get Queue Families
-        uint queueFamiliesCount = infos->GraphicQueueIndex == infos->PresentQueueIndex ? (uint)1 : (uint)2;
+		// 	// Get Queue Families
+		uint queueFamiliesCount = infos->GraphicQueueIndex == infos->PresentQueueIndex ? (uint)1 : (uint)2;
 
-        VkDeviceQueueCreateInfo* queueCreateInfos = stackalloc VkDeviceQueueCreateInfo[(int)queueFamiliesCount];
+		VkDeviceQueueCreateInfo* queueCreateInfos = stackalloc VkDeviceQueueCreateInfo[(int)queueFamiliesCount];
 
-        float queuePriority = 1.0f;
-        uint index = 0;
+		float queuePriority = 1.0f;
+		uint index = 0;
 
-        queueCreateInfos[index++] = new VkDeviceQueueCreateInfo
-        {
-            sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            queueFamilyIndex = infos->GraphicQueueIndex,
-            queueCount = 1,
-            pQueuePriorities = &queuePriority
-        };
+		queueCreateInfos[index++] = new VkDeviceQueueCreateInfo
+		{
+			sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+			queueFamilyIndex = infos->GraphicQueueIndex,
+			queueCount = 1,
+			pQueuePriorities = &queuePriority
+		};
 
-        if (infos->PresentQueueIndex != infos->GraphicQueueIndex)
-        {
-            queueCreateInfos[index++] = new VkDeviceQueueCreateInfo
-            {
-                sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-                queueFamilyIndex = infos->PresentQueueIndex,
-                queueCount = 1,
-                pQueuePriorities = &queuePriority
-            };
-        }
+		if (infos->PresentQueueIndex != infos->GraphicQueueIndex)
+		{
+			queueCreateInfos[index++] = new VkDeviceQueueCreateInfo
+			{
+				sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+				queueFamilyIndex = infos->PresentQueueIndex,
+				queueCount = 1,
+				pQueuePriorities = &queuePriority
+			};
+		}
 
-        VkDeviceCreateInfo createInfo = new();
-        createInfo.sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.queueCreateInfoCount = queueFamiliesCount;
-        createInfo.pQueueCreateInfos = queueCreateInfos;
-        createInfo.enabledExtensionCount = infos->DeviceExtensions->Count;
-        createInfo.ppEnabledExtensionNames = (byte**)infos->DeviceExtensions->Pointer;
-        createInfo.pNext = null;
-        createInfo.pEnabledFeatures = null;
-        createInfo.enabledLayerCount =  0;
-        createInfo.ppEnabledLayerNames =null;
+		VkDeviceCreateInfo createInfo = new();
+		createInfo.sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.queueCreateInfoCount = queueFamiliesCount;
+		createInfo.pQueueCreateInfos = queueCreateInfos;
+		createInfo.enabledExtensionCount = infos->DeviceExtensions->Count;
+		createInfo.ppEnabledExtensionNames = (byte**)infos->DeviceExtensions->Pointer;
+		createInfo.pNext = null;
+		createInfo.pEnabledFeatures = null;
+		createInfo.enabledLayerCount = 0;
+		createInfo.ppEnabledLayerNames = null;
 
-        createInfo.flags = 0;
+		createInfo.flags = 0;
 
-        result = vkCreateDevice(*infos->PhysicalDevice, &createInfo, null, infos->VkDevice );
+		result = vkCreateDevice(*infos->PhysicalDevice, &createInfo, null, infos->VkDevice);
 		return 0;
 	}
 
-	internal static void DisposeDevice(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void DisposeDevice(WindowsData* infos)
 	{
 		if (infos->VkDevice == null) return;
 
 		vkDestroyDevice(*infos->VkDevice, null);
 	}
 
-	internal static void Pause(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Pause(WindowsData* infos)
 	{
 		if (infos->VkDevice == null) return;
 
@@ -1732,12 +1879,12 @@ internal unsafe static partial class WindowsContextGraphicDevice
 	}
 
 	[LibraryImport(Vulkan, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkDeviceWaitIdle(VkDevice device);
 
 	[LibraryImport(Vulkan, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const_char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
 
@@ -1765,10 +1912,11 @@ internal unsafe static partial class WindowsContextGraphicDevice
 		internal VkPhysicalDeviceFeatures* pEnabledFeatures;
 	}
 
-	internal struct VkExtensionProperties {
-    internal fixed byte  extensionName[(int)VK_MAX_EXTENSION_NAME_SIZE];
-    internal uint32_t    specVersion;
-}
+	internal struct VkExtensionProperties
+	{
+		internal fixed byte extensionName[(int)VK_MAX_EXTENSION_NAME_SIZE];
+		internal uint32_t specVersion;
+	}
 
 	internal struct VkDeviceQueueCreateInfo
 	{
@@ -1779,77 +1927,81 @@ internal unsafe static partial class WindowsContextGraphicDevice
 		internal uint32_t queueCount;
 		internal float* pQueuePriorities;
 	}
-	
+
 	internal enum VkDeviceQueueCreateFlags
 	{
 		// Provided by VK_VERSION_1_1
 		VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT = 0x00000001,
 	}
 
-internal struct VkPhysicalDeviceFeatures {
-    VkBool32    robustBufferAccess;
-    VkBool32    fullDrawIndexUint32;
-    VkBool32    imageCubeArray;
-    VkBool32    independentBlend;
-    VkBool32    geometryShader;
-    VkBool32    tessellationShader;
-    VkBool32    sampleRateShading;
-    VkBool32    dualSrcBlend;
-    VkBool32    logicOp;
-    VkBool32    multiDrawIndirect;
-    VkBool32    drawIndirectFirstInstance;
-    VkBool32    depthClamp;
-    VkBool32    depthBiasClamp;
-    VkBool32    fillModeNonSolid;
-    VkBool32    depthBounds;
-    VkBool32    wideLines;
-    VkBool32    largePoints;
-    VkBool32    alphaToOne;
-    VkBool32    multiViewport;
-    VkBool32    samplerAnisotropy;
-    VkBool32    textureCompressionETC2;
-    VkBool32    textureCompressionASTC_LDR;
-    VkBool32    textureCompressionBC;
-    VkBool32    occlusionQueryPrecise;
-    VkBool32    pipelineStatisticsQuery;
-    VkBool32    vertexPipelineStoresAndAtomics;
-    VkBool32    fragmentStoresAndAtomics;
-    VkBool32    shaderTessellationAndGeometryPointSize;
-    VkBool32    shaderImageGatherExtended;
-    VkBool32    shaderStorageImageExtendedFormats;
-    VkBool32    shaderStorageImageMultisample;
-    VkBool32    shaderStorageImageReadWithoutFormat;
-    VkBool32    shaderStorageImageWriteWithoutFormat;
-    VkBool32    shaderUniformBufferArrayDynamicIndexing;
-    VkBool32    shaderSampledImageArrayDynamicIndexing;
-    VkBool32    shaderStorageBufferArrayDynamicIndexing;
-    VkBool32    shaderStorageImageArrayDynamicIndexing;
-    VkBool32    shaderClipDistance;
-    VkBool32    shaderCullDistance;
-    VkBool32    shaderFloat64;
-    VkBool32    shaderInt64;
-    VkBool32    shaderInt16;
-    VkBool32    shaderResourceResidency;
-    VkBool32    shaderResourceMinLod;
-    VkBool32    sparseBinding;
-    VkBool32    sparseResidencyBuffer;
-    VkBool32    sparseResidencyImage2D;
-    VkBool32    sparseResidencyImage3D;
-    VkBool32    sparseResidency2Samples;
-    VkBool32    sparseResidency4Samples;
-    VkBool32    sparseResidency8Samples;
-    VkBool32    sparseResidency16Samples;
-    VkBool32    sparseResidencyAliased;
-    VkBool32    variableMultisampleRate;
-    VkBool32    inheritedQueries;
-}
+	internal struct VkPhysicalDeviceFeatures
+	{
+		VkBool32 robustBufferAccess;
+		VkBool32 fullDrawIndexUint32;
+		VkBool32 imageCubeArray;
+		VkBool32 independentBlend;
+		VkBool32 geometryShader;
+		VkBool32 tessellationShader;
+		VkBool32 sampleRateShading;
+		VkBool32 dualSrcBlend;
+		VkBool32 logicOp;
+		VkBool32 multiDrawIndirect;
+		VkBool32 drawIndirectFirstInstance;
+		VkBool32 depthClamp;
+		VkBool32 depthBiasClamp;
+		VkBool32 fillModeNonSolid;
+		VkBool32 depthBounds;
+		VkBool32 wideLines;
+		VkBool32 largePoints;
+		VkBool32 alphaToOne;
+		VkBool32 multiViewport;
+		VkBool32 samplerAnisotropy;
+		VkBool32 textureCompressionETC2;
+		VkBool32 textureCompressionASTC_LDR;
+		VkBool32 textureCompressionBC;
+		VkBool32 occlusionQueryPrecise;
+		VkBool32 pipelineStatisticsQuery;
+		VkBool32 vertexPipelineStoresAndAtomics;
+		VkBool32 fragmentStoresAndAtomics;
+		VkBool32 shaderTessellationAndGeometryPointSize;
+		VkBool32 shaderImageGatherExtended;
+		VkBool32 shaderStorageImageExtendedFormats;
+		VkBool32 shaderStorageImageMultisample;
+		VkBool32 shaderStorageImageReadWithoutFormat;
+		VkBool32 shaderStorageImageWriteWithoutFormat;
+		VkBool32 shaderUniformBufferArrayDynamicIndexing;
+		VkBool32 shaderSampledImageArrayDynamicIndexing;
+		VkBool32 shaderStorageBufferArrayDynamicIndexing;
+		VkBool32 shaderStorageImageArrayDynamicIndexing;
+		VkBool32 shaderClipDistance;
+		VkBool32 shaderCullDistance;
+		VkBool32 shaderFloat64;
+		VkBool32 shaderInt64;
+		VkBool32 shaderInt16;
+		VkBool32 shaderResourceResidency;
+		VkBool32 shaderResourceMinLod;
+		VkBool32 sparseBinding;
+		VkBool32 sparseResidencyBuffer;
+		VkBool32 sparseResidencyImage2D;
+		VkBool32 sparseResidencyImage3D;
+		VkBool32 sparseResidency2Samples;
+		VkBool32 sparseResidency4Samples;
+		VkBool32 sparseResidency8Samples;
+		VkBool32 sparseResidency16Samples;
+		VkBool32 sparseResidencyAliased;
+		VkBool32 variableMultisampleRate;
+		VkBool32 inheritedQueries;
+	}
 
 }
 
-internal unsafe static partial class WindowsContextGraphicDeviceQueue
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicQueue
 {
 
-	internal static int CreateQueue(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int CreateQueue(WindowsData* infos)
 	{
 
 		vkGetDeviceQueue(*infos->VkDevice, infos->GraphicQueueIndex, 0, infos->GraphicQueue);
@@ -1860,31 +2012,34 @@ internal unsafe static partial class WindowsContextGraphicDeviceQueue
 		return 0;
 	}
 
-	internal static int DisposeQueue(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int DisposeQueue(WindowsData* infos)
 	{
 
 		return 0;
 	}
-	
+
 	[LibraryImport(Vulkan, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial void vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
 
 	// [LibraryImport(Vulkan, SetLastError = false)]
-    // [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	// [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	// [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	// internal static unsafe partial VkResult vkQueueSubmit(VkQueue queue, uint32_t submitCount, VkSubmitInfo* pSubmits, VkFence fence);
 
 	[LibraryImport(Vulkan, SetLastError = false)]
-    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static unsafe partial VkResult vkQueueWaitIdle(VkQueue queue);
 }
 
-internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicSwapchain
 {
-	internal static int FindBestValues(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int FindBestValues(WindowsData* infos)
 	{
 		// // querySwapChainSupport
 		// VkSurfaceCapabilitiesKHR Capabilities = new();
@@ -1920,7 +2075,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		return 0;
 	}
 
-	internal static void CreateSwapChain(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + depth
+	internal static void CreateSwapChain(WindowsData* infos) // + depth
 	{
 
 
@@ -1964,7 +2119,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		// contextData->RenderPassArea->offset.y = 0;
 	}
 
-	internal static void CreateSwapChainImages(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + depth
+	internal static void CreateSwapChainImages(WindowsData* infos) // + depth
 	{
 
 		// uint SwapChainImageViewsCount = 0;
@@ -2007,7 +2162,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 
 	}
 
-	private static void CreateFrameBufer(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	private static void CreateFrameBufer(WindowsData* infos)
 	{
 		// VkResult result = VkResult.VK_SUCCESS;
 
@@ -2043,7 +2198,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		// }
 	}
 
-	internal static void DisposeSwapChainFramebuffer(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void DisposeSwapChainFramebuffer(WindowsData* infos)
 	{
 		// if (contextData->Device.IsNotNull && contextData->Framebuffers != null)
 		// {
@@ -2057,7 +2212,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		// }
 	}
 
-	internal static void DisposeSwapChainImages(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void DisposeSwapChainImages(WindowsData* infos)
 	{
 		// if (contextData->Device.IsNotNull && contextData->SwapChainImageViews != null)
 		// {
@@ -2068,7 +2223,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		// }
 	}
 
-	internal static void DisposeSwapChain(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void DisposeSwapChain(WindowsData* infos)
 	{
 		// if (contextData->Device.IsNotNull && contextData->SwapChain.IsNotNull)
 		// {
@@ -2076,7 +2231,7 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 		// }
 	}
 
-	internal static void RecreateSwapchain(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void RecreateSwapchain(WindowsData* infos)
 	{
 
 	}
@@ -2084,10 +2239,12 @@ internal unsafe static partial class WindowsContextGraphicDeviceSwapchain
 
 }
 
-
-internal unsafe static class WindowsContextGraphicSync
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicSynchro
 {
-	internal static void CreateFence(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void CreateFence( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// if (contextData->InFlightFences == null)
 		// 	// contextData->InFlightFences = (VkFence*)NativeMemory.Alloc(contextData->MaxFrameInFlight * (uint)Unsafe.SizeOf<VkFence>());
@@ -2107,7 +2264,7 @@ internal unsafe static class WindowsContextGraphicSync
 
 	}
 
-	internal static void CreateSemaphore(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void CreateSemaphore( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// VkResult result;
 
@@ -2141,7 +2298,7 @@ internal unsafe static class WindowsContextGraphicSync
 
 
 
-	internal static void DisposeSemaphore(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void DisposeSemaphore( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 
 		// if (contextData->Device.IsNotNull && contextData->ImageAvailableSemaphores != null)
@@ -2169,7 +2326,7 @@ internal unsafe static class WindowsContextGraphicSync
 		// }	
 	}
 	
-	internal static void DisposeFence(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void DisposeFence( WindowsData* infos) // + renderpass   + syncobj + command
     {
         // if (contextData->Device.IsNotNull && contextData->InFlightFences != null)
         // {
@@ -2185,11 +2342,13 @@ internal unsafe static class WindowsContextGraphicSync
     }
 }
 
-
-internal unsafe static class WindowsContextGraphicCommandAbdBarrier
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicCommandAndBarrier
 {
 
-	internal static void CreateCommandPool(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void CreateCommandPool( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// VkCommandPoolCreateInfo* poolInfoCompute = stackalloc VkCommandPoolCreateInfo[1];
 		// poolInfoCompute[0].sType = VkStructureType.VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -2203,7 +2362,7 @@ internal unsafe static class WindowsContextGraphicCommandAbdBarrier
 
 	}
 
-	internal static void CreateCommandBuffers(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void CreateCommandBuffers( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// if (contextData->CommandBuffers == null)
 		// 	contextData->CommandBuffers = Memory.Memory.NewArray<VkCommandBuffer>(contextData->MaxFrameInFlight);
@@ -2221,7 +2380,7 @@ internal unsafe static class WindowsContextGraphicCommandAbdBarrier
 		// _ = Log.Check(result != VkResult.VK_SUCCESS, "Create  Command buffer ") ? 1 : 0;
 	}
 
-	internal static void DisposeCommandPool(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void DisposeCommandPool( WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// if (contextData->CommandPool.IsNotNull)
 		// {
@@ -2233,11 +2392,14 @@ internal unsafe static class WindowsContextGraphicCommandAbdBarrier
 
 }
 
-internal unsafe static class WindowsContextGraphicRenderPass
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicRenderPass
 {
 
 
-	internal static void CreateRenderPass(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void CreateRenderPass(WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// // WindowsGraphicRender.CreateShader(contextData);
 		// // RENDER PASS AREA 
@@ -2309,7 +2471,7 @@ internal unsafe static class WindowsContextGraphicRenderPass
 		// // _ = Log.Check(result != VkResult.VK_SUCCESS, $"Create Render Pass : {contextData->RenderPass}") ? 1 : 0;
 	}
 
-	internal static void DisposeRenderPass(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos) // + renderpass   + syncobj + command
+	internal static void DisposeRenderPass(WindowsData* infos) // + renderpass   + syncobj + command
 	{
 		// if (contextData->Device.IsNotNull && contextData->RenderPass.IsNotNull)
 		// {
@@ -2323,8 +2485,10 @@ internal unsafe static class WindowsContextGraphicRenderPass
 
 }
 
-
-internal unsafe static partial class WindowsContextGraphicRenderDrawings
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsGraphicDrawings
 {
 
 	static volatile uint currentFrame = 0;
@@ -2333,7 +2497,7 @@ internal unsafe static partial class WindowsContextGraphicRenderDrawings
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
 	[UnmanagedCallConv]
-	internal static void Draw(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Draw( WindowsData* infos)
 	{
 		// uint* waitStages = stackalloc uint[1] { (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | (uint)VkPipelineStageFlagBits.VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT };
 		// VkFence CurrentinFlightFence = contextData->InFlightFences[currentFrame];
@@ -2405,7 +2569,7 @@ internal unsafe static partial class WindowsContextGraphicRenderDrawings
 
 	[UnmanagedCallConv]
 
-	static void RecordCommandBuffer(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, uint currentImageIndex)
+	static void RecordCommandBuffer( WindowsData* infos, uint currentImageIndex)
 	{
 		// int renderPasses = 1;
 
@@ -2488,8 +2652,10 @@ internal unsafe static partial class WindowsContextGraphicRenderDrawings
 
 }
 
-
-internal unsafe static class WindowsContextGraphicPipelineCreation
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicPipeline
 {
 	internal static void CreatePipeline()
 	{
@@ -2748,8 +2914,10 @@ internal unsafe static class WindowsContextGraphicPipelineCreation
 
 }
 
-
-internal unsafe static class GraphicPipelineFixedFunction
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicFixedFunction
 {
 
 	internal static void CreateDynamicStates()
@@ -2776,8 +2944,10 @@ internal unsafe static class GraphicPipelineFixedFunction
 
 }
 
-
-internal unsafe static class GraphicPipelineCreationShaders
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicShaders
 {
 	internal static void CreateShaderModule()
 	{
@@ -3039,17 +3209,22 @@ internal unsafe static class GraphicPipelineCreationShaders
 
 }
 
-internal unsafe static class GraphicPipelineCreationTextureCreation
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicTextures
 {
 
 
 }
 
-
-internal unsafe static class GraphicPipelineCreationVertexCreation
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsGraphicBuffers
 {
 
-	internal static void GetMemoryPropeties(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void GetMemoryPropeties( WindowsData* infos)
 	{
 		// VkPhysicalDeviceMemoryProperties2* mem2 = stackalloc VkPhysicalDeviceMemoryProperties2[1];
 
@@ -3070,7 +3245,10 @@ internal unsafe static class GraphicPipelineCreationVertexCreation
 
 }
 
-internal unsafe static class WindowsContextInputs
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsInputs
 {
 	internal unsafe static class Mouses
 	{
@@ -3090,20 +3268,25 @@ internal unsafe static class WindowsContextInputs
 	//Gampad ?
 }
 
-internal unsafe static class WindowsContextGamepads
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsAudioCommon
 {
-
 
 }
 
-internal unsafe static class WindowsContextAudioDevice
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsAudioDevice
 {
 
-	internal static int Init(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static int Init( WindowsData* infos)
 	{
 		// const float SpeedOfSound = 345.0f;
 
-		// contextData->AudioModule = GetAudioModuleDLL();
+		infos->AudioModule = GetAudioModuleDLL();
 		// if (contextData->AudioModule == nint.Zero)
 		// {
 		// 	Log.Error("Load XAUDIO2 DLL");
@@ -3164,7 +3347,7 @@ internal unsafe static class WindowsContextAudioDevice
 		return 0;
 	}
 
-	internal static void Dispose(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Dispose( WindowsData* infos)
 	{
 		// if (audioData->AudioInstance == null) return;
 
@@ -3181,7 +3364,7 @@ internal unsafe static class WindowsContextAudioDevice
 		// LibraryLoader.Unload(audioData->AudioModule);
 	}
 
-	internal static void SetVolume(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos, float value)
+	internal static void SetVolume(WindowsData* infos, float value)
 	{
 		//clamp  value < min ? min : value > max ? max : value
 		// audioData->Volume = value;
@@ -3190,14 +3373,14 @@ internal unsafe static class WindowsContextAudioDevice
 		// 	Log.Error("Set Volume failed");
 	}
 
-	internal static void Suspend(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Suspend( WindowsData* infos)
 	{
 		// if (audioData->AudioInstance == null) return;
 
 		// audioData->AudioInstance->StopEngine();
 	}
 
-	internal static void Resume(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Resume( WindowsData* infos)
 	{
 		// if (audioData->AudioInstance == null) return;
 
@@ -3209,7 +3392,7 @@ internal unsafe static class WindowsContextAudioDevice
 		// }
 	}
 
-	internal static void Reset(WindowsContextDataPerFrame* perframe, WindowsContextDataInfos* infos)
+	internal static void Reset( WindowsData* infos)
 	{
 		// if (audioData->AudioInstance != null)
 		// 	Dispose(audioData: audioData);
@@ -3219,20 +3402,22 @@ internal unsafe static class WindowsContextAudioDevice
 
 	static nint GetAudioModuleDLL()
 	{
-		var AudioModule = WindowsContextSystem.Load(XAudio2_9);
+		var AudioModule = WindowsSystem.Load(XAudio2_9);
 
 		if (AudioModule != nint.Zero) { return AudioModule; }
 
-		AudioModule = WindowsContextSystem.Load(XAudio2_8);
+		AudioModule = WindowsSystem.Load(XAudio2_8);
 
 		if (AudioModule != nint.Zero) { return AudioModule; }
 
-		AudioModule = WindowsContextSystem.Load(XAudio1_7);
+		AudioModule = WindowsSystem.Load(XAudio1_7);
 
 		if (AudioModule != nint.Zero) { return AudioModule; }
 
 		return nint.Zero;
 	}
+
+
 
 	internal const string XAudio2_9 = "XAudio2_9";
 	internal const string XAudio2_8 = "XAudio2_8";
@@ -3276,13 +3461,13 @@ internal unsafe static class WindowsContextAudioDevice
 
 	public unsafe delegate nint LoadFunction(nint ptr, string name);
 
-	public static void Load(LoadFunction load, nint module)
+	public static void Load( nint module)
 	{
 		// PFN_XAudio2Create = (delegate* unmanaged[MemberFunction]<IXAudio2**, uint, uint, HRESULT>)load(module, "XAudio2Create");
-		PFN_CreateAudioReverb = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)load(module, "CreateAudioReverb");
-		PFN_CreateAudioVolumeMeter = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)load(module, "CreateAudioVolumeMeter");
-		PFN_X3DAudioInitialize = (delegate* unmanaged[MemberFunction]<uint, float, X3DAUDIO_HANDLE**, HRESULT>)load(module, "X3DAudioInitialize");
-		PFN_X3DAudioCalculate = (delegate* unmanaged[MemberFunction]<void*, void*, void*, uint, void*, void>)load(module, "X3DAudioCalculate");
+		PFN_CreateAudioReverb = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)Windows.WindowsSystem.GetSymbol(module, "CreateAudioReverb");
+		PFN_CreateAudioVolumeMeter = (delegate* unmanaged[MemberFunction]<void**, uint, HRESULT>)Windows.WindowsSystem.GetSymbol(module, "CreateAudioVolumeMeter");
+		PFN_X3DAudioInitialize = (delegate* unmanaged[MemberFunction]<uint, float, X3DAUDIO_HANDLE**, HRESULT>)Windows.WindowsSystem.GetSymbol(module, "X3DAudioInitialize");
+		PFN_X3DAudioCalculate = (delegate* unmanaged[MemberFunction]<void*, void*, void*, uint, void*, void>)Windows.WindowsSystem.GetSymbol(module, "X3DAudioCalculate");
 
 	}
 
@@ -3327,16 +3512,20 @@ internal unsafe static class WindowsContextAudioDevice
 
 }
 
-	
-
-
-internal unsafe static class Sound2DCreation
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class WindowsAudioSound2D
 {
 
 
 }
-	internal unsafe static class Sound3DCreation
-	{
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static class  WindowsAudioSound3D
+{
 
 
-	}
+}

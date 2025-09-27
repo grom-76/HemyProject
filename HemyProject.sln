@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hemy.Sample", "Hemy.Sample\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hemy.Lib", "Hemy.Lib\Hemy.Lib.csproj", "{F81B8371-7954-48E8-A963-550F5BC56C63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hemy.Lib.V2", "Hemy.Lib.V2\Hemy.Lib.V2.csproj", "{3655CA21-E515-4503-8038-FAE1FB28BA68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{F81B8371-7954-48E8-A963-550F5BC56C63}.Release|x64.Build.0 = Release|Any CPU
 		{F81B8371-7954-48E8-A963-550F5BC56C63}.Release|x86.ActiveCfg = Release|Any CPU
 		{F81B8371-7954-48E8-A963-550F5BC56C63}.Release|x86.Build.0 = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|x64.Build.0 = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Debug|x86.Build.0 = Debug|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|x64.ActiveCfg = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|x64.Build.0 = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|x86.ActiveCfg = Release|Any CPU
+		{3655CA21-E515-4503-8038-FAE1FB28BA68}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
