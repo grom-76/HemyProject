@@ -1,0 +1,60 @@
+namespace Hemy.Lib.V2.Platform.Windows;
+
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Threading;
+
+using const_char = System.Byte;
+using BOOL = System.Int32;
+
+// https://learn.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+using size_t = System.UIntPtr;
+using uint32_t = System.UInt32;
+using uint64_t = System.UInt64;
+using uint8_t = System.Byte;
+using int32_t = System.Int32;
+using int64_t = System.Int64;
+using uint16_t = System.UInt16;
+
+using VkBool32 = System.UInt32;
+using VkDeviceAddress = System.UInt64;
+using VkDeviceSize = System.UInt64;
+using Flag = System.Int32;
+
+using HRESULT = System.Int32;
+
+using static Hemy.Lib.V2.Platform.Windows.WindowsGraphicCommon;
+using static Hemy.Lib.V2.Platform.Windows.WindowsWindowCommon;
+using Hemy.Lib.V2.Core;
+
+
+
+[SkipLocalsInit]
+[SuppressUnmanagedCodeSecurity]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe static partial class WindowsIO
+{
+	internal const string Ucrt = "ucrtbase";
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static bool IsFileExist(string file)
+	{
+		//https://learn.microsoft.com/fr-fr/cpp/c-runtime-library/reference/access-s-waccess-s?view=msvc-170 
+		var bytes = WindowsMemory.New(file);
+		int err = _access_s(bytes, 0);
+		WindowsMemory.Dispose(bytes);
+		return err == 0;
+	}
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	[LibraryImport(Ucrt, SetLastError = false)]
+	internal static partial int _access_s(const_char* path, int mode);
+}

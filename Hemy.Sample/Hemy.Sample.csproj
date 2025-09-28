@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hemy.Lib\Hemy.Lib.csproj" />
+    <ProjectReference Include="..\Hemy.Lib.V2\Hemy.Lib.V2.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
