@@ -70,6 +70,11 @@ internal unsafe static partial class WindowsGraphicCommon
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct VkQueue;
 
+	
+	[SkipLocalsInit]
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct VkFence;
+
 
 	public unsafe static void* LoadInstanceFunc(VkInstance* vkInstance, string name)
 	{

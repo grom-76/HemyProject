@@ -92,7 +92,33 @@ public unsafe sealed class Context : IDisposable
 
 	private readonly WindowsData* _data = null;
 	internal readonly WindowsEvents* _events = null;
+
 	
+	internal long* OnClose( void* hWnd, uint message, uint* wParam, long* lParam ) 
+	{
+		WindowsEventsImpl.RequestClose(&_data->State);
+		return null;
+	}
+	internal long* OnEmpty( void* hWnd, uint message, uint* wParam, long* lParam ) 
+	{
+		return WindowsEventsImpl.DefWindowProcA(hWnd, message, wParam, lParam);
+	}
+
+	internal void InitProcMessages()
+	{
+		actions = new Functor[10];
+		actions[0] = OnEmpty;
+		actions[1] = OnClose;
+		WindowsWindowCommon.WM_ARRAY[WindowsEventsImpl.WM_CLOSE] = 1;	
+	}
+	
+	internal delegate long* Functor(void* hWnd, uint message, uint* wParam, long* lParam);
+	internal Functor[] actions = null ;
+	private long* WindowProcMessages2(void* hWnd, uint message, uint* wParam, long* lParam)
+		=> actions[WindowsWindowCommon.WM_ARRAY[message]](hWnd, message, wParam, lParam);
+
+
+
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]

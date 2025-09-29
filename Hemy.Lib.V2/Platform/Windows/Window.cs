@@ -1,9 +1,7 @@
 namespace Hemy.Lib.V2.Platform.Windows;
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security;
+
 using System.Threading;
 
 using const_char = System.Byte;
@@ -28,7 +26,7 @@ using HRESULT = System.Int32;
 using static Hemy.Lib.V2.Platform.Windows.WindowsGraphicCommon;
 using static Hemy.Lib.V2.Platform.Windows.WindowsWindowCommon;
 using Hemy.Lib.V2.Core;
-
+using System.Diagnostics.Contracts;
 
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Sequential)]
@@ -115,15 +113,45 @@ internal static unsafe class WindowsWindowCommon
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct Hwnd;
 
-	internal const uint STATE_NOTINIT = 0;
-	internal const uint STATE_RUNNING = 1;
-	internal const uint STATE_DISPOSE = 2;
-	internal const uint STATE_QUIT = 3;
+	internal const uint STATE_INIT = 1;
+	internal const uint STATE_RUNNING = 2;
+	internal const uint STATE_DISPOSED = 3;
+	internal const uint STATE_QUIT = 4;
 	internal const int NO_ERROR = 0;
 	internal const int ERROR = 1;
 
 	
-
+	internal enum Message : byte
+	{
+		Null=0,
+		Quit = 1,
+		
+	}
+	internal static readonly byte[] WM_ARRAY =
+	[   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,(byte)Message.Quit,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,//50
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 100
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //150
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 200
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 300
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 400
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 500
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 600
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 700
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 800
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 900
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 1000
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 1100
+	];
+	
 }
 
 
@@ -132,7 +160,7 @@ internal static unsafe class WindowsWindowCommon
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class WindowsEventsImpl
 {
-
+	
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
@@ -144,7 +172,7 @@ internal unsafe static partial class WindowsEventsImpl
 			_ = TranslateMessage(&msg);
 			_ = DispatchMessageA(&msg);
 
-			*state = msg.message != WM_QUIT ? 0U : 1U;
+			*state = msg.message != WM_QUIT ? WindowsWindowCommon.STATE_RUNNING : WindowsWindowCommon.STATE_QUIT;
 		}
 	}
 
@@ -155,6 +183,8 @@ internal unsafe static partial class WindowsEventsImpl
         *state = 1;
         PostQuitMessage(0);
     }
+
+
 
 	private const uint PM_REMOVE = 0x0001;
 	internal const uint WM_QUIT = 0x0012;

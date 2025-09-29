@@ -74,6 +74,10 @@ internal unsafe struct WindowsData() // = Settings +Data + Infos
 	// AUDIO
 	internal nint AudioModule = 0;
 
+	[InlineArray(3)]
+	public partial struct VkFence_FixedBuffer { public VkFence f0; }
+	internal VkFence_FixedBuffer Fences;
+
 }
 
 [SkipLocalsInit]
