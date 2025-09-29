@@ -70,6 +70,7 @@ internal unsafe static partial class WindowsGraphicCommon
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct VkQueue;
 
+
 	public unsafe static void* LoadInstanceFunc(VkInstance* vkInstance, string name)
 	{
 		byte* str = WindowsMemory.New(name);

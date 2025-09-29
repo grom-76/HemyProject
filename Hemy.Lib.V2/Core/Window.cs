@@ -13,11 +13,13 @@ public static class Window
 {
     public enum WindowResolution : byte
     {
+#if WINDOWS        
         Fullscreen = 0,
         FHD_1080p_1920x1080,
         HD_720p_1280x720,
         VGA_640x480,
         SVGA_800x600,
+#endif
     }
 
     // <summary> BORDER STYLE </summary>
@@ -37,9 +39,9 @@ public static class Window
     public sealed class WindowSettings(ConntextSettings ctx) : IDisposable
     {
         internal string caption = "First Game V2";
-        internal uint width = 0;
-        internal uint height = 0;
-        internal uint style = 0;
+        internal uint width = 1280;
+        internal uint height = 720;
+        internal WindowStyle style = WindowStyle.standard;
 
         public WindowSettings Resolution(WindowResolution resolution)
         {
@@ -75,7 +77,7 @@ public static class Window
 
         public WindowSettings Style(WindowStyle style)
         {
-            this.style = (uint)style;
+            this.style = style;
             return this;
         }
 

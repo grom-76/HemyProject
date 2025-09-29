@@ -35,7 +35,7 @@ using Hemy.Lib.V2.Core;
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WindowsData() // = Settings +Data + Infos  
 {
-
+	internal fixed byte LogMessage[1024];
 	internal uint State = 0;
 	internal uint Error = 0;
 
@@ -73,8 +73,6 @@ internal unsafe struct WindowsData() // = Settings +Data + Infos
 	internal VkQueue* PresentQueue = null;
 	// AUDIO
 	internal nint AudioModule = 0;
-
-
 
 }
 

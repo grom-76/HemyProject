@@ -53,7 +53,7 @@ internal unsafe static partial class WindowsMemory
 	[SuppressUnmanagedCodeSecurity]
 	internal static T* ToPtr<T>(ref T instance) where T : unmanaged
 		=> (T*)Unsafe.AsPointer(ref instance);
-	
+
 
 	[SkipLocalsInit]
 	[SuppressGCTransition]
@@ -71,13 +71,13 @@ internal unsafe static partial class WindowsMemory
 	internal static T* New<T>(nuint count) where T : unmanaged
 	{
 		size_t size = WindowsUtils.GetByteCount(Size<T>(), count);
-		T* result = (T*)_aligned_malloc(size , DataAlignementSize);
-		
+		T* result = (T*)_aligned_malloc(size, DataAlignementSize);
+
 		Interlocked.Increment(ref _allocations);
 
 		return result;
 	}
-	
+
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity] // FOR STRUCT
@@ -87,7 +87,7 @@ internal unsafe static partial class WindowsMemory
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
-	internal static void Dispose(void* pointer) 
+	internal static void Dispose(void* pointer)
 	{
 		if (pointer == null) return;
 
@@ -107,44 +107,60 @@ internal unsafe static partial class WindowsMemory
 		=> memset(destination, valueToFill, bytesCount);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Ucrt, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static partial void* _aligned_malloc(nuint size, nuint alignment);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Ucrt, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static partial void* _aligned_realloc(void* memblock, nuint size, nuint alignment);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Ucrt, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static partial void _aligned_free(void* ptr);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Ucrt, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static partial void* memmove(void* dest, void* src, nuint size);
 
 	[SkipLocalsInit]
-    [SuppressGCTransition]
-    [SuppressUnmanagedCodeSecurity]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Ucrt, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	internal static partial void* memset(void* dest, int c, nuint count);
+
+	//   [DllImport("kernel32.dll", SetLastError = true)]
+	//     public static extern IntPtr HeapCreate(HeapFlags flOptions, uint dwInitialsize, uint dwMaximumSize);
+
+	//     [DllImport("kernel32.dll", SetLastError = true)]
+	//     public static extern IntPtr HeapAlloc(IntPtr hHeap, HeapFlags dwFlags, uint dwSize);
+
+	//     [DllImport("kernel32.dll", SetLastError = true)]
+	//     public static extern bool HeapDestroy(IntPtr hHeap);
+	//  [Flags]
+    // public enum HeapFlags
+    // {
+    //     HEAP_NO_SERIALIZE = 0x1,
+    //     HEAP_GENERATE_EXCEPTIONS = 0x4,
+    //     HEAP_ZERO_MEMORY = 0x8
+    // }
 }
 
 

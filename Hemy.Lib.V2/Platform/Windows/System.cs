@@ -102,6 +102,21 @@ internal unsafe static partial class WindowsSystem
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
+	internal static ulong GetFrequency()
+	{
+		_ = QueryPerformanceCounter(out ulong count);
+		return count;
+	}
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
+	internal static bool  IsHighPrecision()
+		=> QueryPerformanceCounter(out ulong _) !=0 ;
+
+	[SkipLocalsInit]
+	[SuppressGCTransition]
+	[SuppressUnmanagedCodeSecurity]
 	[LibraryImport(Kernel, SetLastError = false)]
 	[UnmanagedCallConv(CallConvs = [typeof(CallConvStdcall), typeof(CallConvSuppressGCTransition)])]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]

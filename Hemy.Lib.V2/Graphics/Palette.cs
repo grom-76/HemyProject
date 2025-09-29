@@ -1,4 +1,4 @@
-namespace Hemy.Lib.Core.Color;
+namespace Hemy.Lib.V2.Graphics;
 
   
 /// <summary>  Packed color BGRA 

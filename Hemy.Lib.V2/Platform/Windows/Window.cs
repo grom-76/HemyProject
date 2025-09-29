@@ -53,14 +53,13 @@ internal static unsafe class WindowsUtils
 	[SkipLocalsInit]
 	[SuppressGCTransition]
 	[SuppressUnmanagedCodeSecurity]
-	internal static void FillBytesWithString(byte* bytes, string text)
+	internal static void FillBytesWithString(byte* bytes, string text,int offset =0, int size = 1024 )
 	{
-		int i = 0;
-		while (i < text.Length)
+		while (offset <= text.Length && offset <= size)
 		{
-			*(bytes + i) = unchecked((byte)(text[i++] & 0x7f));
+			*(bytes + offset) = unchecked((byte)(text[offset++] & 0x7f));
 		}
-		*(bytes + i) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
+		*(bytes + offset) = 0;// dans le cas ou il n'y ait pas de zero en fin de chaine calloc
 	}
 
 	[SkipLocalsInit]
@@ -159,8 +158,8 @@ internal unsafe static partial class WindowsEventsImpl
 
 	private const uint PM_REMOVE = 0x0001;
 	internal const uint WM_QUIT = 0x0012;
+	internal const uint WM_CLOSE = 0x0010;
 	private const string User = "user32";
-
 
 	[SkipLocalsInit]
     [SuppressGCTransition]
