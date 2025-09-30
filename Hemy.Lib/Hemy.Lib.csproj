@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DefineConstants>WINDOWS</DefineConstants>
-  </PropertyGroup>
+		<!-- <Nullable>enable</Nullable> Nullable types introduce a slight performance cost because they internally store an additional bool -->
+  	</PropertyGroup>
 
-  <ItemGroup >
+  	<ItemGroup >
 		<None Include="Logo.ico"  CopyToOutputDirectory="PreserveNewest"  />
 		<None Include=".\Runtime\ShaderCompiler\Win-x64\Shaderc_shared.dll"  CopyToOutputDirectory="PreserveNewest"  Link="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup> 
 
-  <PropertyGroup Condition ="'$(Configuration)' == 'Release'" >
+  	<PropertyGroup Condition ="'$(Configuration)' == 'Release'" >
 
 		<DebugSymbols>false</DebugSymbols>
 		<Optimize>true</Optimize>

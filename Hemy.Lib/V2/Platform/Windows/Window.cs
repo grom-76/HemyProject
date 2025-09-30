@@ -29,20 +29,6 @@ using Hemy.Lib.V2.Core;
 using System.Diagnostics.Contracts;
 
 [SkipLocalsInit]
-[StructLayout(LayoutKind.Sequential)]
-internal unsafe readonly struct WindowsEvents( WindowsData* windowData  ) : Events.IEvents // = Settings +Data + Infos  
-{
-
-	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
-	public readonly bool IsRunning()
-		=> windowData->State == 1 && windowData->Error == 0;
-
-	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
-	public readonly void RequestClose()
-		=> Windows.WindowsEventsImpl.RequestClose(&windowData->State);
-}
-
-[SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 internal static unsafe class WindowsUtils
@@ -99,8 +85,6 @@ internal static unsafe class WindowsUtils
 		return ((elementSize >= multiplyNoOverflow) || (elementCount >= multiplyNoOverflow)) && (elementSize > 0) && ((nuint.MaxValue / elementSize) < elementCount) ? nuint.MaxValue : (elementCount * elementSize);
 	}
 
-	
-
 }
 
 [SkipLocalsInit]
@@ -120,17 +104,10 @@ internal static unsafe class WindowsWindowCommon
 	internal const int NO_ERROR = 0;
 	internal const int ERROR = 1;
 
-	
-	internal enum Message : byte
-	{
-		Null=0,
-		Quit = 1,
-		
-	}
 	internal static readonly byte[] WM_ARRAY =
-	[   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,(byte)Message.Quit,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,//50
+	[   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 50
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 100
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //150
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 150
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 200
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 300
@@ -154,16 +131,26 @@ internal static unsafe class WindowsWindowCommon
 	
 }
 
+[SkipLocalsInit]
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe readonly struct WindowsEvents( WindowsData* windowData  ) : Events.IEvents // = Settings +Data + Infos  
+{
+
+	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
+	public readonly bool IsRunning()
+		=> windowData->State == 1 && windowData->Error == 0;
+
+	[MethodImpl((MethodImplOptions)768), SkipLocalsInit, SuppressGCTransition, SuppressUnmanagedCodeSecurity]
+	public readonly void RequestClose()
+		=> Windows.WindowsEventsImpl.RequestClose(&windowData->State);
+}
 
 [SkipLocalsInit]
 [SuppressUnmanagedCodeSecurity]
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe static partial class WindowsEventsImpl
 {
-	
-	[SkipLocalsInit]
-	[SuppressGCTransition]
-	[SuppressUnmanagedCodeSecurity]
+	[SkipLocalsInit][SuppressGCTransition][SuppressUnmanagedCodeSecurity]
 	internal static void Update(uint* state)
 	{
 		MSG msg;
@@ -176,15 +163,14 @@ internal unsafe static partial class WindowsEventsImpl
 		}
 	}
 
+	[SkipLocalsInit][SuppressGCTransition][SuppressUnmanagedCodeSecurity]
 	internal static void RequestClose(uint* state)
-    {
-        if (*state == 0) return;
-        
-        *state = 1;
-        PostQuitMessage(0);
-    }
+	{
+		if (*state == 0) return;
 
-
+		*state = 1;
+		PostQuitMessage(0);
+	}
 
 	private const uint PM_REMOVE = 0x0001;
 	internal const uint WM_QUIT = 0x0012;
@@ -264,15 +250,8 @@ internal unsafe static partial class WindowsWindowImpl
 
 	internal static int CreateWindowSettings(WindowsData* infos)
 	{
-		nuint value1 = 0;
-		void* ptr = null;
-		Hwnd* hwnd = null; 
 
-		ptr = &value1;
-		value1 = (nuint)ptr;
-		
 		// WindowStyle WinStyle =infos->Style;
-
 		// Str.StringToBytes(contextData->GameName, Str.BytesToString(info->GameName));
 		// Str.StringToBytes(contextData->EngineName, "Hemy Engine");
 		// byte* LogoIcon = Str.New("Logo.ico");
